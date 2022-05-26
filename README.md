@@ -1,2 +1,2 @@
-# CIS556
-Databases Course
+# Intro
+CIS556 Databases Course
