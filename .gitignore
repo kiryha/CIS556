@@ -1,2 +1,3 @@
-# Skip PyCharm
+# Skip files:
 .idea
+*.pyc
