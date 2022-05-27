@@ -74,7 +74,7 @@
             </property>
            </widget>
           </widget>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="btnAddStudent">
            <property name="maximumSize">
             <size>
              <width>16777215</width>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Thu May 26 20:17:49 2022
+# Created: Fri May 27 12:29:41 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -43,9 +43,9 @@ class Ui_STARRS(object):
         self.linStudentDescription = QtGui.QLineEdit(self.splitter)
         self.linStudentDescription.setMaximumSize(QtCore.QSize(16777215, 20))
         self.linStudentDescription.setObjectName("linStudentDescription")
-        self.pushButton = QtGui.QPushButton(self.splitter_2)
-        self.pushButton.setMaximumSize(QtCore.QSize(16777215, 30))
-        self.pushButton.setObjectName("pushButton")
+        self.btnAddStudent = QtGui.QPushButton(self.splitter_2)
+        self.btnAddStudent.setMaximumSize(QtCore.QSize(16777215, 30))
+        self.btnAddStudent.setObjectName("btnAddStudent")
         self.verticalLayout_2.addWidget(self.splitter_2)
         self.tabSections.addTab(self.tab_1, "")
         self.tab_2 = QtGui.QWidget()
@@ -79,7 +79,7 @@ class Ui_STARRS(object):
 
     def retranslateUi(self, STARRS):
         STARRS.setWindowTitle(QtGui.QApplication.translate("STARRS", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("STARRS", "Add Student", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnAddStudent.setText(QtGui.QApplication.translate("STARRS", "Add Student", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_1), QtGui.QApplication.translate("STARRS", "Online Application Process", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_2), QtGui.QApplication.translate("STARRS", "Admissions Process", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_3), QtGui.QApplication.translate("STARRS", "Online Registration", None, QtGui.QApplication.UnicodeUTF8))
