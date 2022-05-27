@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Fri May 27 12:29:41 2022
+# Created: Fri May 27 13:45:20 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -78,7 +78,7 @@ class Ui_STARRS(object):
         QtCore.QMetaObject.connectSlotsByName(STARRS)
 
     def retranslateUi(self, STARRS):
-        STARRS.setWindowTitle(QtGui.QApplication.translate("STARRS", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        STARRS.setWindowTitle(QtGui.QApplication.translate("STARRS", "S T A R R S", None, QtGui.QApplication.UnicodeUTF8))
         self.btnAddStudent.setText(QtGui.QApplication.translate("STARRS", "Add Student", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_1), QtGui.QApplication.translate("STARRS", "Online Application Process", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_2), QtGui.QApplication.translate("STARRS", "Admissions Process", None, QtGui.QApplication.UnicodeUTF8))
