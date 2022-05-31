@@ -16,11 +16,23 @@ def init_database(sql_file_path):
     connection = sqlite3.connect(sql_file_path)
     cursor = connection.cursor()
 
-    # PROJECT MANAGER ITEMS
+    # OLD
     cursor.execute('''CREATE TABLE student (
                     id integer primary key autoincrement,
                     first_name text,
                     last_name text,
+                    description text
+                    )''')
+
+    # User
+    cursor.execute('''CREATE TABLE user (
+                    id integer primary key autoincrement,
+                    first_name text,
+                    middle_name text,
+                    last_name text,
+                    email text,
+                    address text,
+                    phone text,
                     description text
                     )''')
 
@@ -164,21 +176,30 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         # SETUP UI
         self.setupUi(self)
-        # self.resize(1920, 1000)
+        # Temp
+        self.tabStudents.hide()
+        self.btnAddStudent.hide()
+
+        # # Data
+        # self.students_model = None
+        # self.students_data = None
+        #
+        # # Load students
+        # self.init_students()
 
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
 
-        # Data
-        self.students_model = None
-        self.students_data = None
-
-        # Load students
-        self.init_students()
+        self.init_ui()
 
         # UI functionality
         self.actInitDatabase.triggered.connect(self.init_database)
         # Students
         self.btnAddStudent.clicked.connect(self.add_student)
+
+    def init_ui(self):
+
+        self.comDegreeSought.addItems(['MS', 'MSE'])
+        self.comAdmissionTerm.addItems(['S2022', 'F2022', 'W2023', 'S2023', 'F2023'])
 
     def setup_table(self, table):
 
