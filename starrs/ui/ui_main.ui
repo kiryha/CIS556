@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>563</width>
-    <height>877</height>
+    <height>878</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -312,6 +312,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QLabel" name="labApplicationStatus">
+              <property name="text">
+               <string>Application status:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="Line" name="line">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -319,9 +326,15 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="labApplicationStatus">
+             <widget class="QPushButton" name="btnEnroll">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>45</height>
+               </size>
+              </property>
               <property name="text">
-               <string>Application status:</string>
+               <string>Enroll to Database University</string>
               </property>
              </widget>
             </item>
@@ -350,107 +363,168 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <widget class="QSplitter" name="splitter_12">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Submit Student Data</string>
           </property>
-          <widget class="QLabel" name="label_15">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Enter student ID:</string>
-           </property>
-          </widget>
-          <widget class="QLineEdit" name="linStudentIDAdmission"/>
+          <layout class="QVBoxLayout" name="verticalLayout_10">
+           <item>
+            <widget class="QSplitter" name="splitter_12">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QLabel" name="label_15">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Enter student ID:</string>
+              </property>
+             </widget>
+             <widget class="QLineEdit" name="linStudentIDAdmission"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSplitter" name="splitter_13">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QLabel" name="label">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Transcripts | Recomendations:</string>
+              </property>
+             </widget>
+             <widget class="QLineEdit" name="linTranscript"/>
+             <widget class="QLineEdit" name="linRecommendation"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnAddStudentData">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>45</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Add Student Transcripts and Recomendations</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
-         <widget class="Line" name="line_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="title">
+           <string>Make Decision</string>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSplitter" name="splitter_13">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <widget class="QLabel" name="label">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Received transcript | recomendations</string>
-           </property>
-          </widget>
-          <widget class="QLineEdit" name="linTranscript"/>
-          <widget class="QLineEdit" name="linRecommendation"/>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btnAddStudentData">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>45</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Add Student Transcripts and Recomendations</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="Line" name="line_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSplitter" name="splitter_14">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Select applicant destiny</string>
-           </property>
-          </widget>
-          <widget class="QComboBox" name="comDescision"/>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btnMadeDecision">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>45</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>DOOM</string>
-          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_11">
+           <item>
+            <widget class="QPushButton" name="btnGetPendingApplicants">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>45</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Get List of Decision Pending Applicants</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSplitter" name="splitter_26">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QLabel" name="label_27">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>List of Decision Pending Applicants</string>
+              </property>
+             </widget>
+             <widget class="QComboBox" name="comPendingApplicants"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSplitter" name="splitter_14">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QLabel" name="label_2">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Select applicant destiny</string>
+              </property>
+             </widget>
+             <widget class="QComboBox" name="comDescision"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnMadeDecision">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>45</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Submit Applicant Status</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>

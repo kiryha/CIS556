@@ -302,6 +302,30 @@ class StarrsData:
         connection.commit()
         connection.close()
 
+    def get_pending_applicants(self):
+        """
+        Get and return list of user IDs who applied to university, their data was entered, but decision was not made
+        """
+
+        pending_applicants = []
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM application WHERE "
+                       "transcripts IS NOT NULL "
+                       "AND recommendations IS NOT NULL "
+                       "AND status IS NULL")
+
+        application_tuples = cursor.fetchall()
+
+        connection.close()
+
+        for application_tuple in application_tuples:
+            pending_applicants.append(str(application_tuple[0]))
+
+        return pending_applicants
+
 
 # STARRS Application
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
@@ -326,10 +350,12 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # UI functionality
         self.actInitDatabase.triggered.connect(self.init_database)
 
+        # 1)
         self.btnSubmitApplication.pressed.connect(self.submit_application)
         self.btnCheckApplicationStatus.pressed.connect(self.check_application_status)
-
+        # 2)
         self.btnAddStudentData.pressed.connect(self.add_student_data)
+        self.btnGetPendingApplicants.pressed.connect(self.get_pending_applicants)
         self.btnMadeDecision.pressed.connect(self.set_status)
 
     def init_ui(self):
@@ -361,8 +387,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linRecommendation.setText('Recommendations')
 
         self.comDegreeSought.addItems(['MS', 'MSE'])
-        self.comAdmissionTerm.addItems(['S2022', 'F2022', 'W2023', 'S2023', 'F2023'])
-        self.comDescision.addItems(['Admitted with Aid', 'Admitted', 'Rejected'])
+        self.comAdmissionTerm.addItems(['Summer 2022', 'Fall 2022', 'Winter 2023', 'Summer 2023', 'Fall 2023'])
+        self.comDescision.addItems(['Admitted With Aid', 'Admitted', 'Rejected'])
 
     def init_data(self):
 
@@ -407,24 +433,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             'description']
 
         return user_tuple, application_tuple
-
-    def setup_table(self, table):
-
-        table.verticalHeader().hide()
-        table.verticalHeader().setResizeMode(QtGui.QHeaderView.ResizeToContents)
-        table.horizontalHeader().setResizeMode(QtGui.QHeaderView.ResizeToContents)
-        table.horizontalHeader().setStretchLastSection(True)
-        table.setItemDelegate(AlignDelegate())
-
-    def init_students(self):
-
-        self.setup_table(self.tabStudents)
-
-        self.students_data = Students(self.sql_file_path)
-        self.students_data.get_students()
-
-        self.students_model = StudentsModel(self.students_data)
-        self.tabStudents.setModel(self.students_model)
 
     def init_database(self):
         """
@@ -500,15 +508,26 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         transcripts = self.linTranscript.text()
         recommendations = self.linRecommendation.text()
 
+        if transcripts == '':
+            transcripts = None
+        if recommendations == '':
+            recommendations = None
+
         self.starrs_data.add_student_data(user_id, transcripts, recommendations)
         self.statusBar().showMessage('>> Applicant {0} data submitted!'.format(user_id))
+
+    def get_pending_applicants(self):
+
+        pending_applicants = self.starrs_data.get_pending_applicants()
+        self.comPendingApplicants.clear()
+        self.comPendingApplicants.addItems(pending_applicants)
 
     def set_status(self):
         """
         Admit/reject applicant by GS
         """
 
-        user_id = self.linStudentIDAdmission.text()
+        user_id = self.comPendingApplicants.currentText()
         status = self.comDescision.currentText()
 
         self.starrs_data.set_status(user_id, status)
