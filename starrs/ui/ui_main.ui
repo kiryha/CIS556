@@ -116,8 +116,20 @@
                <enum>Qt::Horizontal</enum>
               </property>
               <widget class="QLabel" name="label_11">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
-                <string>email</string>
+                <string>Applicant email</string>
                </property>
               </widget>
               <widget class="QLineEdit" name="linApplicantEmail"/>
@@ -129,6 +141,18 @@
                <enum>Qt::Horizontal</enum>
               </property>
               <widget class="QLabel" name="label_14">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Cell Number</string>
                </property>
@@ -142,6 +166,18 @@
                <enum>Qt::Horizontal</enum>
               </property>
               <widget class="QLabel" name="label_12">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Zip | State | City | Street</string>
                </property>
@@ -150,6 +186,87 @@
               <widget class="QLineEdit" name="linAddressState"/>
               <widget class="QLineEdit" name="linAddressCity"/>
               <widget class="QLineEdit" name="linAddressStreet"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_4">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Prior Work Expirience:</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linWorkExpirience"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_7">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>1) Prior Degree | Year | GPA | University </string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linPriorDegree1"/>
+              <widget class="QLineEdit" name="linPriorYear1"/>
+              <widget class="QLineEdit" name="linPriorGPA1"/>
+              <widget class="QLineEdit" name="linPriorUniversity1"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_6">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_8">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>2) Prior Degree | Year | GPA | University </string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linPriorDegree2"/>
+              <widget class="QLineEdit" name="linPriorYear2"/>
+              <widget class="QLineEdit" name="linPriorGPA2"/>
+              <widget class="QLineEdit" name="linPriorUniversity2"/>
              </widget>
             </item>
             <item>
@@ -190,66 +307,6 @@
                 </size>
                </property>
               </widget>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSplitter" name="splitter_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <widget class="QLabel" name="label_4">
-               <property name="maximumSize">
-                <size>
-                 <width>120</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Prior Work Expirience:</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="linWorkExpirience"/>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_2">
-              <property name="title">
-               <string>Prior Degrees</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_4">
-               <item>
-                <widget class="QSplitter" name="splitter_5">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <widget class="QLabel" name="label_7">
-                  <property name="text">
-                   <string>1) Degree | Year | GPA | University </string>
-                  </property>
-                 </widget>
-                 <widget class="QLineEdit" name="linPriorDegree1"/>
-                 <widget class="QLineEdit" name="linPriorYear1"/>
-                 <widget class="QLineEdit" name="linPriorGPA1"/>
-                 <widget class="QLineEdit" name="linPriorUniversity1"/>
-                </widget>
-               </item>
-               <item>
-                <widget class="QSplitter" name="splitter_6">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <widget class="QLabel" name="label_8">
-                  <property name="text">
-                   <string>2) Degree | Year | GPA | University </string>
-                  </property>
-                 </widget>
-                 <widget class="QLineEdit" name="linPriorDegree2"/>
-                 <widget class="QLineEdit" name="linPriorYear2"/>
-                 <widget class="QLineEdit" name="linPriorGPA2"/>
-                 <widget class="QLineEdit" name="linPriorUniversity2"/>
-                </widget>
-               </item>
-              </layout>
              </widget>
             </item>
             <item>
