@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_main.ui'
 #
-# Created: Wed Jun  1 16:01:17 2022
+# Created: Wed Jun  1 16:09:42 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -179,9 +179,16 @@ class Ui_STARRS(object):
         self.btnCheckApplicationStatus.setMinimumSize(QtCore.QSize(0, 45))
         self.btnCheckApplicationStatus.setObjectName("btnCheckApplicationStatus")
         self.verticalLayout_5.addWidget(self.btnCheckApplicationStatus)
-        self.labApplicationStatus = QtGui.QLabel(self.tab_5)
+        self.splitter_27 = QtGui.QSplitter(self.tab_5)
+        self.splitter_27.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter_27.setObjectName("splitter_27")
+        self.labApplicationStatus = QtGui.QLabel(self.splitter_27)
+        self.labApplicationStatus.setMaximumSize(QtCore.QSize(120, 16777215))
         self.labApplicationStatus.setObjectName("labApplicationStatus")
-        self.verticalLayout_5.addWidget(self.labApplicationStatus)
+        self.linApplicationStatus = QtGui.QLineEdit(self.splitter_27)
+        self.linApplicationStatus.setEnabled(False)
+        self.linApplicationStatus.setObjectName("linApplicationStatus")
+        self.verticalLayout_5.addWidget(self.splitter_27)
         self.line = QtGui.QFrame(self.tab_5)
         self.line.setFrameShape(QtGui.QFrame.HLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
@@ -307,8 +314,8 @@ class Ui_STARRS(object):
         self.label_14.setText(QtGui.QApplication.translate("STARRS", "Cell Number", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("STARRS", "Zip | State | City | Street", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("STARRS", "Prior Work Expirience:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_7.setText(QtGui.QApplication.translate("STARRS", "1) Prior Degree | Year | GPA | University ", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_8.setText(QtGui.QApplication.translate("STARRS", "2) Prior Degree | Year | GPA | University ", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("STARRS", "1 Prior Degree | Year | GPA | University ", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_8.setText(QtGui.QApplication.translate("STARRS", "2 Prior Degree | Year | GPA | University ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("STARRS", "Admission Term:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("STARRS", "Apply for Degree", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSubmitApplication.setText(QtGui.QApplication.translate("STARRS", "Submit Application", None, QtGui.QApplication.UnicodeUTF8))

@@ -232,7 +232,7 @@
                 </size>
                </property>
                <property name="text">
-                <string>1) Prior Degree | Year | GPA | University </string>
+                <string>1 Prior Degree | Year | GPA | University </string>
                </property>
               </widget>
               <widget class="QLineEdit" name="linPriorDegree1"/>
@@ -260,7 +260,7 @@
                 </size>
                </property>
                <property name="text">
-                <string>2) Prior Degree | Year | GPA | University </string>
+                <string>2 Prior Degree | Year | GPA | University </string>
                </property>
               </widget>
               <widget class="QLineEdit" name="linPriorDegree2"/>
@@ -369,10 +369,26 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="labApplicationStatus">
-              <property name="text">
-               <string>Application status:</string>
+             <widget class="QSplitter" name="splitter_27">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
+              <widget class="QLabel" name="labApplicationStatus">
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Application status:</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linApplicationStatus">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
              </widget>
             </item>
             <item>

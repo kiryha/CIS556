@@ -480,15 +480,15 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         application = self.starrs_data.get_application(user_id)
 
         if not application:
-            self.labApplicationStatus.setText('Application status: Application Was Not Submitted!')
+            self.linApplicationStatus.setText('Application Was Not Submitted!')
             return
 
         if application.status:
-            self.labApplicationStatus.setText('Application status: Admission Decision: {}'.format(application.status))
+            self.linApplicationStatus.setText('Admission Decision: {}'.format(application.status))
 
         else:
             if application.transcripts and application.recommendations:
-                self.labApplicationStatus.setText('Application status: Application Received and Decision Pending')
+                self.linApplicationStatus.setText('Application Received and Decision Pending')
             else:
                 missing = ''
                 if not application.transcripts:
@@ -496,7 +496,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
                 if not application.recommendations:
                     missing += ' and recommendations'
 
-                self.labApplicationStatus.setText('Application status: Application Materials Missing: {}'.format(missing))
+                self.linApplicationStatus.setText('Application Materials Missing: {}'.format(missing))
 
     # 2) Admission process
     def add_student_data(self):
