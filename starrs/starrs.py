@@ -17,12 +17,12 @@ def init_database(sql_file_path):
     cursor = connection.cursor()
 
     # OLD
-    cursor.execute('''CREATE TABLE student (
-                    id integer primary key autoincrement,
-                    first_name text,
-                    last_name text,
-                    description text
-                    )''')
+    # cursor.execute('''CREATE TABLE student (
+    #                 id integer primary key autoincrement,
+    #                 first_name text,
+    #                 last_name text,
+    #                 description text
+    #                 )''')
 
     # User
     cursor.execute('''CREATE TABLE user (
@@ -40,10 +40,11 @@ def init_database(sql_file_path):
     cursor.execute('''CREATE TABLE application (
                     id integer primary key autoincrement,
                     user_id integer,
+                    date_received text,
+                    status text,
                     gre_verbal text,
                     gre_quantitative text,
                     gre_analytical text,
-                    date_received text,
                     experience text,
                     admission_term text,
                     degree_sought text,
@@ -55,7 +56,6 @@ def init_database(sql_file_path):
                     prior2_year text,
                     prior2_gpa text,
                     prior2_university text,
-                    status text,
                     description text,
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
@@ -104,6 +104,53 @@ class User:
         self.address = user_tuple[5]
         self.phone = user_tuple[6]
         self.description = user_tuple[7]
+
+
+class Application:
+    def __init__(self, application_tuple):
+        self.id = None
+        self.user_id = None
+        self.date_received = ''
+        self.status = ''
+        self.gre_verbal = ''
+        self.gre_quantitative = ''
+        self.gre_analytical = ''
+        self.experience = ''
+        self.admission_term = ''
+        self.degree_sought = ''
+        self.prior1_major = ''
+        self.prior1_year = ''
+        self.prior1_gpa = ''
+        self.prior1_university = ''
+        self.prior2_major = ''
+        self.prior2_year = ''
+        self.prior2_gpa = ''
+        self.prior2_university = ''
+        self.description = ''
+
+        self.init(application_tuple)
+
+    def init(self, application_tuple):
+
+        self.id = application_tuple[0]
+        self.user_id = application_tuple[1]
+        self.date_received = application_tuple[2]
+        self.status = application_tuple[3]
+        self.gre_verbal = application_tuple[4]
+        self.gre_quantitative = application_tuple[5]
+        self.gre_analytical = application_tuple[6]
+        self.experience = application_tuple[7]
+        self.admission_term = application_tuple[8]
+        self.degree_sought = application_tuple[9]
+        self.prior1_major = application_tuple[10]
+        self.prior1_year = application_tuple[11]
+        self.prior1_gpa = application_tuple[12]
+        self.prior1_university = application_tuple[13]
+        self.prior2_major = application_tuple[14]
+        self.prior2_year = application_tuple[15]
+        self.prior2_gpa = application_tuple[16]
+        self.prior2_university = application_tuple[17]
+        self.description = application_tuple[18]
 
 
 # Data models
@@ -255,8 +302,65 @@ class StarrsData:
         connection.close()
 
         print 'User {0} {1} added!'.format(user.first_name, user.last_name)
+        return user
+
+    def add_application(self, application_tuple):
+
+        application = Application(application_tuple)
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        # Add object to DB
+        cursor.execute("INSERT INTO application VALUES ("
+                       ":id,"
+                       ":user_id,"
+                       ":date_received,"
+                       ":status,"
+                       ":gre_verbal,"
+                       ":gre_quantitative,"
+                       ":gre_analytical,"
+                       ":experience,"
+                       ":admission_term,"
+                       ":degree_sought,"
+                       ":prior1_major,"
+                       ":prior1_year,"
+                       ":prior1_gpa,"
+                       ":prior1_university," 
+                       ":prior2_major,"
+                       ":prior2_year,"
+                       ":prior2_gpa,"
+                       ":prior2_university,"
+                       ":description)",
+
+                       {'id': cursor.lastrowid,
+                        'user_id': application.user_id,
+                        'date_received': application.date_received,
+                        'status': application.status,
+                        'gre_verbal': application.gre_verbal,
+                        'gre_quantitative': application.gre_quantitative,
+                        'gre_analytical': application.gre_analytical,
+                        'experience': application.experience,
+                        'admission_term': application.admission_term,
+                        'degree_sought': application.degree_sought,
+                        'prior1_major': application.prior1_major,
+                        'prior1_year': application.prior1_year,
+                        'prior1_gpa': application.prior1_gpa,
+                        'prior1_university': application.prior1_university,
+                        'prior2_major': application.prior2_major,
+                        'prior2_year': application.prior2_year,
+                        'prior2_gpa': application.prior2_gpa,
+                        'prior2_university': application.prior2_university,
+                        'description': application.description})
+
+        connection.commit()
+        application.id = cursor.lastrowid  # Add database ID to the object
+        connection.close()
+
+        print 'Application for user {} added!'.format(application.user_id)
 
 
+# STARRS Application
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def __init__(self, parent=None):
         super(STARRS, self).__init__(parent=parent)
@@ -318,35 +422,40 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def get_ui_apply(self):
 
         user_tuple = [
-                        None,
-                        self.linStudentFirstName.text(),
-                        self.linStudentMidName.text(),
-                        self.linStudentLastName.text(),
-                        self.linApplicantEmail.text(),
-                        '{0}, {1}, {2}, {3}'.format(self.linAddressZip.text(),
-                                                    self.linAddressState.text(),
-                                                    self.linAddressCity.text(),
-                                                    self.linAddressStreet.text()),
-                        self.linApplicantPhone.text(),
-                        '']
+            None,
+            self.linStudentFirstName.text(),
+            self.linStudentMidName.text(),
+            self.linStudentLastName.text(),
+            self.linApplicantEmail.text(),
+            '{0}, {1}, {2}, {3}'.format(self.linAddressZip.text(),
+                                        self.linAddressState.text(),
+                                        self.linAddressCity.text(),
+                                        self.linAddressStreet.text()),
+            self.linApplicantPhone.text(),
+            '']
 
-        self.linGREVErbal.text()
-        self.linGREVQuant.text()
-        self.linGREVAnalitical.text()
+        application_tuple = [
+            None,
+            None,
+            None,
+            None,
+            self.linGREVErbal.text(),
+            self.linGREVQuant.text(),
+            self.linGREVAnalitical.text(),
+            self.linWorkExpirience.text(),
+            self.comAdmissionTerm.currentText(),
+            self.comDegreeSought.currentText(),
+            self.linPriorDegree1.text(),
+            self.linPriorYear1.text(),
+            self.linPriorGPA1.text(),
+            self.linPriorUniversity1.text(),
+            self.linPriorDegree2.text(),
+            self.linPriorYear2.text(),
+            self.linPriorGPA2.text(),
+            self.linPriorUniversity2.text(),
+            'description']
 
-        self.linWorkExpirience.text()
-        self.comDegreeSought.currentText()
-        self.comAdmissionTerm.currentText()
-        self.linPriorDegree1.text()
-        self.linPriorYear1.text()
-        self.linPriorGPA1.text()
-        self.linPriorUniversity1.text()
-        self.linPriorDegree2.text()
-        self.linPriorYear2.text()
-        self.linPriorGPA2.text()
-        self.linPriorUniversity2.text()
-
-        return user_tuple
+        return user_tuple, application_tuple
 
     def setup_table(self, table):
 
@@ -387,9 +496,16 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     # 1) Online Application
     def submit_application(self):
 
-        user_tuple = self.get_ui_apply()
-        self.starrs_data.add_user(user_tuple)
+        # Add user
+        user_tuple, application_tuple = self.get_ui_apply()
+        user = self.starrs_data.add_user(user_tuple)
 
+        # Sent password
+        self.statusBar().showMessage('>> Password is: >{0}<'.format(user.id))
+
+        # Add application
+        application_tuple[1] = user.id
+        self.starrs_data.add_application(application_tuple)
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])
