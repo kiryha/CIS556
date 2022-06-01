@@ -1,5 +1,6 @@
 import os
 import sqlite3
+from datetime import date
 from PySide import QtGui
 from PySide import QtCore
 from ui import ui_main
@@ -42,6 +43,8 @@ def init_database(sql_file_path):
                     user_id integer,
                     date_received text,
                     status text,
+                    transcripts text,
+                    recommendations text,
                     gre_verbal text,
                     gre_quantitative text,
                     gre_analytical text,
@@ -112,6 +115,8 @@ class Application:
         self.user_id = None
         self.date_received = ''
         self.status = ''
+        self.transcripts = ''
+        self.recommendations = ''
         self.gre_verbal = ''
         self.gre_quantitative = ''
         self.gre_analytical = ''
@@ -136,21 +141,23 @@ class Application:
         self.user_id = application_tuple[1]
         self.date_received = application_tuple[2]
         self.status = application_tuple[3]
-        self.gre_verbal = application_tuple[4]
-        self.gre_quantitative = application_tuple[5]
-        self.gre_analytical = application_tuple[6]
-        self.experience = application_tuple[7]
-        self.admission_term = application_tuple[8]
-        self.degree_sought = application_tuple[9]
-        self.prior1_major = application_tuple[10]
-        self.prior1_year = application_tuple[11]
-        self.prior1_gpa = application_tuple[12]
-        self.prior1_university = application_tuple[13]
-        self.prior2_major = application_tuple[14]
-        self.prior2_year = application_tuple[15]
-        self.prior2_gpa = application_tuple[16]
-        self.prior2_university = application_tuple[17]
-        self.description = application_tuple[18]
+        self.transcripts = application_tuple[4]
+        self.recommendations = application_tuple[5]
+        self.gre_verbal = application_tuple[6]
+        self.gre_quantitative = application_tuple[7]
+        self.gre_analytical = application_tuple[8]
+        self.experience = application_tuple[9]
+        self.admission_term = application_tuple[10]
+        self.degree_sought = application_tuple[11]
+        self.prior1_major = application_tuple[12]
+        self.prior1_year = application_tuple[13]
+        self.prior1_gpa = application_tuple[14]
+        self.prior1_university = application_tuple[15]
+        self.prior2_major = application_tuple[16]
+        self.prior2_year = application_tuple[17]
+        self.prior2_gpa = application_tuple[18]
+        self.prior2_university = application_tuple[19]
+        self.description = application_tuple[20]
 
 
 # Data models
@@ -270,6 +277,17 @@ class StarrsData:
     def __init__(self, sql_file_path):
         self.sql_file_path = sql_file_path
 
+    # Tuple to object conversion
+    def convert_to_application(self, application_tuples):
+
+        applications = []
+
+        for application_tuple in application_tuples:
+            application = Application(application_tuple)
+            applications.append(application)
+
+        return applications
+
     def add_user(self, user_tuple):
 
         user = User(user_tuple)
@@ -317,6 +335,8 @@ class StarrsData:
                        ":user_id,"
                        ":date_received,"
                        ":status,"
+                       ":transcripts,"
+                       ":recommendations,"
                        ":gre_verbal,"
                        ":gre_quantitative,"
                        ":gre_analytical,"
@@ -337,6 +357,8 @@ class StarrsData:
                         'user_id': application.user_id,
                         'date_received': application.date_received,
                         'status': application.status,
+                        'transcripts': application.transcripts,
+                        'recommendations': application.recommendations,
                         'gre_verbal': application.gre_verbal,
                         'gre_quantitative': application.gre_quantitative,
                         'gre_analytical': application.gre_analytical,
@@ -359,6 +381,63 @@ class StarrsData:
 
         print 'Application for user {} added!'.format(application.user_id)
 
+    def get_application(self, user_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM application WHERE user_id=:user_id",
+                       {'user_id': user_id})
+
+        application_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if application_tuple:
+            return self.convert_to_application([application_tuple])[0]
+
+    def add_student_data(self, user_id, transcripts, recommendations):
+        """
+        GS enters transcripts and recommendations
+        """
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE application SET "
+                       "transcripts=:transcripts,"
+                       "recommendations=:recommendations "
+
+                       "WHERE user_id=:user_id",
+
+                       {'user_id': user_id,
+                        'transcripts': transcripts,
+                        'recommendations': recommendations
+                        })
+
+        connection.commit()
+        connection.close()
+
+    def set_status(self, user_id, status):
+        """
+        Set applicant status
+        """
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE application SET "
+                       "status=:status "
+
+                       "WHERE user_id=:user_id",
+
+                       {'user_id': user_id,
+                        'status': status
+                        })
+
+        connection.commit()
+        connection.close()
+
 
 # STARRS Application
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
@@ -377,9 +456,15 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # self.init_students()
         # self.btnAddStudent.clicked.connect(self.add_student)
 
+        # Database
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
+        if not os.path.exists(self.sql_file_path):
+            self.init_database()
+
+        # Starrs data
         self.starrs_data = None
 
+        # Init UI data
         self.init_ui()
         self.init_data()
 
@@ -387,22 +472,27 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.actInitDatabase.triggered.connect(self.init_database)
 
         self.btnSubmitApplication.pressed.connect(self.submit_application)
+        self.btnCheckApplicationStatus.pressed.connect(self.check_application_status)
+
+        self.btnAddStudentData.pressed.connect(self.add_student_data)
+        self.btnMadeDecision.pressed.connect(self.set_status)
 
     def init_ui(self):
 
         # Temp fill forms
-        self.linStudentFirstName.setText('Sara')
-        self.linStudentLastName.setText('Connor')
+        # Application
+        self.linStudentFirstName.setText('Kiryha')
+        self.linStudentLastName.setText('Krysko')
         self.linGREVErbal.setText('170')
         self.linGREVQuant.setText('170')
         self.linGREVAnalitical.setText('6')
-        self.linApplicantEmail.setText('connor@umich.edu')
-        self.linApplicantPhone.setText('734-780-0123')
+        self.linApplicantEmail.setText('coder@umich.edu')
+        self.linApplicantPhone.setText('734-780-9383')
         self.linAddressZip.setText('48067')
         self.linAddressState.setText('MI')
         self.linAddressCity.setText('Royal Oak')
         self.linAddressStreet.setText('W 6th st')
-        self.linWorkExpirience.setText('I was working as developer at Google')
+        self.linWorkExpirience.setText('I was working as developer at Google. In my dreams.')
         self.linPriorDegree1.setText('Bachelor')
         self.linPriorYear1.setText('1998')
         self.linPriorGPA1.setText('3.2')
@@ -411,9 +501,13 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linPriorYear2.setText('1999')
         self.linPriorGPA2.setText('3.6')
         self.linPriorUniversity2.setText('KTILP')
+        # Admission
+        self.linTranscript.setText('Transcripts')
+        self.linRecommendation.setText('Recommendations')
 
         self.comDegreeSought.addItems(['MS', 'MSE'])
         self.comAdmissionTerm.addItems(['S2022', 'F2022', 'W2023', 'S2023', 'F2023'])
+        self.comDescision.addItems(['Admitted with Aid', 'Admitted', 'Rejected'])
 
     def init_data(self):
 
@@ -435,10 +529,12 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             '']
 
         application_tuple = [
-            None,
-            None,
-            None,
-            None,
+            None,  # id
+            None,  # user_id
+            date.today().strftime('%d/%m/%Y'),  # date received
+            None,  # status
+            None,  # transcripts
+            None,  # recommendations
             self.linGREVErbal.text(),
             self.linGREVQuant.text(),
             self.linGREVAnalitical.text(),
@@ -506,6 +602,62 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # Add application
         application_tuple[1] = user.id
         self.starrs_data.add_application(application_tuple)
+
+    def check_application_status(self):
+        """
+        The status is:
+            Application Materials Missing
+            Application Received and Decision Pending
+            Admission Decision: Accepted
+            Admission Decision: Rejected
+        """
+
+        # Get user application
+        user_id = self.lineStudentID.text()
+        application = self.starrs_data.get_application(user_id)
+
+        if not application:
+            self.labApplicationStatus.setText('Application status: Application Was Not Submitted!')
+            return
+
+        if application.status:
+            self.labApplicationStatus.setText('Application status: Admission Decision: {}'.format(application.status))
+
+        else:
+            if application.transcripts and application.recommendations:
+                self.labApplicationStatus.setText('Application status: Application Received and Decision Pending')
+            else:
+                missing = ''
+                if not application.transcripts:
+                    missing += 'transcripts'
+                if not application.recommendations:
+                    missing += ' and recommendations'
+
+                self.labApplicationStatus.setText('Application status: Application Materials Missing: {}'.format(missing))
+
+    # 2) Admission process
+    def add_student_data(self):
+        """
+        Add transcripts and recommendations by GS
+        """
+
+        user_id = self.linStudentIDAdmission.text()
+        transcripts = self.linTranscript.text()
+        recommendations = self.linRecommendation.text()
+
+        self.starrs_data.add_student_data(user_id, transcripts, recommendations)
+        self.statusBar().showMessage('>> Applicant {0} data submitted!'.format(user_id))
+
+    def set_status(self):
+        """
+        Admit/reject applicant by GS
+        """
+
+        user_id = self.linStudentIDAdmission.text()
+        status = self.comDescision.currentText()
+
+        self.starrs_data.set_status(user_id, status)
+
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])
