@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_main.ui'
 #
-# Created: Wed Jun  1 13:17:38 2022
+# Created: Wed Jun  1 13:36:42 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -185,10 +185,6 @@ class Ui_STARRS(object):
         self.verticalLayout_5.addItem(spacerItem1)
         self.tabWidget.addTab(self.tab_5, "")
         self.verticalLayout_2.addWidget(self.tabWidget)
-        self.tabUsers = QtGui.QTableView(self.tab_1)
-        self.tabUsers.setMaximumSize(QtCore.QSize(16777215, 200))
-        self.tabUsers.setObjectName("tabUsers")
-        self.verticalLayout_2.addWidget(self.tabUsers)
         self.tabSections.addTab(self.tab_1, "")
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName("tab_2")

@@ -17,14 +17,6 @@ def init_database(sql_file_path):
     connection = sqlite3.connect(sql_file_path)
     cursor = connection.cursor()
 
-    # OLD
-    # cursor.execute('''CREATE TABLE student (
-    #                 id integer primary key autoincrement,
-    #                 first_name text,
-    #                 last_name text,
-    #                 description text
-    #                 )''')
-
     # User
     cursor.execute('''CREATE TABLE user (
                     id integer primary key autoincrement,
@@ -65,23 +57,6 @@ def init_database(sql_file_path):
 
     connection.commit()
     connection.close()
-
-
-class Student:
-    def __init__(self, student_tuple):
-        self.id = None
-        self.first_name = ''
-        self.last_name = ''
-        self.description = ''
-
-        self.init(student_tuple)
-
-    def init(self, student_tuple):
-
-        self.id = student_tuple[0]
-        self.first_name = student_tuple[1]
-        self.last_name = student_tuple[2]
-        self.description = student_tuple[3]
 
 
 class User:
@@ -160,119 +135,7 @@ class Application:
         self.description = application_tuple[20]
 
 
-# Data models
-class AlignDelegate(QtGui.QItemDelegate):
-    def paint(self, painter, option, index):
-        option.displayAlignment = QtCore.Qt.AlignCenter
-        QtGui.QItemDelegate.paint(self, painter, option, index)
-
-
-class Students:
-    def __init__(self, sql_file_path):
-        self.sql_file_path = sql_file_path
-        self.list_students = []
-
-    def convert_to_students(self, student_tuples):
-
-        students = []
-
-        for student_tuple in student_tuples:
-            student = Student(student_tuple)
-            students.append(student)
-
-        return students
-
-    def add_student(self, student_tuple):
-
-        # Create student object
-        student = Student(student_tuple)
-
-        connection = sqlite3.connect(self.sql_file_path)
-        cursor = connection.cursor()
-
-        # Add object to DB
-        cursor.execute("INSERT INTO student VALUES ("
-                       ":id,"
-                       ":first_name,"
-                       ":last_name,"
-                       ":description)",
-
-                       {'id': cursor.lastrowid,
-                        'first_name': student.first_name,
-                        'last_name': student.last_name,
-                        'description': student.description})
-
-        connection.commit()
-        student.id = cursor.lastrowid  # Add database ID to the object
-        connection.close()
-
-        # Add student to data instance
-        self.list_students.append(student)
-
-    def get_students(self):
-
-        connection = sqlite3.connect(self.sql_file_path)
-
-        cursor = connection.cursor()
-        cursor.execute("SELECT * FROM student")
-        student_tuples = cursor.fetchall()
-        connection.close()
-
-        if student_tuples:
-            student_objects = self.convert_to_students(student_tuples)
-            self.list_students.extend(student_objects)
-
-
-class StudentsModel(QtCore.QAbstractTableModel):
-    def __init__(self, students, parent=None):
-        QtCore.QAbstractTableModel.__init__(self, parent)
-
-        self.students = students
-        self.header = ['  Id  ', '  First Name ', '  Last Name ', '  Description  ']
-
-    # Build-in functions
-    def flags(self, index):
-
-        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
-
-    def headerData(self, col, orientation, role):
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
-            return self.header[col]
-
-    def rowCount(self, parent):
-
-        if not self.students.list_students:
-            return 0
-
-        return len(self.students.list_students)
-
-    def columnCount(self, parent):
-
-        return len(self.header)
-
-    def data(self, index, role):
-
-        if not index.isValid():
-            return
-
-        row = index.row()
-        column = index.column()
-        student = self.students.list_students[row]
-
-        if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
-            if column == 0:
-                return student.id
-
-            if column == 1:
-                return student.first_name
-
-            if column == 2:
-                return student.last_name
-
-            if column == 3:
-                return student.description
-
-
+# Database manipulations
 class StarrsData:
     def __init__(self, sql_file_path):
         self.sql_file_path = sql_file_path
@@ -288,6 +151,7 @@ class StarrsData:
 
         return applications
 
+    # CURDs
     def add_user(self, user_tuple):
 
         user = User(user_tuple)
@@ -446,15 +310,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         # SETUP UI
         self.setupUi(self)
-        # self.tabStudents.hide()
-
-        # # Data
-        # self.students_model = None
-        # self.students_data = None
-        #
-        # # Load students
-        # self.init_students()
-        # self.btnAddStudent.clicked.connect(self.add_student)
 
         # Database
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
