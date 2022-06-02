@@ -363,6 +363,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnGetPendingApplicants.pressed.connect(self.get_pending_applicants)
         self.btnMadeDecision.pressed.connect(self.set_status)
 
+    # Data and UI setup
     def init_ui(self):
 
         # Temp fill forms
@@ -447,17 +448,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         """
 
         init_database(self.sql_file_path)
-
-    def add_student(self):
-
-        first_name = self.linStudentFirstName.text()
-        last_name = self.linStudentLastName.text()
-        description = self.linStudentDescription.text()
-        student_tuple = [None, first_name, last_name, description]
-
-        self.students_model.layoutAboutToBeChanged.emit()
-        self.students_data.add_student(student_tuple)
-        self.students_model.layoutChanged.emit()
 
     # 1) Online Application
     def submit_application(self):
