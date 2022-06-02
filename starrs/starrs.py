@@ -373,7 +373,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linGREVQuant.setText('170')
         self.linGREVAnalitical.setText('6')
         self.linApplicantEmail.setText('coder@umich.edu')
-        self.linApplicantPhone.setText('734-780-9383')
+        self.linApplicantPhone.setText('734-780-0123')
         self.linAddressZip.setText('48067')
         self.linAddressState.setText('MI')
         self.linAddressCity.setText('Royal Oak')
