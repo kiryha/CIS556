@@ -41,6 +41,7 @@ def init_database(sql_file_path):
                     gre_quantitative text,
                     gre_analytical text,
                     experience text,
+                    interest text,
                     admission_term text,
                     degree_sought text,
                     prior1_major text,
@@ -96,6 +97,7 @@ class Application:
         self.gre_quantitative = ''
         self.gre_analytical = ''
         self.experience = ''
+        self.interest = ''
         self.admission_term = ''
         self.degree_sought = ''
         self.prior1_major = ''
@@ -122,17 +124,18 @@ class Application:
         self.gre_quantitative = application_tuple[7]
         self.gre_analytical = application_tuple[8]
         self.experience = application_tuple[9]
-        self.admission_term = application_tuple[10]
-        self.degree_sought = application_tuple[11]
-        self.prior1_major = application_tuple[12]
-        self.prior1_year = application_tuple[13]
-        self.prior1_gpa = application_tuple[14]
-        self.prior1_university = application_tuple[15]
-        self.prior2_major = application_tuple[16]
-        self.prior2_year = application_tuple[17]
-        self.prior2_gpa = application_tuple[18]
-        self.prior2_university = application_tuple[19]
-        self.description = application_tuple[20]
+        self.interest = application_tuple[10]
+        self.admission_term = application_tuple[11]
+        self.degree_sought = application_tuple[12]
+        self.prior1_major = application_tuple[13]
+        self.prior1_year = application_tuple[14]
+        self.prior1_gpa = application_tuple[15]
+        self.prior1_university = application_tuple[16]
+        self.prior2_major = application_tuple[17]
+        self.prior2_year = application_tuple[18]
+        self.prior2_gpa = application_tuple[19]
+        self.prior2_university = application_tuple[20]
+        self.description = application_tuple[21]
 
 
 # Database manipulations
@@ -205,6 +208,7 @@ class StarrsData:
                        ":gre_quantitative,"
                        ":gre_analytical,"
                        ":experience,"
+                       ":interest,"
                        ":admission_term,"
                        ":degree_sought,"
                        ":prior1_major,"
@@ -227,6 +231,7 @@ class StarrsData:
                         'gre_quantitative': application.gre_quantitative,
                         'gre_analytical': application.gre_analytical,
                         'experience': application.experience,
+                        'interest': application.interest,
                         'admission_term': application.admission_term,
                         'degree_sought': application.degree_sought,
                         'prior1_major': application.prior1_major,
@@ -374,6 +379,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linAddressCity.setText('Royal Oak')
         self.linAddressStreet.setText('W 6th st')
         self.linWorkExpirience.setText('I was working as developer at Google. In my dreams.')
+        self.linAreaOfInterest.setText('Computer Graphics')
         self.linPriorDegree1.setText('Bachelor')
         self.linPriorYear1.setText('1998')
         self.linPriorGPA1.setText('3.2')
@@ -420,6 +426,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.linGREVQuant.text(),
             self.linGREVAnalitical.text(),
             self.linWorkExpirience.text(),
+            self.linAreaOfInterest.text(),
             self.comAdmissionTerm.currentText(),
             self.comDegreeSought.currentText(),
             self.linPriorDegree1.text(),

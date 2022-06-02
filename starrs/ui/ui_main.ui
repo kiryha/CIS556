@@ -270,6 +270,31 @@
              </widget>
             </item>
             <item>
+             <widget class="QSplitter" name="splitter_15">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_13">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Area of Interest:</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linAreaOfInterest"/>
+             </widget>
+            </item>
+            <item>
              <widget class="QSplitter" name="splitter_3">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>

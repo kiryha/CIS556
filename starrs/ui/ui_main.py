@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui_main.ui'
+# Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Wed Jun  1 16:09:42 2022
+# Created: Wed Jun  1 21:09:35 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -138,6 +138,16 @@ class Ui_STARRS(object):
         self.linPriorUniversity2 = QtGui.QLineEdit(self.splitter_6)
         self.linPriorUniversity2.setObjectName("linPriorUniversity2")
         self.verticalLayout_3.addWidget(self.splitter_6)
+        self.splitter_15 = QtGui.QSplitter(self.tab)
+        self.splitter_15.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter_15.setObjectName("splitter_15")
+        self.label_13 = QtGui.QLabel(self.splitter_15)
+        self.label_13.setMinimumSize(QtCore.QSize(200, 0))
+        self.label_13.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.label_13.setObjectName("label_13")
+        self.linAreaOfInterest = QtGui.QLineEdit(self.splitter_15)
+        self.linAreaOfInterest.setObjectName("linAreaOfInterest")
+        self.verticalLayout_3.addWidget(self.splitter_15)
         self.splitter_3 = QtGui.QSplitter(self.tab)
         self.splitter_3.setOrientation(QtCore.Qt.Horizontal)
         self.splitter_3.setObjectName("splitter_3")
@@ -316,6 +326,7 @@ class Ui_STARRS(object):
         self.label_4.setText(QtGui.QApplication.translate("STARRS", "Prior Work Expirience:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("STARRS", "1 Prior Degree | Year | GPA | University ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("STARRS", "2 Prior Degree | Year | GPA | University ", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_13.setText(QtGui.QApplication.translate("STARRS", "Area of Interest:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("STARRS", "Admission Term:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("STARRS", "Apply for Degree", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSubmitApplication.setText(QtGui.QApplication.translate("STARRS", "Submit Application", None, QtGui.QApplication.UnicodeUTF8))
