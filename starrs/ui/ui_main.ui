@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabSections">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_1">
        <attribute name="title">
@@ -28,7 +28,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -154,10 +154,60 @@
                 </size>
                </property>
                <property name="text">
-                <string>Cell Number</string>
+                <string>Home Number</string>
                </property>
               </widget>
-              <widget class="QLineEdit" name="linApplicantPhone"/>
+              <widget class="QLineEdit" name="linApplicantHomePhone"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_16">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_16">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Work Number</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linApplicantWorkPhone"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_17">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_17">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Mobile Number</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linApplicantMobilePhone"/>
              </widget>
             </item>
             <item>
@@ -335,6 +385,285 @@
              </widget>
             </item>
             <item>
+             <widget class="QLabel" name="label_18">
+              <property name="text">
+               <string>Recommendation Letter 1</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_18">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_19">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Title | Name</string>
+               </property>
+              </widget>
+              <widget class="QComboBox" name="comTitle1">
+               <property name="maximumSize">
+                <size>
+                 <width>50</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linRecommName1">
+               <property name="maximumSize">
+                <size>
+                 <width>300</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_19">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_21">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Email | Affliation</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linRecommEmail1">
+               <property name="maximumSize">
+                <size>
+                 <width>300</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+              <widget class="QComboBox" name="comRecommRelation1">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_20">
+              <property name="text">
+               <string>Recommendation Letter 2</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_20">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_22">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Title | Name</string>
+               </property>
+              </widget>
+              <widget class="QComboBox" name="comTitle2">
+               <property name="maximumSize">
+                <size>
+                 <width>50</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linRecommName2">
+               <property name="maximumSize">
+                <size>
+                 <width>300</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_21">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_23">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Email | Affliation</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linRecommEmail2">
+               <property name="maximumSize">
+                <size>
+                 <width>300</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+              <widget class="QComboBox" name="comRecommRelation2">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_24">
+              <property name="text">
+               <string>Recommendation Letter 3</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_22">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_25">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Title | Name</string>
+               </property>
+              </widget>
+              <widget class="QComboBox" name="comTitle3">
+               <property name="maximumSize">
+                <size>
+                 <width>50</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linRecommName3">
+               <property name="maximumSize">
+                <size>
+                 <width>300</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_23">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_26">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Email | Affliation</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linRecommEmail3">
+               <property name="maximumSize">
+                <size>
+                 <width>300</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+              <widget class="QComboBox" name="comRecommRelation3">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="btnSubmitApplication">
               <property name="minimumSize">
                <size>
@@ -465,7 +794,7 @@
           <property name="title">
            <string>Submit Student Data</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_10">
+          <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
             <widget class="QSplitter" name="splitter_12">
              <property name="orientation">
@@ -489,6 +818,11 @@
               </property>
              </widget>
              <widget class="QLineEdit" name="linStudentIDAdmission"/>
+             <widget class="QPushButton" name="btnSearchApplicant">
+              <property name="text">
+               <string>Search</string>
+              </property>
+             </widget>
             </widget>
            </item>
            <item>
@@ -496,25 +830,50 @@
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <widget class="QLabel" name="label">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>16777215</height>
-               </size>
-              </property>
+             <widget class="QCheckBox" name="checkTranscriptReceived">
               <property name="text">
-               <string>Transcripts | Recomendations:</string>
+               <string>Transcript Received</string>
               </property>
              </widget>
-             <widget class="QLineEdit" name="linTranscript"/>
-             <widget class="QLineEdit" name="linRecommendation"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSplitter" name="splitter_24">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QLabel" name="labelRL1">
+              <property name="text">
+               <string>Recommendation Score 1</string>
+              </property>
+             </widget>
+             <widget class="QComboBox" name="comRecommScore1"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSplitter" name="splitter_25">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QLabel" name="labelRL2">
+              <property name="text">
+               <string>Recommendation Score 2</string>
+              </property>
+             </widget>
+             <widget class="QComboBox" name="comRecommScore2"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSplitter" name="splitter_28">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QLabel" name="labelRL3">
+              <property name="text">
+               <string>Recommendation Score 3</string>
+              </property>
+             </widget>
+             <widget class="QComboBox" name="comRecommScore3"/>
             </widget>
            </item>
            <item>
