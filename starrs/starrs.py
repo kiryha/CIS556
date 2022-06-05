@@ -25,7 +25,9 @@ def init_database(sql_file_path):
                     last_name text,
                     email text,
                     address text,
-                    phone text,
+                    home_phone text,
+                    work_phone text,
+                    mobile_phone text,
                     description text
                     )''')
 
@@ -36,7 +38,6 @@ def init_database(sql_file_path):
                     date_received text,
                     status text,
                     transcripts text,
-                    recommendations text,
                     gre_verbal text,
                     gre_quantitative text,
                     gre_analytical text,
@@ -53,8 +54,25 @@ def init_database(sql_file_path):
                     prior2_gpa text,
                     prior2_university text,
                     description text,
-                    FOREIGN KEY(user_id) REFERENCES user(id)
+                    FOREIGN KEY(user_id) REFERENCES user(id) 
+                    ON DELETE CASCADE
+                    ON UPDATE NO ACTION
                     )''')
+
+    # Recommendation letters
+    cursor.execute('''CREATE TABLE recommendationletter (
+                    recommendation_no integer,
+                    application_id integer,
+                    user_id integer
+                    name text,
+                    affiliation text,
+                    email text,
+                    title text,
+                    score text,                   
+                    FOREIGN KEY(application_id, user_id) REFERENCES application(application_id, user_id) 
+                    ON DELETE CASCADE
+                    ON UPDATE NO ACTION
+                    )''')                
 
     connection.commit()
     connection.close()
@@ -68,7 +86,9 @@ class User:
         self.last_name = ''
         self.email = ''
         self.address = ''
-        self.phone = ''
+        self.home_phone = ''
+        self.work_phone = ''
+        self.mobile_phone = ''
         self.description = ''
 
         self.init(user_tuple)
@@ -81,8 +101,10 @@ class User:
         self.last_name = user_tuple[3]
         self.email = user_tuple[4]
         self.address = user_tuple[5]
-        self.phone = user_tuple[6]
-        self.description = user_tuple[7]
+        self.home_phone = user_tuple[6]
+        self.work_phone = user_tuple[7]
+        self.mobile_phone = user_tuple[8]
+        self.description = user_tuple[9]
 
 
 class Application:
@@ -92,7 +114,6 @@ class Application:
         self.date_received = ''
         self.status = ''
         self.transcripts = ''
-        self.recommendations = ''
         self.gre_verbal = ''
         self.gre_quantitative = ''
         self.gre_analytical = ''
@@ -109,7 +130,6 @@ class Application:
         self.prior2_gpa = ''
         self.prior2_university = ''
         self.description = ''
-
         self.init(application_tuple)
 
     def init(self, application_tuple):
@@ -119,24 +139,37 @@ class Application:
         self.date_received = application_tuple[2]
         self.status = application_tuple[3]
         self.transcripts = application_tuple[4]
-        self.recommendations = application_tuple[5]
-        self.gre_verbal = application_tuple[6]
-        self.gre_quantitative = application_tuple[7]
-        self.gre_analytical = application_tuple[8]
-        self.experience = application_tuple[9]
-        self.interest = application_tuple[10]
-        self.admission_term = application_tuple[11]
-        self.degree_sought = application_tuple[12]
-        self.prior1_major = application_tuple[13]
-        self.prior1_year = application_tuple[14]
-        self.prior1_gpa = application_tuple[15]
-        self.prior1_university = application_tuple[16]
-        self.prior2_major = application_tuple[17]
-        self.prior2_year = application_tuple[18]
-        self.prior2_gpa = application_tuple[19]
-        self.prior2_university = application_tuple[20]
-        self.description = application_tuple[21]
+        self.gre_verbal = application_tuple[5]
+        self.gre_quantitative = application_tuple[6]
+        self.gre_analytical = application_tuple[7]
+        self.experience = application_tuple[8]
+        self.interest = application_tuple[9]
+        self.admission_term = application_tuple[10]
+        self.degree_sought = application_tuple[11]
+        self.prior1_major = application_tuple[12]
+        self.prior1_year = application_tuple[13]
+        self.prior1_gpa = application_tuple[14]
+        self.prior1_university = application_tuple[15]
+        self.prior2_major = application_tuple[16]
+        self.prior2_year = application_tuple[17]
+        self.prior2_gpa = application_tuple[18]
+        self.prior2_university = application_tuple[19]
+        self.description = application_tuple[20]
 
+class Recommendation:
+    def __init__(self, recommendation_tuple):
+        self.title = ''
+        self.name = ''
+        self.email = ''
+        self.affiliation = ''
+        self.init(recommendation_tuple)
+
+    def init(self, recommendation_tuple):
+
+        self.title = recommendation_tuple[0]
+        self.name = recommendation_tuple[1]
+        self.email = recommendation_tuple[2]
+        self.affiliation = recommendation_tuple[3]      
 
 # Database manipulations
 class StarrsData:
@@ -170,7 +203,9 @@ class StarrsData:
                        ":last_name,"
                        ":email,"
                        ":address,"
-                       ":phone,"
+                       ":home_phone,"
+                       ":work_phone,"
+                       ":mobile_phone,"
                        ":description)",
 
                        {'id': cursor.lastrowid,
@@ -179,7 +214,9 @@ class StarrsData:
                         'last_name': user.last_name,
                         'email': user.email,
                         'address': user.address,
-                        'phone': user.phone,
+                        'home_phone': user.home_phone,
+                        'work_phone': user.work_phone,
+                        'mobile_phone': user.mobile_phone,
                         'description': user.description})
 
         connection.commit()
@@ -189,7 +226,7 @@ class StarrsData:
         print 'User {0} {1} added!'.format(user.first_name, user.last_name)
         return user
 
-    def add_application(self, application_tuple):
+    def add_application(self, application_tuple, recommendations_tuple):
 
         application = Application(application_tuple)
 
@@ -203,7 +240,6 @@ class StarrsData:
                        ":date_received,"
                        ":status,"
                        ":transcripts,"
-                       ":recommendations,"
                        ":gre_verbal,"
                        ":gre_quantitative,"
                        ":gre_analytical,"
@@ -226,7 +262,6 @@ class StarrsData:
                         'date_received': application.date_received,
                         'status': application.status,
                         'transcripts': application.transcripts,
-                        'recommendations': application.recommendations,
                         'gre_verbal': application.gre_verbal,
                         'gre_quantitative': application.gre_quantitative,
                         'gre_analytical': application.gre_analytical,
@@ -246,6 +281,31 @@ class StarrsData:
 
         connection.commit()
         application.id = cursor.lastrowid  # Add database ID to the object
+
+        recommendation_no=0;
+
+        for recommendation_tuple in recommendations_tuple:
+                recommendation_no+=1
+                # Add object to DB
+                cursor.execute("INSERT INTO recommendationletter VALUES ("
+                       ":recommendation_no,"
+                       ":application_id,"
+                       ":user_id,"
+                       ":affiliation,"
+                       ":email,"
+                       ":title,"
+                       ":score)",
+
+                       {'recommendation_no': recommendation_no,
+                        'application_id': application.id,
+                        'user_id': application.user_id,
+                        'title': str(recommendation_tuple[0]),
+                        'email': str(recommendation_tuple[1]),
+                        'affiliation': str(recommendation_tuple[2]),
+                        'score': None})
+
+                connection.commit()
+        
         connection.close()
 
         print 'Application for user {} added!'.format(application.user_id)
@@ -265,7 +325,7 @@ class StarrsData:
         if application_tuple:
             return self.convert_to_application([application_tuple])[0]
 
-    def add_student_data(self, user_id, transcripts, recommendations):
+    def add_student_data(self, user_id, transcripts, scores):
         """
         GS enters transcripts and recommendations
         """
@@ -274,18 +334,32 @@ class StarrsData:
         cursor = connection.cursor()
 
         cursor.execute("UPDATE application SET "
-                       "transcripts=:transcripts,"
-                       "recommendations=:recommendations "
-
+                       "transcripts=:transcripts "
                        "WHERE user_id=:user_id",
 
                        {'user_id': user_id,
-                        'transcripts': transcripts,
-                        'recommendations': recommendations
+                        'transcripts': transcripts
                         })
 
         connection.commit()
+
+        recommendation_no=0;
+
+        for score in scores:
+            recommendation_no+=1
+            cursor.execute("UPDATE recommendationletter SET "
+                       "score=:score "
+                       "WHERE user_id=:user_id AND recommendation_no = :recommendation_no",
+
+                       {'user_id': user_id,
+                        'score': score,
+                        'recommendation_no': recommendation_no
+                        })
+            connection.commit()
+
         connection.close()
+
+
 
     def set_status(self, user_id, status):
         """
@@ -316,11 +390,8 @@ class StarrsData:
 
         connection = sqlite3.connect(self.sql_file_path)
         cursor = connection.cursor()
-
-        cursor.execute("SELECT * FROM application WHERE "
-                       "transcripts IS NOT NULL "
-                       "AND recommendations IS NOT NULL "
-                       "AND status IS NULL")
+        
+        cursor.execute("SELECT application.* FROM application INNER JOIN recommendationLetter ON application.id = recommendationLetter.application_id WHERE application.transcripts != 0 AND application.transcripts IS NOT NULL GROUP BY application.user_id")
 
         application_tuples = cursor.fetchall()
 
@@ -359,6 +430,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnSubmitApplication.pressed.connect(self.submit_application)
         self.btnCheckApplicationStatus.pressed.connect(self.check_application_status)
         # 2)
+        self.btnSearchApplicant.pressed.connect(self.search_applicant)
         self.btnAddStudentData.pressed.connect(self.add_student_data)
         self.btnGetPendingApplicants.pressed.connect(self.get_pending_applicants)
         self.btnMadeDecision.pressed.connect(self.set_status)
@@ -374,7 +446,9 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linGREVQuant.setText('170')
         self.linGREVAnalitical.setText('6')
         self.linApplicantEmail.setText('coder@umich.edu')
-        self.linApplicantPhone.setText('734-780-0123')
+        self.linApplicantHomePhone.setText('734-780-0122')
+        self.linApplicantWorkPhone.setText('734-780-0123')
+        self.linApplicantMobilePhone.setText('734-780-0124')
         self.linAddressZip.setText('48067')
         self.linAddressState.setText('MI')
         self.linAddressCity.setText('Royal Oak')
@@ -390,12 +464,34 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linPriorGPA2.setText('3.6')
         self.linPriorUniversity2.setText('KTILP')
         # Admission
-        self.linTranscript.setText('Transcripts')
-        self.linRecommendation.setText('Recommendations')
+        # self.linTranscript.setText('Transcripts')
+        # self.linRecommendation.setText('Recommendations')
+        self.comRecommScore1.addItems(['','top 5%', '85-94%', '70-84%', 'below 70%'])
+        self.comRecommScore2.addItems(['','top 5%', '85-94%', '70-84%', 'below 70%'])
+        self.comRecommScore3.addItems(['','top 5%', '85-94%', '70-84%', 'below 70%'])
 
         self.comDegreeSought.addItems(['MS', 'MSE'])
         self.comAdmissionTerm.addItems(['Summer 2022', 'Fall 2022', 'Winter 2023', 'Summer 2023', 'Fall 2023'])
         self.comDescision.addItems(['Admitted With Aid', 'Admitted', 'Rejected'])
+
+        self.comTitle1.addItems(['','Mr', 'Ms', 'Dr'])
+        self.comTitle2.addItems(['','Mr', 'Ms', 'Dr'])
+        self.comTitle3.addItems(['','Mr', 'Ms', 'Dr'])
+
+        self.comRecommRelation1.addItems(['','Professor', 'Coworker', 'Friend'])
+        self.comRecommRelation2.addItems(['','Professor', 'Coworker', 'Friend'])
+        self.comRecommRelation3.addItems(['','Professor', 'Coworker', 'Friend'])
+
+        self.comTitle1.setCurrentIndex(3)
+        self.linRecommName1.setText('Thomas Steiner')
+        self.linRecommEmail1.setText('Thomas.Steiner@umich.edu')
+        self.comRecommRelation1.setCurrentIndex(1)
+
+        self.comTitle2.setCurrentIndex(2)
+        self.linRecommName2.setText('Gerardo Mitsuy')
+        self.linRecommEmail2.setText('mitsuy@gmail.com')
+        self.comRecommRelation2.setCurrentIndex(3)
+        
 
     def init_data(self):
 
@@ -413,7 +509,9 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
                                         self.linAddressState.text(),
                                         self.linAddressCity.text(),
                                         self.linAddressStreet.text()),
-            self.linApplicantPhone.text(),
+            self.linApplicantHomePhone.text(),
+            self.linApplicantWorkPhone.text(),
+            self.linApplicantMobilePhone.text(),
             '']
 
         application_tuple = [
@@ -422,7 +520,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             date.today().strftime('%d/%m/%Y'),  # date received
             None,  # status
             None,  # transcripts
-            None,  # recommendations
             self.linGREVErbal.text(),
             self.linGREVQuant.text(),
             self.linGREVAnalitical.text(),
@@ -440,7 +537,40 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.linPriorUniversity2.text(),
             'description']
 
-        return user_tuple, application_tuple
+        recommendation_tuple1 = [
+            self.comTitle1.currentText(),
+            self.linRecommName1.text(),
+            self.linRecommEmail1.text(),
+            self.comRecommRelation1.currentText()
+         ]
+
+        recommendation_tuple2 = [
+            self.comTitle2.currentText(),
+            self.linRecommName2.text(),
+            self.linRecommEmail2.text(),
+            self.comRecommRelation2.currentText()
+         ]
+
+        recommendation_tuple3 = [
+            self.comTitle3.currentText(),
+            self.linRecommName3.text(),
+            self.linRecommEmail3.text(),
+            self.comRecommRelation3.currentText()
+         ]
+
+
+        recommendations_tuple = []
+
+        if recommendation_tuple1[1]:
+            recommendations_tuple.append(recommendation_tuple1)
+
+        if recommendation_tuple2[1]:
+            recommendations_tuple.append(recommendation_tuple2)
+
+        if recommendation_tuple3[1]:
+            recommendations_tuple.append(recommendation_tuple2)
+
+        return user_tuple, application_tuple, recommendations_tuple
 
     def init_database(self):
         """
@@ -453,7 +583,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def submit_application(self):
 
         # Add user
-        user_tuple, application_tuple = self.get_ui_apply()
+        user_tuple, application_tuple, recommendations_tuple = self.get_ui_apply()
+
         user = self.starrs_data.add_user(user_tuple)
 
         # Sent password
@@ -461,7 +592,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         # Add application
         application_tuple[1] = user.id
-        self.starrs_data.add_application(application_tuple)
+        self.starrs_data.add_application(application_tuple, recommendations_tuple)
 
     def check_application_status(self):
         """
@@ -474,7 +605,18 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         # Get user application
         user_id = self.lineStudentID.text()
+
         application = self.starrs_data.get_application(user_id)
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM recommendationletter WHERE user_id=:user_id",
+                       {'user_id': user_id})
+
+        recommendationCount = cursor.fetchall()[0][0]
+
+        connection.close()
 
         if not application:
             self.linApplicationStatus.setText('Application Was Not Submitted!')
@@ -484,38 +626,154 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.linApplicationStatus.setText('Admission Decision: {}'.format(application.status))
 
         else:
-            if application.transcripts and application.recommendations:
+            if application.transcripts and recommendationCount > 0:
                 self.linApplicationStatus.setText('Application Received and Decision Pending')
             else:
                 missing = ''
                 if not application.transcripts:
-                    missing += 'transcripts'
-                if not application.recommendations:
-                    missing += ' and recommendations'
+                    missing += ' | transcripts |'
+                if recommendationCount == 0:
+                    missing += ' | recommendations |'
 
                 self.linApplicationStatus.setText('Application Materials Missing: {}'.format(missing))
 
+    def convert_score_to_index(self, score):
+        if (score == 'top 5%'):
+            return 1
+        elif (score == 'top 5%'):
+                return 2;
+        elif (score == '85-94%'):
+                return 2;
+        elif (score == '70-84%'):
+                return 3;
+        elif (score == 'below 70%'):
+                return 4;
+        else:
+            return 0
+
+
     # 2) Admission process
+    def search_applicant(self):
+        """
+        Applicant could have up to 3 recommendation letters.
+        Button is to show if there is transcript received and enable how many recommendation scores textboxes
+        """
+
+        user_id = self.linStudentIDAdmission.text()
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM recommendationletter WHERE user_id=:user_id",
+                       {'user_id': user_id})
+
+        recommendationCount = cursor.fetchall()[0][0]
+
+        cursor.execute("SELECT transcripts FROM application WHERE user_id=:user_id",
+                       {'user_id': user_id})
+
+        transcript = cursor.fetchall()[0][0]
+
+
+        
+        cursor.execute("SELECT score FROM recommendationletter WHERE user_id=:user_id",
+                       {'user_id': user_id})
+
+        scores = cursor.fetchall()
+
+        if scores:
+            if len(scores)>0 :
+                self.comRecommScore1.setCurrentIndex(self.convert_score_to_index(scores[0][0]))
+            else:
+                self.comRecommScore1.setCurrentIndex(0)
+            if len(scores)>1 :
+                self.comRecommScore2.setCurrentIndex(self.convert_score_to_index(scores[1][0]))
+            else:
+                self.comRecommScore2.setCurrentIndex(0)                
+            if len(scores)>2 :
+                self.comRecommScore3.setCurrentIndex(self.convert_score_to_index(scores[2][0]))
+            else:
+                self.comRecommScore3.setCurrentIndex(0)   
+
+        if (transcript == '1') :
+            self.checkTranscriptReceived.setChecked(True)
+            self.checkTranscriptReceived.show();
+            
+        else:
+            self.checkTranscriptReceived.setChecked(False)
+        
+        
+        if (recommendationCount == 0) :
+            self.labelRL1.setDisabled(True)
+            self.comRecommScore1.setDisabled(True)
+
+            self.labelRL2.setDisabled(True)
+            self.comRecommScore2.setDisabled(True)
+
+            self.labelRL3.setDisabled(True)
+            self.comRecommScore3.setDisabled(True)
+
+        if (recommendationCount == 1) :
+            self.labelRL1.setDisabled(False)
+            self.comRecommScore1.setDisabled(False)
+
+            self.labelRL2.setDisabled(True)
+            self.comRecommScore2.setDisabled(True)
+
+            self.labelRL3.setDisabled(True)
+            self.comRecommScore3.setDisabled(True)    
+
+        if (recommendationCount == 2) :
+            self.labelRL1.setDisabled(False)
+            self.comRecommScore1.setDisabled(False)
+
+            self.labelRL2.setDisabled(False)
+            self.comRecommScore2.setDisabled(False)
+
+            self.labelRL3.setDisabled(True)
+            self.comRecommScore3.setDisabled(True)  
+
+        if (recommendationCount == 3) :
+            self.labelRL1.setDisabled(False)
+            self.comRecommScore1.setDisabled(False)
+
+            self.labelRL2.setDisabled(False)
+            self.comRecommScore2.setDisabled(False)
+
+            self.labelRL3.setDisabled(False)
+            self.comRecommScore3.setDisabled(False)             
+
+
     def add_student_data(self):
         """
         Add transcripts and recommendations by GS
         """
 
         user_id = self.linStudentIDAdmission.text()
-        transcripts = self.linTranscript.text()
-        recommendations = self.linRecommendation.text()
+        transcripts = self.checkTranscriptReceived.isChecked()
 
-        if transcripts == '':
-            transcripts = None
-        if recommendations == '':
-            recommendations = None
+        score1 = self.comRecommScore1.currentText()
+        score2 = self.comRecommScore2.currentText()
+        score3 = self.comRecommScore3.currentText()
 
-        self.starrs_data.add_student_data(user_id, transcripts, recommendations)
+        scores = []
+
+        if score1:
+            scores.append(score1)
+
+        if score2:
+            scores.append(score2)
+
+        if score3:
+            scores.append(score3)
+
+        self.starrs_data.add_student_data(user_id, transcripts, scores)
         self.statusBar().showMessage('>> Applicant {0} data submitted!'.format(user_id))
 
     def get_pending_applicants(self):
 
         pending_applicants = self.starrs_data.get_pending_applicants()
+
         self.comPendingApplicants.clear()
         self.comPendingApplicants.addItems(pending_applicants)
 
