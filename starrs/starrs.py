@@ -228,9 +228,6 @@ class StarrsData:
 
     def add_application(self, application_tuple, recommendations_tuple):
 
-        print 'AAAAAAAAAAAAAAAAAAAAAAAAAA'
-        print application_tuple
-
         application = Application(application_tuple)
 
         connection = sqlite3.connect(self.sql_file_path)
