@@ -114,7 +114,6 @@ class Application:
         self.date_received = ''
         self.status = ''
         self.transcripts = ''
-        self.recommendations = ''
         self.gre_verbal = ''
         self.gre_quantitative = ''
         self.gre_analytical = ''
@@ -228,6 +227,9 @@ class StarrsData:
         return user
 
     def add_application(self, application_tuple, recommendations_tuple):
+
+        print 'AAAAAAAAAAAAAAAAAAAAAAAAAA'
+        print application_tuple
 
         application = Application(application_tuple)
 
@@ -521,7 +523,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             date.today().strftime('%d/%m/%Y'),  # date received
             None,  # status
             None,  # transcripts
-            None,  # recommendations
             self.linGREVErbal.text(),
             self.linGREVQuant.text(),
             self.linGREVAnalitical.text(),
