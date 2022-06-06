@@ -335,6 +335,61 @@
              </widget>
             </item>
             <item>
+             <widget class="QLabel" name="label_17">
+              <property name="text">
+               <string>Recomendations by Letter Wrters:  Name | email | Title | Affiliation</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_16">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_16">
+               <property name="text">
+                <string>1) </string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linRecomendation1Name"/>
+              <widget class="QLineEdit" name="linRecomendation1Email"/>
+              <widget class="QLineEdit" name="linRecomendation1Title"/>
+              <widget class="QLineEdit" name="linRecomendation1Affiliation"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_17">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_18">
+               <property name="text">
+                <string>2) </string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linRecomendation2Name"/>
+              <widget class="QLineEdit" name="linRecomendation2Email"/>
+              <widget class="QLineEdit" name="linRecomendation2Title"/>
+              <widget class="QLineEdit" name="linRecomendation2Affiliation"/>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_35">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_35">
+               <property name="text">
+                <string>3) </string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linRecomendation3Name"/>
+              <widget class="QLineEdit" name="linRecomendation3Email"/>
+              <widget class="QLineEdit" name="linRecomendation3Title"/>
+              <widget class="QLineEdit" name="linRecomendation3Affiliation"/>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="btnSubmitApplication">
               <property name="minimumSize">
                <size>
@@ -492,7 +547,31 @@
             </widget>
            </item>
            <item>
+            <widget class="Line" name="line_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QSplitter" name="splitter_13">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QCheckBox" name="chbTranscripts">
+              <property name="text">
+               <string>Transcripts Were Received</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="btnSetTranscripts">
+              <property name="text">
+               <string>Submit Transcripts Status</string>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSplitter" name="splitter_36">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -510,22 +589,65 @@
                </size>
               </property>
               <property name="text">
-               <string>Transcripts | Recomendations:</string>
+               <string>Recomenatations: </string>
               </property>
              </widget>
-             <widget class="QLineEdit" name="linTranscript"/>
              <widget class="QLineEdit" name="linRecommendation"/>
             </widget>
            </item>
            <item>
-            <widget class="Line" name="line_3">
+            <widget class="QSplitter" name="splitter_37">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
+             <widget class="QCheckBox" name="chbDoRecommendation_1">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+             <widget class="QLineEdit" name="linRecomendationName_1"/>
+             <widget class="QLineEdit" name="linRecomendationEmail_1"/>
+             <widget class="QLineEdit" name="linRecomendationTitle_1"/>
+             <widget class="QLineEdit" name="linRecomendationAffiliation_1"/>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="btnAddStudentData">
+            <widget class="QSplitter" name="splitter_38">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QCheckBox" name="chbDoRecommendation_2">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+             <widget class="QLineEdit" name="linRecomendationName_2"/>
+             <widget class="QLineEdit" name="linRecomendationEmail_2"/>
+             <widget class="QLineEdit" name="linRecomendationTitle_2"/>
+             <widget class="QLineEdit" name="linRecomendationAffiliation_2"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSplitter" name="splitter_39">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QCheckBox" name="chbDoRecommendation_3">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+             <widget class="QLineEdit" name="linRecomendationName_3"/>
+             <widget class="QLineEdit" name="linRecomendationEmail_3"/>
+             <widget class="QLineEdit" name="linRecomendationTitle_3"/>
+             <widget class="QLineEdit" name="linRecomendationAffiliation_3"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnSetRecomendations">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -533,7 +655,7 @@
               </size>
              </property>
              <property name="text">
-              <string>Add Student Transcripts and Recomendations</string>
+              <string>Submit Recomendations</string>
              </property>
             </widget>
            </item>
