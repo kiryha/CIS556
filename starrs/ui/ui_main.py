@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Mon Jun  6 17:57:18 2022
+# Created: Mon Jun  6 20:36:20 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -294,10 +294,8 @@ class Ui_STARRS(object):
         self.splitter_36.setObjectName("splitter_36")
         self.label = QtGui.QLabel(self.splitter_36)
         self.label.setMinimumSize(QtCore.QSize(200, 0))
-        self.label.setMaximumSize(QtCore.QSize(200, 16777215))
+        self.label.setMaximumSize(QtCore.QSize(400, 16777215))
         self.label.setObjectName("label")
-        self.linRecommendation = QtGui.QLineEdit(self.splitter_36)
-        self.linRecommendation.setObjectName("linRecommendation")
         self.verticalLayout_10.addWidget(self.splitter_36)
         self.splitter_37 = QtGui.QSplitter(self.groupBox)
         self.splitter_37.setOrientation(QtCore.Qt.Horizontal)
@@ -314,12 +312,15 @@ class Ui_STARRS(object):
         self.linRecomendationTitle_1.setObjectName("linRecomendationTitle_1")
         self.linRecomendationAffiliation_1 = QtGui.QLineEdit(self.splitter_37)
         self.linRecomendationAffiliation_1.setObjectName("linRecomendationAffiliation_1")
+        self.comRecomendationScore_1 = QtGui.QComboBox(self.splitter_37)
+        self.comRecomendationScore_1.setObjectName("comRecomendationScore_1")
         self.verticalLayout_10.addWidget(self.splitter_37)
         self.splitter_38 = QtGui.QSplitter(self.groupBox)
         self.splitter_38.setOrientation(QtCore.Qt.Horizontal)
         self.splitter_38.setObjectName("splitter_38")
         self.chbDoRecommendation_2 = QtGui.QCheckBox(self.splitter_38)
         self.chbDoRecommendation_2.setText("")
+        self.chbDoRecommendation_2.setChecked(True)
         self.chbDoRecommendation_2.setObjectName("chbDoRecommendation_2")
         self.linRecomendationName_2 = QtGui.QLineEdit(self.splitter_38)
         self.linRecomendationName_2.setObjectName("linRecomendationName_2")
@@ -329,6 +330,8 @@ class Ui_STARRS(object):
         self.linRecomendationTitle_2.setObjectName("linRecomendationTitle_2")
         self.linRecomendationAffiliation_2 = QtGui.QLineEdit(self.splitter_38)
         self.linRecomendationAffiliation_2.setObjectName("linRecomendationAffiliation_2")
+        self.comRecomendationScore_2 = QtGui.QComboBox(self.splitter_38)
+        self.comRecomendationScore_2.setObjectName("comRecomendationScore_2")
         self.verticalLayout_10.addWidget(self.splitter_38)
         self.splitter_39 = QtGui.QSplitter(self.groupBox)
         self.splitter_39.setOrientation(QtCore.Qt.Horizontal)
@@ -344,6 +347,8 @@ class Ui_STARRS(object):
         self.linRecomendationTitle_3.setObjectName("linRecomendationTitle_3")
         self.linRecomendationAffiliation_3 = QtGui.QLineEdit(self.splitter_39)
         self.linRecomendationAffiliation_3.setObjectName("linRecomendationAffiliation_3")
+        self.comRecomendationScore_3 = QtGui.QComboBox(self.splitter_39)
+        self.comRecomendationScore_3.setObjectName("comRecomendationScore_3")
         self.verticalLayout_10.addWidget(self.splitter_39)
         self.btnSetRecomendations = QtGui.QPushButton(self.groupBox)
         self.btnSetRecomendations.setMinimumSize(QtCore.QSize(0, 45))
@@ -442,7 +447,7 @@ class Ui_STARRS(object):
         self.label_15.setText(QtGui.QApplication.translate("STARRS", "Enter student ID:", None, QtGui.QApplication.UnicodeUTF8))
         self.chbTranscripts.setText(QtGui.QApplication.translate("STARRS", "Transcripts Were Received", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSetTranscripts.setText(QtGui.QApplication.translate("STARRS", "Submit Transcripts Status", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("STARRS", "Recomenatations: ", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("STARRS", "Recomenatations: Name | email | Title | Affiliation | Score", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSetRecomendations.setText(QtGui.QApplication.translate("STARRS", "Submit Recomendations", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_4.setTitle(QtGui.QApplication.translate("STARRS", "Make Decision", None, QtGui.QApplication.UnicodeUTF8))
         self.btnGetPendingApplicants.setText(QtGui.QApplication.translate("STARRS", "Get List of Decision Pending Applicants", None, QtGui.QApplication.UnicodeUTF8))

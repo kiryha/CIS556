@@ -584,15 +584,14 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>200</width>
+                <width>400</width>
                 <height>16777215</height>
                </size>
               </property>
               <property name="text">
-               <string>Recomenatations: </string>
+               <string>Recomenatations: Name | email | Title | Affiliation | Score</string>
               </property>
              </widget>
-             <widget class="QLineEdit" name="linRecommendation"/>
             </widget>
            </item>
            <item>
@@ -612,6 +611,7 @@
              <widget class="QLineEdit" name="linRecomendationEmail_1"/>
              <widget class="QLineEdit" name="linRecomendationTitle_1"/>
              <widget class="QLineEdit" name="linRecomendationAffiliation_1"/>
+             <widget class="QComboBox" name="comRecomendationScore_1"/>
             </widget>
            </item>
            <item>
@@ -623,11 +623,15 @@
               <property name="text">
                <string/>
               </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
              </widget>
              <widget class="QLineEdit" name="linRecomendationName_2"/>
              <widget class="QLineEdit" name="linRecomendationEmail_2"/>
              <widget class="QLineEdit" name="linRecomendationTitle_2"/>
              <widget class="QLineEdit" name="linRecomendationAffiliation_2"/>
+             <widget class="QComboBox" name="comRecomendationScore_2"/>
             </widget>
            </item>
            <item>
@@ -644,6 +648,7 @@
              <widget class="QLineEdit" name="linRecomendationEmail_3"/>
              <widget class="QLineEdit" name="linRecomendationTitle_3"/>
              <widget class="QLineEdit" name="linRecomendationAffiliation_3"/>
+             <widget class="QComboBox" name="comRecomendationScore_3"/>
             </widget>
            </item>
            <item>

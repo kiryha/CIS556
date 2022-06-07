@@ -62,6 +62,7 @@ def init_database(sql_file_path):
                     email text,
                     title text,
                     affiliation text,
+                    score text,
                     description text,
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
@@ -154,6 +155,7 @@ class Recommendation:
         self.email = None
         self.title = None
         self.affiliation = None
+        self.score = None
         self.description = None
 
         self.init(recommendation_tuple)
@@ -166,7 +168,8 @@ class Recommendation:
         self.email = recommendation_tuple[3]
         self.title = recommendation_tuple[4]
         self.affiliation = recommendation_tuple[5]
-        self.description = recommendation_tuple[6]
+        self.score = recommendation_tuple[6]
+        self.description = recommendation_tuple[7]
 
 
 # Database manipulations
@@ -340,6 +343,7 @@ class StarrsData:
                        ":email,"
                        ":title,"
                        ":affiliation,"
+                       ":score,"
                        ":description)",
 
                        {'id': cursor.lastrowid,
@@ -348,6 +352,7 @@ class StarrsData:
                         'email': recommendation.email,
                         'title': recommendation.title,
                         'affiliation': recommendation.affiliation,
+                        'score': recommendation.score,
                         'description': recommendation.description})
 
         connection.commit()
@@ -495,15 +500,22 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linRecomendation1Title.setText('physicist')
         self.linRecomendation1Affiliation.setText('what is it?')
         # Admission
-        self.linRecommendation.setText('Recommendations')
         self.linRecomendationName_1.setText('Richard Feynman')
         self.linRecomendationEmail_1.setText('rick@alamos.net')
         self.linRecomendationTitle_1.setText('physicist')
         self.linRecomendationAffiliation_1.setText('The best!')
+        self.linRecomendationName_2.setText('Hubert J Farnsworth')
+        self.linRecomendationEmail_2.setText('express@futurama.com')
+        self.linRecomendationTitle_2.setText('professor')
+        self.linRecomendationAffiliation_2.setText('Cords')
 
         self.comDegreeSought.addItems(['MS', 'MSE'])
         self.comAdmissionTerm.addItems(['Summer 2022', 'Fall 2022', 'Winter 2023', 'Summer 2023', 'Fall 2023'])
         self.comDescision.addItems(['Admitted With Aid', 'Admitted', 'Rejected'])
+        scores = ['95-100', '85-94', '70-84', '0-70']
+        self.comRecomendationScore_1.addItems(scores)
+        self.comRecomendationScore_2.addItems(scores)
+        self.comRecomendationScore_3.addItems(scores)
 
     def init_data(self):
 
@@ -627,6 +639,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         Add recommendations by GS
         """
 
+        # TODO: check existing recommendations, should not be more than 3 in total
+
         user_id = self.linStudentIDAdmission.text()
 
         if self.chbDoRecommendation_1.isChecked():
@@ -638,6 +652,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
                 self.linRecomendationEmail_1.text(),
                 self.linRecomendationTitle_1.text(),
                 self.linRecomendationAffiliation_1.text(),
+                self.comRecomendationScore_1.currentText(),
                 'For Student {}'.format(user_id)]
             self.starrs_data.add_recommendation(recommendation_tuple)
 
@@ -646,6 +661,10 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def get_pending_applicants(self):
 
         pending_applicants = self.starrs_data.get_pending_applicants()
+
+        if not pending_applicants:
+            return
+
         self.comPendingApplicants.clear()
         self.comPendingApplicants.addItems(pending_applicants)
 
