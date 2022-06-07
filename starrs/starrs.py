@@ -1,8 +1,8 @@
 import os
 import sqlite3
+import smtplib
 from datetime import date
 from PySide import QtGui
-from PySide import QtCore
 from ui import ui_main
 
 scripts_root = os.path.dirname(__file__).replace('\\', '/')
@@ -615,6 +615,25 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         """
 
         init_database(self.sql_file_path)
+
+    # Common
+    def send_email(self, email, user_name, user_id):
+
+        # Authenticate
+        login = "random.t4@outlook.com"
+        password = 'starrs1234'
+        session = smtplib.SMTP('smtp-mail.outlook.com', 587)
+        session.starttls()
+        session.login(login, password)
+
+        # Compose email
+        subject = 'Welcome to STARRS!'
+        text = 'Hello {0}, \nYour id/password is {1}.'.format(user_name, user_id)
+        message = 'Subject: {}\n\n{}'.format(subject, text)
+
+        # Send email
+        session.sendmail(login, email, message)
+        session.quit()
 
     # 1) Online Application
     def submit_application(self):
