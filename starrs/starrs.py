@@ -36,7 +36,6 @@ def init_database(sql_file_path):
                     date_received text,
                     status text,
                     transcripts integer,
-                    recommendations text,
                     gre_verbal text,
                     gre_quantitative text,
                     gre_analytical text,
@@ -103,7 +102,6 @@ class Application:
         self.date_received = ''
         self.status = ''
         self.transcripts = None
-        self.recommendations = ''
         self.gre_verbal = ''
         self.gre_quantitative = ''
         self.gre_analytical = ''
@@ -130,23 +128,22 @@ class Application:
         self.date_received = application_tuple[2]
         self.status = application_tuple[3]
         self.transcripts = application_tuple[4]
-        self.recommendations = application_tuple[5]
-        self.gre_verbal = application_tuple[6]
-        self.gre_quantitative = application_tuple[7]
-        self.gre_analytical = application_tuple[8]
-        self.experience = application_tuple[9]
-        self.interest = application_tuple[10]
-        self.admission_term = application_tuple[11]
-        self.degree_sought = application_tuple[12]
-        self.prior1_major = application_tuple[13]
-        self.prior1_year = application_tuple[14]
-        self.prior1_gpa = application_tuple[15]
-        self.prior1_university = application_tuple[16]
-        self.prior2_major = application_tuple[17]
-        self.prior2_year = application_tuple[18]
-        self.prior2_gpa = application_tuple[19]
-        self.prior2_university = application_tuple[20]
-        self.description = application_tuple[21]
+        self.gre_verbal = application_tuple[5]
+        self.gre_quantitative = application_tuple[6]
+        self.gre_analytical = application_tuple[7]
+        self.experience = application_tuple[8]
+        self.interest = application_tuple[9]
+        self.admission_term = application_tuple[10]
+        self.degree_sought = application_tuple[11]
+        self.prior1_major = application_tuple[12]
+        self.prior1_year = application_tuple[13]
+        self.prior1_gpa = application_tuple[14]
+        self.prior1_university = application_tuple[15]
+        self.prior2_major = application_tuple[16]
+        self.prior2_year = application_tuple[17]
+        self.prior2_gpa = application_tuple[18]
+        self.prior2_university = application_tuple[19]
+        self.description = application_tuple[20]
 
 
 class Recommendation:
@@ -165,11 +162,11 @@ class Recommendation:
 
         self.id = recommendation_tuple[0]
         self.user_id = recommendation_tuple[1]
-        self.name = recommendation_tuple[1]
-        self.email = recommendation_tuple[2]
-        self.title = recommendation_tuple[3]
-        self.affiliation = recommendation_tuple[4]
-        self.description = recommendation_tuple[5]
+        self.name = recommendation_tuple[2]
+        self.email = recommendation_tuple[3]
+        self.title = recommendation_tuple[4]
+        self.affiliation = recommendation_tuple[5]
+        self.description = recommendation_tuple[6]
 
 
 # Database manipulations
@@ -187,6 +184,16 @@ class StarrsData:
             applications.append(application)
 
         return applications
+
+    def convert_to_recommendation(self, recommendation_tuples):
+
+        recommendations = []
+
+        for recommendation_tuple in recommendation_tuples:
+            recommendation = Recommendation(recommendation_tuple)
+            recommendations.append(recommendation)
+
+        return recommendations
 
     # CURDs
     def add_user(self, user_tuple):
@@ -237,7 +244,6 @@ class StarrsData:
                        ":date_received,"
                        ":status,"
                        ":transcripts,"
-                       ":recommendations,"
                        ":gre_verbal,"
                        ":gre_quantitative,"
                        ":gre_analytical,"
@@ -260,7 +266,6 @@ class StarrsData:
                         'date_received': application.date_received,
                         'status': application.status,
                         'transcripts': application.transcripts,
-                        'recommendations': application.recommendations,
                         'gre_verbal': application.gre_verbal,
                         'gre_quantitative': application.gre_quantitative,
                         'gre_analytical': application.gre_analytical,
@@ -318,29 +323,53 @@ class StarrsData:
         connection.commit()
         connection.close()
 
-    def add_recommendation(self, user_id, recommendation):
+    def add_recommendation(self, recommendation_tuple):
         """
-        GS enters transcripts
+        GS enters recommendation
+        """
 
-        user_id integer,
-        name text,
-        email text,
-        title text,
-        affiliation text,
-        description text,
-        """
+        recommendation = Recommendation(recommendation_tuple)
 
         connection = sqlite3.connect(self.sql_file_path)
         cursor = connection.cursor()
 
         cursor.execute("INSERT INTO recommendation VALUES ("
-                       "description=:description)",
+                       ":id,"
+                       ":user_id,"
+                       ":name,"
+                       ":email,"
+                       ":title,"
+                       ":affiliation,"
+                       ":description)",
 
-                       {'user_id': user_id,
+                       {'id': cursor.lastrowid,
+                        'user_id': recommendation.user_id,
+                        'name': recommendation.name,
+                        'email': recommendation.email,
+                        'title': recommendation.title,
+                        'affiliation': recommendation.affiliation,
                         'description': recommendation.description})
 
         connection.commit()
+        recommendation.id = cursor.lastrowid  # Add database ID to the object
         connection.close()
+
+        return recommendation
+
+    def get_recommendations(self, user_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM recommendation WHERE user_id=:user_id",
+                       {'user_id': user_id})
+
+        recommendation_tuples = cursor.fetchall()
+
+        connection.close()
+
+        if recommendation_tuples:
+            return self.convert_to_recommendation(recommendation_tuples)
 
     def set_status(self, user_id, status):
         """
@@ -362,6 +391,28 @@ class StarrsData:
         connection.commit()
         connection.close()
 
+    def get_users_with_transcripts(self):
+        """
+        Get list of student ids for all students with transcripts submitted by GS
+        """
+
+        user_ids = []
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM application WHERE "
+                       "transcripts IS 1 "
+                       "AND status IS NULL")
+
+        application_tuples = cursor.fetchall()
+        connection.close()
+
+        for application_tuple in application_tuples:
+            user_ids.append(str(application_tuple[1]))
+
+        return user_ids
+
     def get_pending_applicants(self):
         """
         Get and return list of user IDs who applied to university, their data was entered, but decision was not made
@@ -369,20 +420,14 @@ class StarrsData:
 
         pending_applicants = []
 
-        connection = sqlite3.connect(self.sql_file_path)
-        cursor = connection.cursor()
+        user_ids = self.get_users_with_transcripts()
 
-        cursor.execute("SELECT * FROM application WHERE "
-                       "transcripts IS NOT NULL "
-                       "AND recommendations IS NOT NULL "
-                       "AND status IS NULL")
+        if not user_ids:
+            return
 
-        application_tuples = cursor.fetchall()
-
-        connection.close()
-
-        for application_tuple in application_tuples:
-            pending_applicants.append(str(application_tuple[0]))
+        for user_id in user_ids:
+            if self.get_recommendations(user_id):
+                pending_applicants.append(user_id)
 
         return pending_applicants
 
@@ -547,13 +592,16 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.linApplicationStatus.setText('Admission Decision: {}'.format(application.status))
 
         else:
-            if application.transcripts and application.recommendations:
+            # Get recommendations
+            recommendations = self.starrs_data.get_recommendations(user_id)
+
+            if application.transcripts and recommendations:
                 self.linApplicationStatus.setText('Application Received and Decision Pending')
             else:
                 missing = ''
                 if not application.transcripts:
                     missing += 'transcripts'
-                if not application.recommendations:
+                if not recommendations:
                     missing += ' recommendations'
 
                 self.linApplicationStatus.setText('Application Materials Missing: {}'.format(missing))
@@ -582,6 +630,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         user_id = self.linStudentIDAdmission.text()
 
         if self.chbDoRecommendation_1.isChecked():
+
             recommendation_tuple = [
                 None,
                 user_id,
@@ -589,11 +638,10 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
                 self.linRecomendationEmail_1.text(),
                 self.linRecomendationTitle_1.text(),
                 self.linRecomendationAffiliation_1.text(),
-                ''
-            ]
-            recommendation = Recommendation(recommendation_tuple)
-            self.starrs_data.add_recommendations(user_id, recommendation)
-            self.statusBar().showMessage('>> Applicant {0} recommendations submitted!'.format(user_id))
+                'For Student {}'.format(user_id)]
+            self.starrs_data.add_recommendation(recommendation_tuple)
+
+        self.statusBar().showMessage('>> Applicant {0} recommendations submitted!'.format(user_id))
 
     def get_pending_applicants(self):
 
