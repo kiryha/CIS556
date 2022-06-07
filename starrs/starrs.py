@@ -527,18 +527,50 @@ class AlignDelegate(QtGui.QItemDelegate):
         QtGui.QItemDelegate.paint(self, painter, option, index)
 
 
+class DropdownDelegate(QtGui.QItemDelegate):
+    def __init__(self, data, parent=None):
+        QtGui.QItemDelegate.__init__(self, parent)
+        self._data = data
+
+    def createEditor(self, parent, option, index):
+        model_value = index.model().data(index, QtCore.Qt.DisplayRole)
+
+        editor = QtGui.QComboBox(parent)
+        editor.addItems(self._data)
+
+        return editor
+
+    def setEditorData(self, editor, index):
+
+        model_value = index.model().data(index, QtCore.Qt.EditRole)
+
+        # editor.setEditText(model_value)
+        current_index = editor.findText(model_value)
+        if current_index > 0:
+            editor.setCurrentIndex(current_index)
+
+    def setModelData(self, editor, model, index):
+        editor_value = editor.currentText()
+        model.setData(index, editor_value, QtCore.Qt.EditRole)
+        # ModelDataSet(editorValue)
+
+
 class ApplicantModel(QtCore.QAbstractTableModel):
     def __init__(self, user, application, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
         self.user = user
         self.application = application
-        self.header = ['  Id  ', ' e-mail ', '  verbal ', '  ranking  ', '  comments  ']
+        self.header = ['  Id  ', ' e-mail ', '  verbal ', '  ranking  ', '  comments  ', 'decision']
 
     # Build-in functions
     def flags(self, index):
 
-        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+        column = index.column()
+        if column in [3, 5]:
+            return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+        else:
+            return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
 
     def headerData(self, col, orientation, role):
         if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
@@ -569,8 +601,17 @@ class ApplicantModel(QtCore.QAbstractTableModel):
             if column == 2:
                 return self.application.gre_verbal
 
-            # if column == 3:
-            #     return student.description
+            if column == 3:
+                if not self.application.ranking:
+                    return 'not set'
+                else:
+                    return self.application.ranking
+
+            if column == 5:
+                if not self.application.status:
+                    return 'not set'
+                else:
+                    return self.application.status
 
 
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
@@ -719,6 +760,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def init_applicant(self):
 
         user_id = '1'
+        rankings = ['reject', 'borderline', 'admit', 'admit with aid']
+        decisions = ['Admitted With Aid', 'Admitted', 'Rejected']
 
         self.setup_table(self.tabApplicantData)
 
@@ -727,6 +770,10 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         self.applicant_model = ApplicantModel(user, application)
         self.tabApplicantData.setModel(self.applicant_model)
+        ranking = DropdownDelegate(rankings, self.tabApplicantData)
+        self.tabApplicantData.setItemDelegateForColumn(3, ranking)
+        decision = DropdownDelegate(decisions, self.tabApplicantData)
+        self.tabApplicantData.setItemDelegateForColumn(5, decision)
 
     # Common
     def send_email(self, email, user_name, user_id):
