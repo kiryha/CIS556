@@ -2,7 +2,7 @@ import os
 import sqlite3
 import smtplib
 from datetime import date
-from PySide import QtGui
+from PySide import QtGui, QtCore
 from ui import ui_main
 
 scripts_root = os.path.dirname(__file__).replace('\\', '/')
@@ -206,6 +206,16 @@ class StarrsData:
         self.sql_file_path = sql_file_path
 
     # Tuple to object conversion
+    def convert_to_user(self, user_tuples):
+
+        users = []
+
+        for user_tuple in user_tuples:
+            user = User(user_tuple)
+            users.append(user)
+
+        return users
+
     def convert_to_application(self, application_tuples):
 
         applications = []
@@ -260,6 +270,21 @@ class StarrsData:
 
         print 'User {0} {1} added!'.format(user.first_name, user.last_name)
         return user
+
+    def get_user(self, user_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM user WHERE id=:id",
+                       {'id': user_id})
+
+        user_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if user_tuple:
+            return self.convert_to_user([user_tuple])[0]
 
     def add_application(self, application_tuple):
 
@@ -496,6 +521,58 @@ class StarrsData:
 
 
 # STARRS Application
+class AlignDelegate(QtGui.QItemDelegate):
+    def paint(self, painter, option, index):
+        option.displayAlignment = QtCore.Qt.AlignCenter
+        QtGui.QItemDelegate.paint(self, painter, option, index)
+
+
+class ApplicantModel(QtCore.QAbstractTableModel):
+    def __init__(self, user, application, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+
+        self.user = user
+        self.application = application
+        self.header = ['  Id  ', ' e-mail ', '  verbal ', '  ranking  ', '  comments  ']
+
+    # Build-in functions
+    def flags(self, index):
+
+        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+
+    def headerData(self, col, orientation, role):
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+            return self.header[col]
+
+    def rowCount(self, parent):
+
+        return 1
+
+    def columnCount(self, parent):
+
+        return len(self.header)
+
+    def data(self, index, role):
+
+        if not index.isValid():
+            return
+
+        column = index.column()
+
+        if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
+            if column == 0:
+                return self.user.id
+
+            if column == 1:
+                return self.user.email
+
+            if column == 2:
+                return self.application.gre_verbal
+
+            # if column == 3:
+            #     return student.description
+
+
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def __init__(self, parent=None):
         super(STARRS, self).__init__(parent=parent)
@@ -510,10 +587,12 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         # Starrs data
         self.starrs_data = None
+        self.applicant_model = None
 
         # Init UI data
         self.init_ui()
         self.init_data()
+        self.init_applicant()
 
         # UI functionality
         self.actInitDatabase.triggered.connect(self.init_database)
@@ -628,6 +707,26 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         """
 
         init_database(self.sql_file_path)
+
+    def setup_table(self, table):
+
+        table.verticalHeader().hide()
+        table.verticalHeader().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        table.horizontalHeader().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        table.horizontalHeader().setStretchLastSection(True)
+        table.setItemDelegate(AlignDelegate())
+
+    def init_applicant(self):
+
+        user_id = '1'
+
+        self.setup_table(self.tabApplicantData)
+
+        user = self.starrs_data.get_user(user_id)
+        application = self.starrs_data.get_application(user_id)
+
+        self.applicant_model = ApplicantModel(user, application)
+        self.tabApplicantData.setModel(self.applicant_model)
 
     # Common
     def send_email(self, email, user_name, user_id):
