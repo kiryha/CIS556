@@ -586,7 +586,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         application_tuple = [
             None,  # id
             None,  # user_id
-            date.today().strftime('%d/%m/%Y'),  # date received
+            date.today().strftime('%Y/%m/%d'),  # date received
             None,  # status
             0,  # transcripts
             None,  # recommendations
@@ -629,7 +629,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # Compose email
         subject = 'Welcome to STARRS!'
         text = 'Hello {0}, \nYour id/password is {1}.'.format(user_name, user_id)
-        message = 'Subject: {}\n\n{}'.format(subject, text)
+        message = 'Subject: {0}\n\n{1}'.format(subject, text)
 
         # Send email
         session.sendmail(login, email, message)
