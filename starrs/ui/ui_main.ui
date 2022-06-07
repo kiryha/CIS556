@@ -432,7 +432,7 @@
                 <string>Enter student ID:</string>
                </property>
               </widget>
-              <widget class="QLineEdit" name="lineStudentID"/>
+              <widget class="QLineEdit" name="linStudentID"/>
              </widget>
             </item>
             <item>

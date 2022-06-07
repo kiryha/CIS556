@@ -67,6 +67,13 @@ def init_database(sql_file_path):
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
 
+    cursor.execute('''CREATE TABLE student (
+                    id integer primary key autoincrement,
+                    user_id integer,
+                    description text,
+                    FOREIGN KEY(user_id) REFERENCES user(id)
+                    )''')
+
     connection.commit()
     connection.close()
 
@@ -170,6 +177,21 @@ class Recommendation:
         self.affiliation = recommendation_tuple[5]
         self.score = recommendation_tuple[6]
         self.description = recommendation_tuple[7]
+
+
+class Student:
+    def __init__(self, student_tuple):
+        self.id = None
+        self.user_id = None
+        self.description = None
+
+        self.init(student_tuple)
+
+    def init(self, student_tuple):
+
+        self.id = student_tuple[0]
+        self.user_id = student_tuple[1]
+        self.description = student_tuple[2]
 
 
 # Database manipulations
@@ -436,6 +458,30 @@ class StarrsData:
 
         return pending_applicants
 
+    def add_student(self, student_tuple):
+
+        student = Student(student_tuple)
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        # Add object to DB
+        cursor.execute("INSERT INTO student VALUES ("
+                       ":id,"
+                       ":user_id,"
+                       ":description)",
+
+                       {'id': cursor.lastrowid,
+                        'user_id': student.user_id,
+                        'description': student.description})
+
+        connection.commit()
+        student.id = cursor.lastrowid  # Add database ID to the object
+        connection.close()
+
+        print 'Student {0} added!'.format(student.user_id)
+        return student
+
 
 # STARRS Application
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
@@ -463,6 +509,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # 1)
         self.btnSubmitApplication.pressed.connect(self.submit_application)
         self.btnCheckApplicationStatus.pressed.connect(self.check_application_status)
+        self.btnEnroll.pressed.connect(self.enroll)
         # 2)
         self.btnSetTranscripts.pressed.connect(self.add_transcripts)
         self.btnSetRecomendations.pressed.connect(self.add_recommendations)
@@ -593,7 +640,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         """
 
         # Get user application
-        user_id = self.lineStudentID.text()
+        user_id = self.linStudentID.text()
         application = self.starrs_data.get_application(user_id)
 
         if not application:
@@ -618,6 +665,28 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
                 self.linApplicationStatus.setText('Application Materials Missing: {}'.format(missing))
 
+    def enroll(self):
+        """
+        Enroll admitted student to Database University
+        """
+
+        user_id = self.linStudentID.text()
+
+        if user_id == '':
+            self.statusBar().showMessage('>> Please, enter the user id!')
+            return
+
+        # Check if user was admitted
+        application = self.starrs_data.get_application(user_id)
+
+        if not application:
+            return
+
+        if application.status in ['Admitted With Aid', 'Admitted'] :
+
+            student_tuple = [None, user_id, 'I accept']
+            self.starrs_data.add_student(student_tuple)
+
     # 2) Admission process
     def add_transcripts(self):
         """
@@ -625,6 +694,9 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         """
 
         user_id = self.linStudentIDAdmission.text()
+        if user_id == '':
+            self.statusBar().showMessage('>> Please, enter the user id!')
+            return
 
         if self.chbTranscripts.isChecked():
             transcripts = 1
@@ -642,6 +714,9 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # TODO: check existing recommendations, should not be more than 3 in total
 
         user_id = self.linStudentIDAdmission.text()
+        if user_id == '':
+            self.statusBar().showMessage('>> Please, enter the user id!')
+            return
 
         if self.chbDoRecommendation_1.isChecked():
 

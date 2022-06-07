@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Mon Jun  6 20:36:20 2022
+# Created: Mon Jun  6 21:06:21 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -227,8 +227,8 @@ class Ui_STARRS(object):
         self.splitter_8.setObjectName("splitter_8")
         self.label_10 = QtGui.QLabel(self.splitter_8)
         self.label_10.setObjectName("label_10")
-        self.lineStudentID = QtGui.QLineEdit(self.splitter_8)
-        self.lineStudentID.setObjectName("lineStudentID")
+        self.linStudentID = QtGui.QLineEdit(self.splitter_8)
+        self.linStudentID.setObjectName("linStudentID")
         self.verticalLayout_5.addWidget(self.splitter_8)
         self.btnCheckApplicationStatus = QtGui.QPushButton(self.tab_5)
         self.btnCheckApplicationStatus.setMinimumSize(QtCore.QSize(0, 45))

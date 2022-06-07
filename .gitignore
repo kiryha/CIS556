@@ -1,3 +1,4 @@
 # Skip files:
 .idea
+*.db
 *.pyc
