@@ -659,10 +659,13 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             else:
                 missing = ''
                 if not application.transcripts:
-                    missing += 'transcripts'
+                    missing = 'transcripts'
                 if not recommendations:
-                    missing += ' recommendations'
-
+                    if not application.transcripts:
+                        missing += ' and recommendations'
+                    else:
+                        missing = ' recommendations'
+                        
                 self.linApplicationStatus.setText('Application Materials Missing: {}'.format(missing))
 
     def enroll(self):
