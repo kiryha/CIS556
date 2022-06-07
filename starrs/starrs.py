@@ -34,7 +34,6 @@ def init_database(sql_file_path):
                     id integer primary key autoincrement,
                     user_id integer,
                     date_received text,
-                    status text,
                     transcripts integer,
                     gre_verbal text,
                     gre_quantitative text,
@@ -51,6 +50,7 @@ def init_database(sql_file_path):
                     prior2_year text,
                     prior2_gpa text,
                     prior2_university text,
+                    status text,
                     description text,
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
@@ -108,7 +108,6 @@ class Application:
         self.id = None
         self.user_id = None
         self.date_received = ''
-        self.status = ''
         self.transcripts = None
         self.gre_verbal = ''
         self.gre_quantitative = ''
@@ -125,6 +124,7 @@ class Application:
         self.prior2_year = ''
         self.prior2_gpa = ''
         self.prior2_university = ''
+        self.status = ''
         self.description = ''
 
         self.init(application_tuple)
@@ -134,23 +134,23 @@ class Application:
         self.id = application_tuple[0]
         self.user_id = application_tuple[1]
         self.date_received = application_tuple[2]
-        self.status = application_tuple[3]
-        self.transcripts = application_tuple[4]
-        self.gre_verbal = application_tuple[5]
-        self.gre_quantitative = application_tuple[6]
-        self.gre_analytical = application_tuple[7]
-        self.experience = application_tuple[8]
-        self.interest = application_tuple[9]
-        self.admission_term = application_tuple[10]
-        self.degree_sought = application_tuple[11]
-        self.prior1_major = application_tuple[12]
-        self.prior1_year = application_tuple[13]
-        self.prior1_gpa = application_tuple[14]
-        self.prior1_university = application_tuple[15]
-        self.prior2_major = application_tuple[16]
-        self.prior2_year = application_tuple[17]
-        self.prior2_gpa = application_tuple[18]
-        self.prior2_university = application_tuple[19]
+        self.transcripts = application_tuple[3]
+        self.gre_verbal = application_tuple[4]
+        self.gre_quantitative = application_tuple[5]
+        self.gre_analytical = application_tuple[6]
+        self.experience = application_tuple[7]
+        self.interest = application_tuple[8]
+        self.admission_term = application_tuple[9]
+        self.degree_sought = application_tuple[10]
+        self.prior1_major = application_tuple[11]
+        self.prior1_year = application_tuple[12]
+        self.prior1_gpa = application_tuple[13]
+        self.prior1_university = application_tuple[14]
+        self.prior2_major = application_tuple[15]
+        self.prior2_year = application_tuple[16]
+        self.prior2_gpa = application_tuple[17]
+        self.prior2_university = application_tuple[18]
+        self.status = application_tuple[19]
         self.description = application_tuple[20]
 
 
@@ -258,7 +258,7 @@ class StarrsData:
     def add_application(self, application_tuple):
 
         application = Application(application_tuple)
-
+        print application_tuple
         connection = sqlite3.connect(self.sql_file_path)
         cursor = connection.cursor()
 
@@ -267,7 +267,6 @@ class StarrsData:
                        ":id,"
                        ":user_id,"
                        ":date_received,"
-                       ":status,"
                        ":transcripts,"
                        ":gre_verbal,"
                        ":gre_quantitative,"
@@ -284,12 +283,12 @@ class StarrsData:
                        ":prior2_year,"
                        ":prior2_gpa,"
                        ":prior2_university,"
+                       ":status,"
                        ":description)",
 
                        {'id': cursor.lastrowid,
                         'user_id': application.user_id,
                         'date_received': application.date_received,
-                        'status': application.status,
                         'transcripts': application.transcripts,
                         'gre_verbal': application.gre_verbal,
                         'gre_quantitative': application.gre_quantitative,
@@ -306,6 +305,7 @@ class StarrsData:
                         'prior2_year': application.prior2_year,
                         'prior2_gpa': application.prior2_gpa,
                         'prior2_university': application.prior2_university,
+                        'status': application.status,
                         'description': application.description})
 
         connection.commit()
@@ -587,9 +587,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             None,  # id
             None,  # user_id
             date.today().strftime('%Y/%m/%d'),  # date received
-            None,  # status
             0,  # transcripts
-            None,  # recommendations
             self.linGREVErbal.text(),
             self.linGREVQuant.text(),
             self.linGREVAnalitical.text(),
@@ -605,7 +603,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.linPriorYear2.text(),
             self.linPriorGPA2.text(),
             self.linPriorUniversity2.text(),
-            'description']
+            None,  # status
+            '']
 
         return user_tuple, application_tuple
 

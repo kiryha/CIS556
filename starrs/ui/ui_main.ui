@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>563</width>
+    <width>564</width>
     <height>878</height>
    </rect>
   </property>
@@ -559,6 +559,18 @@
               <enum>Qt::Horizontal</enum>
              </property>
              <widget class="QCheckBox" name="chbTranscripts">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="text">
                <string>Transcripts Were Received</string>
               </property>
@@ -668,49 +680,75 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="btnGetPendingApplicants">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>45</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Get List of Decision Pending Applicants</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSplitter" name="splitter_26">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QLabel" name="label_27">
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>List of Decision Pending Applicants</string>
+           </property>
+          </widget>
+          <widget class="QComboBox" name="comPendingApplicants"/>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="groupBox_4">
           <property name="title">
-           <string>Make Decision</string>
+           <string>Review Application</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
-            <widget class="QPushButton" name="btnGetPendingApplicants">
-             <property name="minimumSize">
+            <widget class="QTableView" name="tabApplicantData">
+             <property name="maximumSize">
               <size>
-               <width>0</width>
-               <height>45</height>
+               <width>16777215</width>
+               <height>120</height>
               </size>
-             </property>
-             <property name="text">
-              <string>Get List of Decision Pending Applicants</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSplitter" name="splitter_26">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+            <widget class="QPushButton" name="pushButton">
+             <property name="text">
+              <string>PushButton</string>
              </property>
-             <widget class="QLabel" name="label_27">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>List of Decision Pending Applicants</string>
-              </property>
-             </widget>
-             <widget class="QComboBox" name="comPendingApplicants"/>
             </widget>
            </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Make Decision</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
             <widget class="QSplitter" name="splitter_14">
              <property name="orientation">
@@ -786,7 +824,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>563</width>
+     <width>564</width>
      <height>21</height>
     </rect>
    </property>
