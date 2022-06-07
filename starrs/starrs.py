@@ -4,8 +4,11 @@ from datetime import date
 from PySide import QtGui
 from PySide import QtCore
 from ui import ui_main
+from sendEmail import sendEmail
+from generate_random_password import generate_random_password
 
 scripts_root = os.path.dirname(__file__).replace('\\', '/')
+
 
 
 # Database
@@ -28,6 +31,7 @@ def init_database(sql_file_path):
                     home_phone text,
                     work_phone text,
                     mobile_phone text,
+                    password text,
                     description text
                     )''')
 
@@ -89,6 +93,7 @@ class User:
         self.home_phone = ''
         self.work_phone = ''
         self.mobile_phone = ''
+        self.password = ''
         self.description = ''
 
         self.init(user_tuple)
@@ -104,7 +109,8 @@ class User:
         self.home_phone = user_tuple[6]
         self.work_phone = user_tuple[7]
         self.mobile_phone = user_tuple[8]
-        self.description = user_tuple[9]
+        self.password = user_tuple[9]
+        self.description = user_tuple[10]
 
 
 class Application:
@@ -206,6 +212,7 @@ class StarrsData:
                        ":home_phone,"
                        ":work_phone,"
                        ":mobile_phone,"
+                       ":password,"
                        ":description)",
 
                        {'id': cursor.lastrowid,
@@ -217,6 +224,7 @@ class StarrsData:
                         'home_phone': user.home_phone,
                         'work_phone': user.work_phone,
                         'mobile_phone': user.mobile_phone,
+                        'password': user.password,
                         'description': user.description})
 
         connection.commit()
@@ -512,6 +520,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.linApplicantHomePhone.text(),
             self.linApplicantWorkPhone.text(),
             self.linApplicantMobilePhone.text(),
+            None,
             '']
 
         application_tuple = [
@@ -582,8 +591,12 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     # 1) Online Application
     def submit_application(self):
 
+        password = generate_random_password();
+
         # Add user
         user_tuple, application_tuple, recommendations_tuple = self.get_ui_apply()
+
+        user_tuple[9] = password
 
         user = self.starrs_data.add_user(user_tuple)
 
@@ -593,6 +606,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # Add application
         application_tuple[1] = user.id
         self.starrs_data.add_application(application_tuple, recommendations_tuple)
+
+        sendEmail(user_tuple[4],user.id,'"{}"'.format(password))
 
     def check_application_status(self):
         """
