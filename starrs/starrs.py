@@ -51,6 +51,8 @@ def init_database(sql_file_path):
                     prior2_gpa text,
                     prior2_university text,
                     status text,
+                    ranking text,
+                    comments text,
                     description text,
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
@@ -125,6 +127,8 @@ class Application:
         self.prior2_gpa = ''
         self.prior2_university = ''
         self.status = ''
+        self.ranking = ''
+        self.comments = ''
         self.description = ''
 
         self.init(application_tuple)
@@ -151,7 +155,9 @@ class Application:
         self.prior2_gpa = application_tuple[17]
         self.prior2_university = application_tuple[18]
         self.status = application_tuple[19]
-        self.description = application_tuple[20]
+        self.ranking = application_tuple[20]
+        self.comments = application_tuple[21]
+        self.description = application_tuple[22]
 
 
 class Recommendation:
@@ -258,7 +264,7 @@ class StarrsData:
     def add_application(self, application_tuple):
 
         application = Application(application_tuple)
-        print application_tuple
+
         connection = sqlite3.connect(self.sql_file_path)
         cursor = connection.cursor()
 
@@ -284,6 +290,8 @@ class StarrsData:
                        ":prior2_gpa,"
                        ":prior2_university,"
                        ":status,"
+                       ":ranking,"
+                       ":comments,"
                        ":description)",
 
                        {'id': cursor.lastrowid,
@@ -306,6 +314,8 @@ class StarrsData:
                         'prior2_gpa': application.prior2_gpa,
                         'prior2_university': application.prior2_university,
                         'status': application.status,
+                        'ranking': application.status,
+                        'comments': application.status,
                         'description': application.description})
 
         connection.commit()
@@ -417,6 +427,8 @@ class StarrsData:
 
         connection.commit()
         connection.close()
+
+        print 'Application status user {0} set to {1}'.format(user_id, status)
 
     def get_users_with_transcripts(self):
         """
@@ -604,6 +616,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.linPriorGPA2.text(),
             self.linPriorUniversity2.text(),
             None,  # status
+            '',  # reviewer ranking
+            '',  # reviewer comments
             '']
 
         return user_tuple, application_tuple
