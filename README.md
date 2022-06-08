@@ -1,32 +1,15 @@
 # Intro
-CIS556 Databases Course
+CIS556 Databases Course (UMICH).
 
-# Online Application Process
-### List of entities (tables):
+The Course project is STARRS application for Database University.
 
-1)
-APPLICATION STATUS (id, status)  
-APPLICANT (id, first name, last name, email, password, address, phone #, prior work experience, application)
-APPLICATION (id, status, date received, academics)
-ACADEMICS (id, gpa, application degree, admission term, area of interest, prior degree)
-PRIOR DEGREE (id, gpa, university name, graduation year)
-PRIOR TRANSCRIPTS (id, course, score)
+# Summary
+The project is to implement an on-line admissions and graduation clearance system for graduate students applying 
+to the University. 
 
-2)
-STUDENT (id, first name, last name, email, password)
+The current system allows students to apply online but the process by which the faculty reviews the applications 
+is a paper process. For simplicity, in this project your team will design and build a system that will automate 
+the workflow process in the admissions, registration and graduation system for Master’s degree students. 
 
-4)
-ALUMNI (id, first name, last name, email, password)
-
-### UI elements
-#### Applicant make application
-[ First Name ]  
-[ Last Name ]  
-[ GPA ]  
-[ email ]  
-[ Submit Application button ]
-
-#### Applicant checking status
-
-
-#### Admission
+You can implement this project using any DBMS the team has access to, you must be able to demo the application 
+in the final presentation.

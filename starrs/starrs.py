@@ -247,7 +247,7 @@ class StarrsData:
 
         return recommendations
 
-    # CURDs
+    # Basic CURDs
     def add_user(self, user_tuple):
 
         user = User(user_tuple)
@@ -489,36 +489,6 @@ class StarrsData:
 
         return user_ids
 
-    def get_pending_applicants(self):
-        """
-        Get and return list of user IDs who applied to university, their data was entered, but decision was not made
-        """
-
-        # Get pending applicants isd
-        pending_applicants_ids = []
-
-        user_ids = self.get_users_with_transcripts()
-
-        if not user_ids:
-            del self.pending_users[:]
-            del self.pending_applications[:]
-            return
-
-        for user_id in user_ids:
-            if self.get_recommendations(user_id):
-                pending_applicants_ids.append(user_id)
-
-        # Get pending applicants object and update class variables
-        del self.pending_users[:]
-        del self.pending_applications[:]
-        print pending_applicants_ids
-        print self.pending_applications
-        for user_id in pending_applicants_ids:
-            self.pending_users.append(self.get_user(user_id))
-            self.pending_applications.append(self.get_application(user_id))
-
-        return pending_applicants_ids
-
     def add_student(self, student_tuple):
 
         student = Student(student_tuple)
@@ -587,6 +557,36 @@ class StarrsData:
                 index = self.pending_applications.index(application)
                 self.pending_applications[index] = self.get_application(user_id)
 
+    # Multi step actions
+    def get_pending_applicants(self):
+        """
+        Get and return list of user IDs who applied to university, their data was entered, but decision was not made
+        """
+
+        # Get pending applicants isd
+        pending_applicants_ids = []
+
+        user_ids = self.get_users_with_transcripts()
+
+        if not user_ids:
+            del self.pending_users[:]
+            del self.pending_applications[:]
+            return
+
+        for user_id in user_ids:
+            if self.get_recommendations(user_id):
+                pending_applicants_ids.append(user_id)
+
+        # Get pending applicants object and update class variables
+        del self.pending_users[:]
+        del self.pending_applications[:]
+
+        for user_id in pending_applicants_ids:
+            self.pending_users.append(self.get_user(user_id))
+            self.pending_applications.append(self.get_application(user_id))
+
+        return pending_applicants_ids
+
 
 # STARRS Application
 class AlignDelegate(QtGui.QItemDelegate):
@@ -628,7 +628,6 @@ class ApplicantModel(QtCore.QAbstractTableModel):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
         self.starrs_data = starrs_data
-
         self.header = ['  Id  ', ' Email ', '  Verbal ', '      Ranking      ', '  Comments  ', '  Status  ']
 
     # Build-in functions
@@ -641,6 +640,7 @@ class ApplicantModel(QtCore.QAbstractTableModel):
             return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
 
     def headerData(self, col, orientation, role):
+
         if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
             return self.header[col]
 
@@ -870,7 +870,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         self.applicant_model.layoutAboutToBeChanged.emit()
         self.starrs_data.get_pending_applicants()
-        print self.starrs_data.pending_applications
         self.applicant_model.layoutChanged.emit()
 
     # Common
