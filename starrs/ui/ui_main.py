@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Wed Jun  8 12:05:03 2022
+# Created: Wed Jun  8 18:29:37 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -262,6 +262,28 @@ class Ui_STARRS(object):
         self.tab_2.setObjectName("tab_2")
         self.verticalLayout_6 = QtGui.QVBoxLayout(self.tab_2)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
+        self.groupBox_2 = QtGui.QGroupBox(self.tab_2)
+        self.groupBox_2.setObjectName("groupBox_2")
+        self.verticalLayout_8 = QtGui.QVBoxLayout(self.groupBox_2)
+        self.verticalLayout_8.setObjectName("verticalLayout_8")
+        self.splitter_13 = QtGui.QSplitter(self.groupBox_2)
+        self.splitter_13.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter_13.setObjectName("splitter_13")
+        self.label_27 = QtGui.QLabel(self.splitter_13)
+        self.label_27.setObjectName("label_27")
+        self.linSearchApplicantID = QtGui.QLineEdit(self.splitter_13)
+        self.linSearchApplicantID.setObjectName("linSearchApplicantID")
+        self.linSearchApplicantLastname = QtGui.QLineEdit(self.splitter_13)
+        self.linSearchApplicantLastname.setObjectName("linSearchApplicantLastname")
+        self.verticalLayout_8.addWidget(self.splitter_13)
+        self.btnFindApplicant = QtGui.QPushButton(self.groupBox_2)
+        self.btnFindApplicant.setObjectName("btnFindApplicant")
+        self.verticalLayout_8.addWidget(self.btnFindApplicant)
+        self.tabFoundApplicants = QtGui.QTableView(self.groupBox_2)
+        self.tabFoundApplicants.setMaximumSize(QtCore.QSize(16777215, 100))
+        self.tabFoundApplicants.setObjectName("tabFoundApplicants")
+        self.verticalLayout_8.addWidget(self.tabFoundApplicants)
+        self.verticalLayout_6.addWidget(self.groupBox_2)
         self.groupBox = QtGui.QGroupBox(self.tab_2)
         self.groupBox.setObjectName("groupBox")
         self.verticalLayout_10 = QtGui.QVBoxLayout(self.groupBox)
@@ -353,7 +375,7 @@ class Ui_STARRS(object):
         self.btnSetTranscripts.setObjectName("btnSetTranscripts")
         self.verticalLayout_10.addWidget(self.btnSetTranscripts)
         self.btnSetRecomendations = QtGui.QPushButton(self.groupBox)
-        self.btnSetRecomendations.setMinimumSize(QtCore.QSize(0, 45))
+        self.btnSetRecomendations.setMinimumSize(QtCore.QSize(0, 35))
         self.btnSetRecomendations.setObjectName("btnSetRecomendations")
         self.verticalLayout_10.addWidget(self.btnSetRecomendations)
         self.verticalLayout_6.addWidget(self.groupBox)
@@ -372,6 +394,8 @@ class Ui_STARRS(object):
         self.btnUpdatePendingApplicants.setObjectName("btnUpdatePendingApplicants")
         self.verticalLayout_11.addWidget(self.btnUpdatePendingApplicants)
         self.verticalLayout_6.addWidget(self.groupBox_4)
+        spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_6.addItem(spacerItem2)
         self.tabSections.addTab(self.tab_2, "")
         self.tab_3 = QtGui.QWidget()
         self.tab_3.setObjectName("tab_3")
@@ -425,6 +449,9 @@ class Ui_STARRS(object):
         self.btnEnroll.setText(QtGui.QApplication.translate("STARRS", "Enroll to Database University", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_5), QtGui.QApplication.translate("STARRS", "Check Application Status", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_1), QtGui.QApplication.translate("STARRS", "Online Application Process", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox_2.setTitle(QtGui.QApplication.translate("STARRS", "Find Applicant by ID or Last Name", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_27.setText(QtGui.QApplication.translate("STARRS", "Applicant ID | Last Name", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnFindApplicant.setText(QtGui.QApplication.translate("STARRS", "Find Applicant", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("STARRS", "Update Student Data", None, QtGui.QApplication.UnicodeUTF8))
         self.label_15.setText(QtGui.QApplication.translate("STARRS", "Enter student ID:", None, QtGui.QApplication.UnicodeUTF8))
         self.chbTranscripts.setText(QtGui.QApplication.translate("STARRS", "Transcripts Were Received", None, QtGui.QApplication.UnicodeUTF8))

@@ -297,6 +297,20 @@ class StarrsData:
         if user_tuple:
             return self.convert_to_user([user_tuple])[0]
 
+    def get_user_by_name(self, last_name):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM user WHERE last_name=:last_name",
+                       {'last_name': last_name})
+
+        user_tuples = cursor.fetchall()
+        connection.close()
+
+        if user_tuples:
+            return self.convert_to_user(user_tuples)
+
     def add_application(self, application_tuple):
 
         application = Application(application_tuple)
@@ -705,13 +719,61 @@ class ApplicantModel(QtCore.QAbstractTableModel):
             return True
 
 
+class FoundApplicantModel(QtCore.QAbstractTableModel):
+    def __init__(self, users, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+
+        self.users = users
+        self.header = ['  Id  ', ' Email ', '  First Name ', '  Last Name  ', '  Phone  ']
+
+    def flags(self, index):
+
+        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+
+    def headerData(self, col, orientation, role):
+
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+            return self.header[col]
+
+    def rowCount(self, parent):
+
+        return len(self.users)
+
+    def columnCount(self, parent):
+
+        return len(self.header)
+
+    def data(self, index, role):
+
+        if not index.isValid():
+            return
+
+        row = index.row()
+        column = index.column()
+
+        if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
+            if column == 0:
+                return self.users[row].id
+
+            if column == 1:
+                return self.users[row].email
+
+            if column == 2:
+                return self.users[row].first_name
+
+            if column == 3:
+                return self.users[row].last_name
+
+            if column == 4:
+                return self.users[row].phone
+
+
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def __init__(self, parent=None):
         super(STARRS, self).__init__(parent=parent)
 
         # SETUP UI
         self.setupUi(self)
-        self.setup_table(self.tabApplicantData)
 
         # Constants
         self.rankings = ['Reject', 'Border Line', 'Admit', 'Admit With Aid']
@@ -741,6 +803,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnCheckApplicationStatus.pressed.connect(self.check_application_status)
         self.btnEnroll.pressed.connect(self.enroll)
         # 2)
+        self.btnFindApplicant.pressed.connect(self.find_applicant)
         self.btnSetTranscripts.pressed.connect(self.add_transcripts)
         self.btnSetRecomendations.pressed.connect(self.add_recommendations)
         self.btnUpdatePendingApplicants.pressed.connect(self.update_applicants)
@@ -785,11 +848,16 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linRecomendationTitle_2.setText('professor')
         self.linRecomendationAffiliation_2.setText('Cords')
 
+        # UI controls
         self.comDegreeSought.addItems(self.degrees)
         self.comAdmissionTerm.addItems(self.terms)
         self.comRecomendationScore_1.addItems(self.scores)
         self.comRecomendationScore_2.addItems(self.scores)
         self.comRecomendationScore_3.addItems(self.scores)
+
+        # Tables
+        self.setup_table(self.tabApplicantData)
+        self.setup_table(self.tabFoundApplicants)
 
     def init_data(self):
 
@@ -964,6 +1032,24 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
             student_tuple = [None, user_id, 'I accept']
             self.starrs_data.add_student(student_tuple)
+
+    def find_applicant(self):
+
+        user_id = self.linSearchApplicantID.text()
+        last_name = self.linSearchApplicantLastname.text()
+
+        users = None
+
+        if user_id != '':
+            users = [self.starrs_data.get_user(user_id)]
+        elif last_name != '':
+            users = self.starrs_data.get_user_by_name(last_name)
+        else:
+            self.tabFoundApplicants.setModel(FoundApplicantModel([]))
+            self.statusBar().showMessage('>> Enter applicant ID or Last Name!')
+
+        if users:
+            self.tabFoundApplicants.setModel(FoundApplicantModel(users))
 
     # 2) Admission process
     def add_transcripts(self):
