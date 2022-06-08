@@ -205,6 +205,17 @@ class StarrsData:
     def __init__(self, sql_file_path):
         self.sql_file_path = sql_file_path
 
+        # Processed data
+        self.pending_users = []
+        self.pending_applications = []
+
+        self.init_starrs_data()
+
+    # Data init
+    def init_starrs_data(self):
+
+        self.get_pending_applicants()
+
     # Tuple to object conversion
     def convert_to_user(self, user_tuples):
 
@@ -433,7 +444,7 @@ class StarrsData:
         if recommendation_tuples:
             return self.convert_to_recommendation(recommendation_tuples)
 
-    def set_status(self, user_id, status):
+    def update_status(self, user_id, status):
         """
         Set applicant status
         """
@@ -453,7 +464,8 @@ class StarrsData:
         connection.commit()
         connection.close()
 
-        print 'Application status user {0} set to {1}'.format(user_id, status)
+        # Update pending applicant data
+        self.update_pending_applications(user_id)
 
     def get_users_with_transcripts(self):
         """
@@ -482,18 +494,30 @@ class StarrsData:
         Get and return list of user IDs who applied to university, their data was entered, but decision was not made
         """
 
-        pending_applicants = []
+        # Get pending applicants isd
+        pending_applicants_ids = []
 
         user_ids = self.get_users_with_transcripts()
 
         if not user_ids:
+            del self.pending_users[:]
+            del self.pending_applications[:]
             return
 
         for user_id in user_ids:
             if self.get_recommendations(user_id):
-                pending_applicants.append(user_id)
+                pending_applicants_ids.append(user_id)
 
-        return pending_applicants
+        # Get pending applicants object and update class variables
+        del self.pending_users[:]
+        del self.pending_applications[:]
+        print pending_applicants_ids
+        print self.pending_applications
+        for user_id in pending_applicants_ids:
+            self.pending_users.append(self.get_user(user_id))
+            self.pending_applications.append(self.get_application(user_id))
+
+        return pending_applicants_ids
 
     def add_student(self, student_tuple):
 
@@ -518,6 +542,50 @@ class StarrsData:
 
         print 'Student {0} added!'.format(student.user_id)
         return student
+
+    def update_comments(self, user_id, comments):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE application SET "
+                       "comments=:comments "
+
+                       "WHERE user_id=:user_id",
+
+                       {'user_id': user_id,
+                        'comments': comments})
+
+        connection.commit()
+        connection.close()
+
+        # Update STARRS data
+        self.update_pending_applications(user_id)
+
+    def update_ranking(self, user_id, ranking):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE application SET "
+                       "ranking=:ranking "
+
+                       "WHERE user_id=:user_id",
+
+                       {'user_id': user_id,
+                        'ranking': ranking})
+
+        connection.commit()
+        connection.close()
+
+        # Update STARRS data
+        self.update_pending_applications(user_id)
+
+    def update_pending_applications(self, user_id):
+        for application in self.pending_applications:
+            if application.user_id == user_id:
+                index = self.pending_applications.index(application)
+                self.pending_applications[index] = self.get_application(user_id)
 
 
 # STARRS Application
@@ -556,18 +624,18 @@ class DropdownDelegate(QtGui.QItemDelegate):
 
 
 class ApplicantModel(QtCore.QAbstractTableModel):
-    def __init__(self, user, application, parent=None):
+    def __init__(self, starrs_data, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
-        self.user = user
-        self.application = application
-        self.header = ['  Id  ', ' e-mail ', '  verbal ', '  ranking  ', '  comments  ', 'decision']
+        self.starrs_data = starrs_data
+
+        self.header = ['  Id  ', ' Email ', '  Verbal ', '      Ranking      ', '  Comments  ', '  Status  ']
 
     # Build-in functions
     def flags(self, index):
 
         column = index.column()
-        if column in [3, 5]:
+        if column in [3, 4, 5]:
             return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
         else:
             return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
@@ -578,7 +646,7 @@ class ApplicantModel(QtCore.QAbstractTableModel):
 
     def rowCount(self, parent):
 
-        return 1
+        return len(self.starrs_data.pending_users)
 
     def columnCount(self, parent):
 
@@ -589,29 +657,52 @@ class ApplicantModel(QtCore.QAbstractTableModel):
         if not index.isValid():
             return
 
+        row = index.row()
         column = index.column()
 
         if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
             if column == 0:
-                return self.user.id
+                return self.starrs_data.pending_users[row].id
 
             if column == 1:
-                return self.user.email
+                return self.starrs_data.pending_users[row].email
 
             if column == 2:
-                return self.application.gre_verbal
+                return self.starrs_data.pending_applications[row].gre_verbal
 
             if column == 3:
-                if not self.application.ranking:
-                    return 'not set'
-                else:
-                    return self.application.ranking
+                return self.starrs_data.pending_applications[row].ranking
+
+            if column == 4:
+                return self.starrs_data.pending_applications[row].comments
 
             if column == 5:
-                if not self.application.status:
-                    return 'not set'
-                else:
-                    return self.application.status
+                return self.starrs_data.pending_applications[row].status
+
+    def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
+        """
+        When table cell is edited
+        """
+
+        row = index.row()
+        column = index.column()
+        user_id = self.starrs_data.pending_users[row].id
+
+        if role == QtCore.Qt.EditRole:
+
+            if column == 3:
+                self.starrs_data.update_ranking(user_id, cell_data)
+                print '>> Ranking updated: {}'.format(cell_data)
+
+            if column == 4:
+                self.starrs_data.update_comments(user_id, cell_data)
+                print '>> Comment updated: {}'.format(cell_data)
+
+            if column == 5:
+                self.starrs_data.update_status(user_id, cell_data)
+                print '>> Status updated: {}'.format(cell_data)
+
+            return True
 
 
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
@@ -620,6 +711,14 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         # SETUP UI
         self.setupUi(self)
+        self.setup_table(self.tabApplicantData)
+
+        # Constants
+        self.rankings = ['Reject', 'Border Line', 'Admit', 'Admit With Aid']
+        self.decisions = ['Admitted With Aid', 'Admitted', 'Rejected']
+        self.terms = ['Summer 2022', 'Fall 2022', 'Winter 2023', 'Summer 2023', 'Fall 2023']
+        self.degrees = ['MS', 'MSE']
+        self.scores = ['95-100', '85-94', '70-84', '0-70']
 
         # Database
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
@@ -633,7 +732,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # Init UI data
         self.init_ui()
         self.init_data()
-        self.init_applicant()
 
         # UI functionality
         self.actInitDatabase.triggered.connect(self.init_database)
@@ -645,8 +743,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # 2)
         self.btnSetTranscripts.pressed.connect(self.add_transcripts)
         self.btnSetRecomendations.pressed.connect(self.add_recommendations)
-        self.btnGetPendingApplicants.pressed.connect(self.get_pending_applicants)
-        self.btnMadeDecision.pressed.connect(self.set_status)
+        self.btnUpdatePendingApplicants.pressed.connect(self.update_applicants)
 
     # Data and UI setup
     def init_ui(self):
@@ -688,17 +785,22 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linRecomendationTitle_2.setText('professor')
         self.linRecomendationAffiliation_2.setText('Cords')
 
-        self.comDegreeSought.addItems(['MS', 'MSE'])
-        self.comAdmissionTerm.addItems(['Summer 2022', 'Fall 2022', 'Winter 2023', 'Summer 2023', 'Fall 2023'])
-        self.comDescision.addItems(['Admitted With Aid', 'Admitted', 'Rejected'])
-        scores = ['95-100', '85-94', '70-84', '0-70']
-        self.comRecomendationScore_1.addItems(scores)
-        self.comRecomendationScore_2.addItems(scores)
-        self.comRecomendationScore_3.addItems(scores)
+        self.comDegreeSought.addItems(self.degrees)
+        self.comAdmissionTerm.addItems(self.terms)
+        self.comRecomendationScore_1.addItems(self.scores)
+        self.comRecomendationScore_2.addItems(self.scores)
+        self.comRecomendationScore_3.addItems(self.scores)
 
     def init_data(self):
 
         self.starrs_data = StarrsData(self.sql_file_path)
+        self.applicant_model = ApplicantModel(self.starrs_data)
+        self.tabApplicantData.setModel(self.applicant_model)
+
+        ranking = DropdownDelegate(self.rankings, self.tabApplicantData)
+        decision = DropdownDelegate(self.decisions, self.tabApplicantData)
+        self.tabApplicantData.setItemDelegateForColumn(3, ranking)
+        self.tabApplicantData.setItemDelegateForColumn(5, decision)
 
     def get_ui_apply(self):
 
@@ -757,23 +859,19 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         table.horizontalHeader().setStretchLastSection(True)
         table.setItemDelegate(AlignDelegate())
 
-    def init_applicant(self):
+    def init_applicants(self):
 
-        user_id = '1'
-        rankings = ['reject', 'borderline', 'admit', 'admit with aid']
-        decisions = ['Admitted With Aid', 'Admitted', 'Rejected']
-
-        self.setup_table(self.tabApplicantData)
-
-        user = self.starrs_data.get_user(user_id)
-        application = self.starrs_data.get_application(user_id)
-
-        self.applicant_model = ApplicantModel(user, application)
-        self.tabApplicantData.setModel(self.applicant_model)
-        ranking = DropdownDelegate(rankings, self.tabApplicantData)
+        ranking = DropdownDelegate(self.rankings, self.tabApplicantData)
+        decision = DropdownDelegate(self.decisions, self.tabApplicantData)
         self.tabApplicantData.setItemDelegateForColumn(3, ranking)
-        decision = DropdownDelegate(decisions, self.tabApplicantData)
         self.tabApplicantData.setItemDelegateForColumn(5, decision)
+
+    def update_applicants(self):
+
+        self.applicant_model.layoutAboutToBeChanged.emit()
+        self.starrs_data.get_pending_applicants()
+        print self.starrs_data.pending_applications
+        self.applicant_model.layoutChanged.emit()
 
     # Common
     def send_email(self, email, user_name, user_id):
@@ -912,28 +1010,35 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
                 'For Student {}'.format(user_id)]
             self.starrs_data.add_recommendation(recommendation_tuple)
 
+        if self.chbDoRecommendation_2.isChecked():
+
+            recommendation_tuple = [
+                None,
+                user_id,
+                self.linRecomendationName_2.text(),
+                self.linRecomendationEmail_2.text(),
+                self.linRecomendationTitle_2.text(),
+                self.linRecomendationAffiliation_2.text(),
+                self.comRecomendationScore_2.currentText(),
+                'For Student {}'.format(user_id)]
+
+            self.starrs_data.add_recommendation(recommendation_tuple)
+
+        if self.chbDoRecommendation_3.isChecked():
+
+            recommendation_tuple = [
+                None,
+                user_id,
+                self.linRecomendationName_3.text(),
+                self.linRecomendationEmail_3.text(),
+                self.linRecomendationTitle_3.text(),
+                self.linRecomendationAffiliation_3.text(),
+                self.comRecomendationScore_3.currentText(),
+                'For Student {}'.format(user_id)]
+
+            self.starrs_data.add_recommendation(recommendation_tuple)
+
         self.statusBar().showMessage('>> Applicant {0} recommendations submitted!'.format(user_id))
-
-    def get_pending_applicants(self):
-
-        pending_applicants = self.starrs_data.get_pending_applicants()
-
-        if not pending_applicants:
-            return
-
-        self.comPendingApplicants.clear()
-        self.comPendingApplicants.addItems(pending_applicants)
-
-    def set_status(self):
-        """
-        Admit/reject applicant by GS
-        """
-
-        user_id = self.comPendingApplicants.currentText()
-        status = self.comDescision.currentText()
-
-        self.starrs_data.set_status(user_id, status)
-        self.statusBar().showMessage('>> Applicant {0} decision submitted!'.format(user_id))
 
 
 if __name__ == "__main__":

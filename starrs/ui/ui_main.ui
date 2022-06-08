@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>564</width>
+    <width>700</width>
     <height>878</height>
    </rect>
   </property>
@@ -518,7 +518,7 @@
         <item>
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
-           <string>Submit Student Data</string>
+           <string>Update Student Data</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>
@@ -554,32 +554,25 @@
             </widget>
            </item>
            <item>
-            <widget class="QSplitter" name="splitter_13">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+            <widget class="QCheckBox" name="chbTranscripts">
+             <property name="minimumSize">
+              <size>
+               <width>200</width>
+               <height>0</height>
+              </size>
              </property>
-             <widget class="QCheckBox" name="chbTranscripts">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Transcripts Were Received</string>
-              </property>
-             </widget>
-             <widget class="QPushButton" name="btnSetTranscripts">
-              <property name="text">
-               <string>Submit Transcripts Status</string>
-              </property>
-             </widget>
+             <property name="maximumSize">
+              <size>
+               <width>200</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Transcripts Were Received</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -664,6 +657,19 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="btnSetTranscripts">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>35</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Submit Transcripts Status</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="btnSetRecomendations">
              <property name="minimumSize">
               <size>
@@ -680,102 +686,23 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btnGetPendingApplicants">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>45</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Get List of Decision Pending Applicants</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSplitter" name="splitter_26">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <widget class="QLabel" name="label_27">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>List of Decision Pending Applicants</string>
-           </property>
-          </widget>
-          <widget class="QComboBox" name="comPendingApplicants"/>
-         </widget>
-        </item>
-        <item>
          <widget class="QGroupBox" name="groupBox_4">
           <property name="title">
-           <string>Review Application</string>
+           <string>Review Application | Admit Applicants</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
-            <widget class="QTableView" name="tabApplicantData">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>120</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>PushButton</string>
+              <string>List of Applicants Pending Admission Decision:</string>
              </property>
             </widget>
            </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Make Decision</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
-            <widget class="QSplitter" name="splitter_14">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <widget class="QLabel" name="label_2">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Select applicant destiny</string>
-              </property>
-             </widget>
-             <widget class="QComboBox" name="comDescision"/>
-            </widget>
+            <widget class="QTableView" name="tabApplicantData"/>
            </item>
            <item>
-            <widget class="QPushButton" name="btnMadeDecision">
+            <widget class="QPushButton" name="btnUpdatePendingApplicants">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -783,25 +710,12 @@
               </size>
              </property>
              <property name="text">
-              <string>Submit Applicant Status</string>
+              <string>Update List of Decision Pending Applicants</string>
              </property>
             </widget>
            </item>
           </layout>
          </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>
@@ -824,7 +738,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>564</width>
+     <width>700</width>
      <height>21</height>
     </rect>
    </property>
