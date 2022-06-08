@@ -208,6 +208,8 @@ class StarrsData:
         # Processed data
         self.pending_users = []
         self.pending_applications = []
+        self.modify_user = None
+        self.modify_application = None
 
         self.init_starrs_data()
 
@@ -215,6 +217,11 @@ class StarrsData:
     def init_starrs_data(self):
 
         self.get_pending_applicants()
+
+    def init_update_application(self, user_id):
+
+        self.modify_user = self.get_user(user_id)
+        self.modify_application = self.get_application(user_id)
 
     # Tuple to object conversion
     def convert_to_user(self, user_tuples):
@@ -388,6 +395,22 @@ class StarrsData:
 
         if application_tuple:
             return self.convert_to_application([application_tuple])[0]
+
+    def update_user_attribute(self, attribute_name, user_id, attribute_value):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE user SET {0}=:{0} WHERE id=:id".format(attribute_name),
+
+                       {'id': user_id,
+                        '{0}'.format(attribute_name): attribute_value})
+
+        connection.commit()
+        connection.close()
+
+        # Update root data
+        self.modify_user = self.get_user(user_id)
 
     def add_transcripts(self, user_id, transcripts):
         """
@@ -615,7 +638,6 @@ class DropdownDelegate(QtGui.QItemDelegate):
         self._data = data
 
     def createEditor(self, parent, option, index):
-        model_value = index.model().data(index, QtCore.Qt.DisplayRole)
 
         editor = QtGui.QComboBox(parent)
         editor.addItems(self._data)
@@ -626,7 +648,6 @@ class DropdownDelegate(QtGui.QItemDelegate):
 
         model_value = index.model().data(index, QtCore.Qt.EditRole)
 
-        # editor.setEditText(model_value)
         current_index = editor.findText(model_value)
         if current_index > 0:
             editor.setCurrentIndex(current_index)
@@ -634,7 +655,6 @@ class DropdownDelegate(QtGui.QItemDelegate):
     def setModelData(self, editor, model, index):
         editor_value = editor.currentText()
         model.setData(index, editor_value, QtCore.Qt.EditRole)
-        # ModelDataSet(editorValue)
 
 
 class ApplicantModel(QtCore.QAbstractTableModel):
@@ -768,6 +788,76 @@ class FoundApplicantModel(QtCore.QAbstractTableModel):
                 return self.users[row].phone
 
 
+class EditApplicantModel(QtCore.QAbstractTableModel):
+    def __init__(self, starrs_data, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+
+        self.starrs_data = starrs_data
+
+        self.header = ['  User Id  ',
+                       '  First Name ',
+                       '  Middle Name ',
+                       '  Last Name',
+                       '  Email ',
+                       '  Address  ',
+                       '  Phone  ']
+
+    # Build-in functions
+    def flags(self, index):
+
+        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+
+    def headerData(self, col, orientation, role):
+
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+            return self.header[col]
+
+    def rowCount(self, parent):
+
+        return 1
+
+    def columnCount(self, parent):
+
+        return len(self.header)
+
+    def data(self, index, role):
+
+        if not index.isValid():
+            return
+
+        column = index.column()
+
+        if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
+
+            if column == 0:
+
+                return self.starrs_data.modify_user.id
+
+            if column == 1:
+
+                return self.starrs_data.modify_user.first_name
+
+        if role == QtCore.Qt.EditRole:
+
+            if column == 1:
+                return self.starrs_data.modify_user.first_name
+
+    def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
+        """
+        When table cell is edited
+        """
+
+        column = index.column()
+        user_id = self.starrs_data.modify_user.id
+
+        if role == QtCore.Qt.EditRole:
+
+            if column == 1:
+                self.starrs_data.update_user_attribute('first_name', user_id, cell_data)
+
+            return True
+
+
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def __init__(self, parent=None):
         super(STARRS, self).__init__(parent=parent)
@@ -801,6 +891,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # 1)
         self.btnSubmitApplication.pressed.connect(self.submit_application)
         self.btnCheckApplicationStatus.pressed.connect(self.check_application_status)
+        self.btnLoadApplicationData.pressed.connect(self.load_application_data)
         self.btnEnroll.pressed.connect(self.enroll)
         # 2)
         self.btnFindApplicant.pressed.connect(self.find_applicant)
@@ -1050,6 +1141,16 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         if users:
             self.tabFoundApplicants.setModel(FoundApplicantModel(users))
+
+    def load_application_data(self):
+
+        user_id = self.linStudentID.text()
+        user = self.starrs_data.get_user(user_id)
+        application = self.starrs_data.get_application(user_id)
+
+        self.starrs_data.init_update_application(user_id)
+
+        self.tabApplicationData.setModel(EditApplicantModel(self.starrs_data))
 
     # 2) Admission process
     def add_transcripts(self):

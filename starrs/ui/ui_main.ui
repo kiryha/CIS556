@@ -436,59 +436,95 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="btnCheckApplicationStatus">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>45</height>
-               </size>
-              </property>
-              <property name="text">
+             <widget class="QGroupBox" name="groupBox_3">
+              <property name="title">
                <string>Check Application Status</string>
               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <item>
+                <widget class="QPushButton" name="btnCheckApplicationStatus">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Check Application Status</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSplitter" name="splitter_27">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <widget class="QLabel" name="labApplicationStatus">
+                  <property name="maximumSize">
+                   <size>
+                    <width>120</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Application status:</string>
+                  </property>
+                 </widget>
+                 <widget class="QLineEdit" name="linApplicationStatus">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
-             <widget class="QSplitter" name="splitter_27">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+             <widget class="QGroupBox" name="groupBox_6">
+              <property name="title">
+               <string>Modify Appliction Data</string>
               </property>
-              <widget class="QLabel" name="labApplicationStatus">
-               <property name="maximumSize">
-                <size>
-                 <width>120</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Application status:</string>
-               </property>
-              </widget>
-              <widget class="QLineEdit" name="linApplicationStatus">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <item>
+                <widget class="QPushButton" name="btnLoadApplicationData">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Load Application Data</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTableView" name="tabApplicationData"/>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
-             <widget class="Line" name="line">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="btnEnroll">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>45</height>
-               </size>
-              </property>
-              <property name="text">
+             <widget class="QGroupBox" name="groupBox_5">
+              <property name="title">
                <string>Enroll to Database University</string>
               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <item>
+                <widget class="QPushButton" name="btnEnroll">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Enroll to Database University</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
