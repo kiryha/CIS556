@@ -10,6 +10,15 @@ scripts_root = os.path.dirname(__file__).replace('\\', '/')
 
 # Database
 schema = {
+    'user': {
+        0: 'id',
+        1: 'first_name',
+        2: 'middle_name',
+        3: 'last_name',
+        4: 'email',
+        5: 'address',
+        6: 'phone'},
+
     'application': {
          7: 'transcripts',
          8: 'gre_verbal',
@@ -26,9 +35,24 @@ schema = {
          19: 'prior2_major',
          20: 'prior2_year',
          21: 'prior2_gpa',
-         22: 'prior2_university'
-    }
+         22: 'prior2_university'},
+
+    'recommendation': {
+        23: 'name',
+        24: 'email',
+        25: 'title',
+        26: 'affiliation',
+        27: 'name',
+        28: 'email',
+        29: 'title',
+        30: 'affiliation',
+        31: 'name',
+        32: 'email',
+        33: 'title',
+        34: 'affiliation'}
 }
+
+
 def init_database(sql_file_path):
     """
     Create database tables
@@ -230,6 +254,7 @@ class StarrsData:
         self.pending_applications = []
         self.modify_user = None
         self.modify_application = None
+        self.modify_recommendations = []
 
         self.init_starrs_data()
 
@@ -242,6 +267,10 @@ class StarrsData:
 
         self.modify_user = self.get_user(user_id)
         self.modify_application = self.get_application(user_id)
+
+        recommendations = self.get_recommendations(user_id)
+        if recommendations:
+            self.modify_recommendations.extend(recommendations)
 
     # Tuple to object conversion
     def convert_to_user(self, user_tuples):
@@ -502,6 +531,21 @@ class StarrsData:
 
         return recommendation
 
+    def get_recommendation(self, id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM recommendation WHERE id=:id",
+                       {'id': id})
+
+        recommendation_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if recommendation_tuple:
+            return self.convert_to_recommendation([recommendation_tuple])[0]
+
     def get_recommendations(self, user_id):
 
         connection = sqlite3.connect(self.sql_file_path)
@@ -516,6 +560,24 @@ class StarrsData:
 
         if recommendation_tuples:
             return self.convert_to_recommendation(recommendation_tuples)
+
+    def update_recommendation(self, recommendation_index, id, attribute_name, attribute_value):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE recommendation SET "
+                       "{0}=:{0} WHERE "
+                       "id=:id".format(attribute_name),
+
+                       {'id': id,
+                        '{0}'.format(attribute_name): attribute_value})
+
+        connection.commit()
+        connection.close()
+
+        # Update root data
+        self.modify_recommendations[recommendation_index] = self.get_recommendation(id)
 
     def update_status(self, user_id, status):
         """
@@ -693,7 +755,7 @@ class DropdownDelegate(QtGui.QItemDelegate):
         model.setData(index, editor_value, QtCore.Qt.EditRole)
 
 
-class ApplicantModel(QtCore.QAbstractTableModel):
+class ReviewApplicantModel(QtCore.QAbstractTableModel):
     def __init__(self, starrs_data, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
@@ -824,20 +886,20 @@ class FoundApplicantModel(QtCore.QAbstractTableModel):
                 return self.users[row].phone
 
 
-class EditApplicantModel(QtCore.QAbstractTableModel):
+class EditApplicationModel(QtCore.QAbstractTableModel):
     def __init__(self, starrs_data, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
         self.starrs_data = starrs_data
 
-        self.header = ['  User Id  ',
+        self.header = ['  User Id  ',  # User
                        '  First Name ',
                        '  Middle Name ',
                        '  Last Name',
                        '  Email ',
                        '  Address  ',
                        '  Phone  ',
-                       '  Transcripts ',
+                       '  Transcripts ',  # Application
                        '  GRE Verbal  ',
                        '  GRE Quantitative  ',
                        '  GER Analytical  ',
@@ -852,7 +914,19 @@ class EditApplicantModel(QtCore.QAbstractTableModel):
                        '  Prior 2 Major  ',
                        '  Prior 2 Year  ',
                        '  Prior 2 GPA  ',
-                       '  Prior 2 University  ']
+                       '  Prior 2 University  ',
+                       '  R1 Name  ',  # Recommendations
+                       '  R1 Email  ',
+                       '  R1 Title  ',
+                       '  R1 Affiliation  ',
+                       '  R2 Name  ',
+                       '  R2 Email  ',
+                       '  R2 Title  ',
+                       '  R2 Affiliation  ',
+                       '  R3 Name  ',
+                       '  R3 Email  ',
+                       '  R3 Title  ',
+                       '  R3 Affiliation']
 
     # Build-in functions
     def flags(self, index):
@@ -885,41 +959,25 @@ class EditApplicantModel(QtCore.QAbstractTableModel):
 
         if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
 
-            if column == 0:
-                return self.starrs_data.modify_user.id
-            elif column == 1:
-                return self.starrs_data.modify_user.first_name
-            elif column == 2:
-                return self.starrs_data.modify_user.middle_name
-            elif column == 3:
-                return self.starrs_data.modify_user.last_name
-            elif column == 4:
-                return self.starrs_data.modify_user.email
-            elif column == 5:
-                return self.starrs_data.modify_user.address
-            elif column == 6:
-                return self.starrs_data.modify_user.phone
-            else:
+            if column in range(0, 7):
+                attribute = schema['user'][column]
+                return eval('self.starrs_data.modify_user.{0}'.format(attribute))
+            elif column in range(7, 23):
                 attribute = schema['application'][column]
                 return eval('self.starrs_data.modify_application.{0}'.format(attribute))
+            else:
+                return self.get_recommendation(column)
 
         if role == QtCore.Qt.EditRole:
 
-            if column == 1:
-                return self.starrs_data.modify_user.first_name
-            elif column == 2:
-                return self.starrs_data.modify_user.middle_name
-            elif column == 3:
-                return self.starrs_data.modify_user.last_name
-            elif column == 4:
-                return self.starrs_data.modify_user.email
-            elif column == 5:
-                return self.starrs_data.modify_user.address
-            elif column == 6:
-                return self.starrs_data.modify_user.phone
-            else:
+            if column in range(0, 7):
+                attribute = schema['user'][column]
+                return eval('self.starrs_data.modify_user.{0}'.format(attribute))
+            elif column in range(7, 23):
                 attribute = schema['application'][column]
                 return eval('self.starrs_data.modify_application.{0}'.format(attribute))
+            else:
+                return self.get_recommendation(column)
 
     def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
         """
@@ -931,23 +989,45 @@ class EditApplicantModel(QtCore.QAbstractTableModel):
 
         if role == QtCore.Qt.EditRole:
 
-            if column == 1:
-                self.starrs_data.update_user_attribute('first_name', user_id, cell_data)
-            elif column == 2:
-                self.starrs_data.update_user_attribute('middle_name', user_id, cell_data)
-            elif column == 3:
-                self.starrs_data.update_user_attribute('last_name', user_id, cell_data)
-            elif column == 4:
-                self.starrs_data.update_user_attribute('email', user_id, cell_data)
-            elif column == 5:
-                self.starrs_data.update_user_attribute('address', user_id, cell_data)
-            elif column == 6:
-                self.starrs_data.update_user_attribute('phone', user_id, cell_data)
-            else:
+            if column in range(1, 7):
+                attribute = schema['user'][column]
+                self.starrs_data.update_user_attribute(attribute, user_id, cell_data)
+            elif column in range(7, 23):
                 attribute = schema['application'][column]
                 self.starrs_data.update_application_attribute(attribute, user_id, cell_data)
+            else:
+                recommendation_index = self.get_index(column)
+                recommendation = self.starrs_data.modify_recommendations[recommendation_index]
+                attribute = schema['recommendation'][column]
+                self.starrs_data.update_recommendation(recommendation_index, recommendation.id, attribute, cell_data)
 
             return True
+
+    # Custom
+    def get_index(self, column):
+        """
+        Return index of recommendation object by column
+        """
+
+        if column in range(23, 27):
+            index = 0
+        elif column in range(27, 31):
+            index = 1
+        else:
+            index = 2
+
+        return index
+
+    def get_recommendation(self, column):
+        """
+        Return recommendation table data for current column and list index
+        """
+
+        attribute = schema['recommendation'][column]
+        index = self.get_index(column)
+
+        if index + 1 <= len(self.starrs_data.modify_recommendations):
+            return eval('self.starrs_data.modify_recommendations[{0}].{1}'.format(index, attribute))
 
 
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
@@ -989,7 +1069,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnFindApplicant.pressed.connect(self.find_applicant)
         self.btnSetTranscripts.pressed.connect(self.add_transcripts)
         self.btnSetRecomendations.pressed.connect(self.add_recommendations)
-        self.btnUpdatePendingApplicants.pressed.connect(self.update_applicants)
+        self.btnLoadPendingApplicants.pressed.connect(self.update_applicants)
 
     # Data and UI setup
     def init_ui(self):
@@ -1018,18 +1098,30 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linPriorGPA2.setText('3.6')
         self.linPriorUniversity2.setText('KTILP')
         self.linRecomendation1Name.setText('Richard Feynman')
-        self.linRecomendation1Email.setText('rick@alamos.net')
+        self.linRecomendation1Email.setText('atom@alamos.net')
         self.linRecomendation1Title.setText('physicist')
-        self.linRecomendation1Affiliation.setText('what is it?')
+        self.linRecomendation1Affiliation.setText('nuclear')
+        self.linRecomendation2Name.setText('Hubert J Farnsworth')
+        self.linRecomendation2Email.setText('express@futurama.com')
+        self.linRecomendation2Title.setText('professor')
+        self.linRecomendation2Affiliation.setText('space')
+        self.linRecomendation3Name.setText('Rick Sanchez')
+        self.linRecomendation3Email.setText('rick@morty.com')
+        self.linRecomendation3Title.setText('psycho')
+        self.linRecomendation3Affiliation.setText('universe')
         # Admission
         self.linRecomendationName_1.setText('Richard Feynman')
-        self.linRecomendationEmail_1.setText('rick@alamos.net')
+        self.linRecomendationEmail_1.setText('atom@alamos.net')
         self.linRecomendationTitle_1.setText('physicist')
-        self.linRecomendationAffiliation_1.setText('The best!')
+        self.linRecomendationAffiliation_1.setText('nuclear')
         self.linRecomendationName_2.setText('Hubert J Farnsworth')
         self.linRecomendationEmail_2.setText('express@futurama.com')
         self.linRecomendationTitle_2.setText('professor')
-        self.linRecomendationAffiliation_2.setText('Cords')
+        self.linRecomendationAffiliation_2.setText('space')
+        self.linRecomendationName_3.setText('Rick Sanchez')
+        self.linRecomendationEmail_3.setText('rick@morty.com')
+        self.linRecomendationTitle_3.setText('psycho')
+        self.linRecomendationAffiliation_3.setText('universe')
 
         # UI controls
         self.comDegreeSought.addItems(self.degrees)
@@ -1039,19 +1131,20 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.comRecomendationScore_3.addItems(self.scores)
 
         # Tables
-        self.setup_table(self.tabApplicantData)
+        self.setup_table(self.tabReviewAdmitApplicant)
+        self.setup_table(self.tabEditApplication)
         self.setup_table(self.tabFoundApplicants)
 
     def init_data(self):
 
         self.starrs_data = StarrsData(self.sql_file_path)
-        self.applicant_model = ApplicantModel(self.starrs_data)
-        self.tabApplicantData.setModel(self.applicant_model)
+        self.applicant_model = ReviewApplicantModel(self.starrs_data)
+        self.tabReviewAdmitApplicant.setModel(self.applicant_model)
 
-        ranking = DropdownDelegate(self.rankings, self.tabApplicantData)
-        decision = DropdownDelegate(self.decisions, self.tabApplicantData)
-        self.tabApplicantData.setItemDelegateForColumn(3, ranking)
-        self.tabApplicantData.setItemDelegateForColumn(5, decision)
+        ranking = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
+        decision = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
+        self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking)
+        self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, decision)
 
     def get_ui_apply(self):
 
@@ -1109,13 +1202,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         table.horizontalHeader().setResizeMode(QtGui.QHeaderView.ResizeToContents)
         table.horizontalHeader().setStretchLastSection(True)
         table.setItemDelegate(AlignDelegate())
-
-    def init_applicants(self):
-
-        ranking = DropdownDelegate(self.rankings, self.tabApplicantData)
-        decision = DropdownDelegate(self.decisions, self.tabApplicantData)
-        self.tabApplicantData.setItemDelegateForColumn(3, ranking)
-        self.tabApplicantData.setItemDelegateForColumn(5, decision)
 
     def update_applicants(self):
 
@@ -1237,12 +1323,9 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def load_application_data(self):
 
         user_id = self.linStudentID.text()
-        user = self.starrs_data.get_user(user_id)
-        application = self.starrs_data.get_application(user_id)
-
         self.starrs_data.init_update_application(user_id)
 
-        self.tabApplicationData.setModel(EditApplicantModel(self.starrs_data))
+        self.tabEditApplication.setModel(EditApplicationModel(self.starrs_data))
 
     # 2) Admission process
     def add_transcripts(self):

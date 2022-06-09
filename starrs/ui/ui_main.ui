@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>878</height>
+    <width>691</width>
+    <height>902</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -500,7 +500,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QTableView" name="tabApplicationData"/>
+                <widget class="QTableView" name="tabEditApplication"/>
                </item>
               </layout>
              </widget>
@@ -567,7 +567,14 @@
                <string>Applicant ID | Last Name</string>
               </property>
              </widget>
-             <widget class="QLineEdit" name="linSearchApplicantID"/>
+             <widget class="QLineEdit" name="linSearchApplicantID">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
              <widget class="QLineEdit" name="linSearchApplicantLastname"/>
             </widget>
            </item>
@@ -583,7 +590,7 @@
              <property name="maximumSize">
               <size>
                <width>16777215</width>
-               <height>100</height>
+               <height>200</height>
               </size>
              </property>
             </widget>
@@ -594,7 +601,7 @@
         <item>
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
-           <string>Update Student Data</string>
+           <string>Set or Update Student Transcripts and Recomendations</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>
@@ -724,6 +731,9 @@
               <property name="text">
                <string/>
               </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
              </widget>
              <widget class="QLineEdit" name="linRecomendationName_3"/>
              <widget class="QLineEdit" name="linRecomendationEmail_3"/>
@@ -733,29 +743,72 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="btnSetTranscripts">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>35</height>
-              </size>
+            <widget class="QSplitter" name="splitter_14">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
-             <property name="text">
-              <string>Submit Transcripts Status</string>
-             </property>
+             <widget class="QPushButton" name="btnSetTranscripts">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>35</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Submit Transcripts Status</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="btnSetRecomendations">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>35</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Submit Recomendations</string>
+              </property>
+             </widget>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="btnSetRecomendations">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>35</height>
-              </size>
+            <widget class="QSplitter" name="splitter_26">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
-             <property name="text">
-              <string>Submit Recomendations</string>
-             </property>
+             <widget class="QPushButton" name="btnLoadTransRecom">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>35</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Load Applicant Transcripts and Recomendations</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="btnUpdateTranscripts">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>35</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Update Transcripts</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="btnUpdateRecomendations">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>35</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Update Reccomendations</string>
+              </property>
+             </widget>
             </widget>
            </item>
           </layout>
@@ -770,15 +823,15 @@
            <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>List of Applicants Pending Admission Decision:</string>
+              <string>List of Applicants Pending Decision:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QTableView" name="tabApplicantData"/>
+            <widget class="QTableView" name="tabReviewAdmitApplicant"/>
            </item>
            <item>
-            <widget class="QPushButton" name="btnUpdatePendingApplicants">
+            <widget class="QPushButton" name="btnLoadPendingApplicants">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -786,8 +839,39 @@
               </size>
              </property>
              <property name="text">
-              <string>Update List of Decision Pending Applicants</string>
+              <string>Load Decision Pending Applicants</string>
              </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSplitter" name="splitter_40">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <widget class="QLabel" name="label_36">
+              <property name="maximumSize">
+               <size>
+                <width>80</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Applicant ID:</string>
+              </property>
+             </widget>
+             <widget class="QLineEdit" name="linLoadApplicantByID">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="btnLoadApplicantByID">
+              <property name="text">
+               <string>Load Applicant By ID</string>
+              </property>
+             </widget>
             </widget>
            </item>
           </layout>
@@ -827,7 +911,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>700</width>
+     <width>691</width>
      <height>21</height>
     </rect>
    </property>
