@@ -270,6 +270,7 @@ class StarrsData:
 
         recommendations = self.get_recommendations(user_id)
         if recommendations:
+            del self.modify_recommendations[:]
             self.modify_recommendations.extend(recommendations)
 
     # Tuple to object conversion
