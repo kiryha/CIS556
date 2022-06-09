@@ -9,6 +9,26 @@ scripts_root = os.path.dirname(__file__).replace('\\', '/')
 
 
 # Database
+schema = {
+    'application': {
+         7: 'transcripts',
+         8: 'gre_verbal',
+         9: 'gre_quantitative',
+         10: 'gre_analytical',
+         11: 'experience',
+         12: 'interest',
+         13: 'admission_term',
+         14: 'degree_sought',
+         15: 'prior1_major',
+         16: 'prior1_year',
+         17: 'prior1_gpa',
+         18: 'prior1_university',
+         19: 'prior2_major',
+         20: 'prior2_year',
+         21: 'prior2_gpa',
+         22: 'prior2_university'
+    }
+}
 def init_database(sql_file_path):
     """
     Create database tables
@@ -318,6 +338,22 @@ class StarrsData:
         if user_tuples:
             return self.convert_to_user(user_tuples)
 
+    def update_user_attribute(self, attribute_name, user_id, attribute_value):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE user SET {0}=:{0} WHERE id=:id".format(attribute_name),
+
+                       {'id': user_id,
+                        '{0}'.format(attribute_name): attribute_value})
+
+        connection.commit()
+        connection.close()
+
+        # Update root data
+        self.modify_user = self.get_user(user_id)
+
     def add_application(self, application_tuple):
 
         application = Application(application_tuple)
@@ -396,21 +432,21 @@ class StarrsData:
         if application_tuple:
             return self.convert_to_application([application_tuple])[0]
 
-    def update_user_attribute(self, attribute_name, user_id, attribute_value):
+    def update_application_attribute(self, attribute_name, user_id, attribute_value):
 
         connection = sqlite3.connect(self.sql_file_path)
         cursor = connection.cursor()
 
-        cursor.execute("UPDATE user SET {0}=:{0} WHERE id=:id".format(attribute_name),
+        cursor.execute("UPDATE application SET {0}=:{0} WHERE user_id=:user_id".format(attribute_name),
 
-                       {'id': user_id,
+                       {'user_id': user_id,
                         '{0}'.format(attribute_name): attribute_value})
 
         connection.commit()
         connection.close()
 
         # Update root data
-        self.modify_user = self.get_user(user_id)
+        self.modify_application = self.get_application(user_id)
 
     def add_transcripts(self, user_id, transcripts):
         """
@@ -800,12 +836,32 @@ class EditApplicantModel(QtCore.QAbstractTableModel):
                        '  Last Name',
                        '  Email ',
                        '  Address  ',
-                       '  Phone  ']
+                       '  Phone  ',
+                       '  Transcripts ',
+                       '  GRE Verbal  ',
+                       '  GRE Quantitative  ',
+                       '  GER Analytical  ',
+                       '  Experience  ',
+                       '  Interest  ',
+                       '  Admission Term  ',
+                       '  Degree  ',
+                       '  Prior 1 Major  ',
+                       '  Prior 1 Year  ',
+                       '  Prior 1 GPA  ',
+                       '  Prior 1 University  ',
+                       '  Prior 2 Major  ',
+                       '  Prior 2 Year  ',
+                       '  Prior 2 GPA  ',
+                       '  Prior 2 University  ']
 
     # Build-in functions
     def flags(self, index):
 
-        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+        column = index.column()
+        if column == 0:  # Code State Type
+            return QtCore.Qt.ItemIsEnabled
+        else:
+            return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
 
     def headerData(self, col, orientation, role):
 
@@ -830,17 +886,40 @@ class EditApplicantModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
 
             if column == 0:
-
                 return self.starrs_data.modify_user.id
-
-            if column == 1:
-
+            elif column == 1:
                 return self.starrs_data.modify_user.first_name
+            elif column == 2:
+                return self.starrs_data.modify_user.middle_name
+            elif column == 3:
+                return self.starrs_data.modify_user.last_name
+            elif column == 4:
+                return self.starrs_data.modify_user.email
+            elif column == 5:
+                return self.starrs_data.modify_user.address
+            elif column == 6:
+                return self.starrs_data.modify_user.phone
+            else:
+                attribute = schema['application'][column]
+                return eval('self.starrs_data.modify_application.{0}'.format(attribute))
 
         if role == QtCore.Qt.EditRole:
 
             if column == 1:
                 return self.starrs_data.modify_user.first_name
+            elif column == 2:
+                return self.starrs_data.modify_user.middle_name
+            elif column == 3:
+                return self.starrs_data.modify_user.last_name
+            elif column == 4:
+                return self.starrs_data.modify_user.email
+            elif column == 5:
+                return self.starrs_data.modify_user.address
+            elif column == 6:
+                return self.starrs_data.modify_user.phone
+            else:
+                attribute = schema['application'][column]
+                return eval('self.starrs_data.modify_application.{0}'.format(attribute))
 
     def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
         """
@@ -854,6 +933,19 @@ class EditApplicantModel(QtCore.QAbstractTableModel):
 
             if column == 1:
                 self.starrs_data.update_user_attribute('first_name', user_id, cell_data)
+            elif column == 2:
+                self.starrs_data.update_user_attribute('middle_name', user_id, cell_data)
+            elif column == 3:
+                self.starrs_data.update_user_attribute('last_name', user_id, cell_data)
+            elif column == 4:
+                self.starrs_data.update_user_attribute('email', user_id, cell_data)
+            elif column == 5:
+                self.starrs_data.update_user_attribute('address', user_id, cell_data)
+            elif column == 6:
+                self.starrs_data.update_user_attribute('phone', user_id, cell_data)
+            else:
+                attribute = schema['application'][column]
+                self.starrs_data.update_application_attribute(attribute, user_id, cell_data)
 
             return True
 
