@@ -259,22 +259,17 @@ class StarrsData:
         self.display_applications = []
         self.display_recommendations = []
 
-        self.init_starrs_data()
+    # Init data
+    def clear_data(self):
 
-    # Data init
-    def init_starrs_data(self):
-
-        self.get_pending_applicants()
-
-    def init_update_application(self, user_id):
-
-        self.modify_user = self.get_user(user_id)
-        self.modify_application = self.get_application(user_id)
-
-        recommendations = self.get_recommendations(user_id)
-        if recommendations:
-            del self.modify_recommendations[:]
-            self.modify_recommendations.extend(recommendations)
+        del self.pending_users[:]
+        del self.pending_applications[:]
+        self.modify_user = None
+        self.modify_application = None
+        del self.modify_recommendations[:]
+        del self.display_users[:]
+        del self.display_applications[:]
+        del self.display_recommendations[:]
 
     # Tuple to object conversion
     def convert_to_user(self, user_tuples):
@@ -697,6 +692,18 @@ class StarrsData:
                 self.pending_applications[index] = self.get_application(user_id)
 
     # Multi step actions
+    def load_applicant_data(self, user_id):
+
+        # Clean existing data
+        del self.modify_recommendations[:]
+
+        self.modify_user = self.get_user(user_id)
+        self.modify_application = self.get_application(user_id)
+
+        recommendations = self.get_recommendations(user_id)
+        if recommendations:
+            self.modify_recommendations.extend(recommendations)
+
     def get_pending_applicants(self):
         """
         Get and return list of user IDs who applied to university, their data was entered, but decision was not made
@@ -1006,6 +1013,9 @@ class EditApplicationModel(QtCore.QAbstractTableModel):
             return
 
         column = index.column()
+
+        if not self.starrs_data.modify_user:
+            return
 
         if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
 
@@ -1347,6 +1357,17 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             student_tuple = [None, user_id, 'I accept']
             self.starrs_data.add_student(student_tuple)
 
+    def load_application_data(self):
+
+        user_id = self.linStudentID.text()
+
+        if user_id == '':
+            self.starrs_data.clear_data()
+        else:
+            self.starrs_data.load_applicant_data(user_id)
+
+        self.tabEditApplication.setModel(EditApplicationModel(self.starrs_data))
+
     def find_applicants(self):
 
         user_id = self.linSearchApplicantID.text()
@@ -1356,28 +1377,20 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         if user_id != '':
             user_ids = [user_id]
+
         elif last_name != '':
             users = self.starrs_data.get_users_by_name(last_name)
             if users:
                 for user in users:
                     user_ids.append(user.id)
         else:
-            self.tabFoundApplicants.setModel(FoundApplicantModel([]))
+            self.starrs_data.clear_data()
+            self.tabFoundApplicants.setModel(FoundApplicantModel(self.starrs_data))
             self.statusBar().showMessage('>> Enter applicant ID or Last Name!')
 
         if user_ids:
             self.starrs_data.get_users_for_display(user_ids)
-            model = FoundApplicantModel(self.starrs_data)
-            self.tabFoundApplicants.setModel(model)
-
-    def load_application_data(self):
-
-        user_id = self.linStudentID.text()
-        if user_id == '':
-            self.tabEditApplication.setModel(EditApplicationModel([]))
-        else:
-            self.starrs_data.init_update_application(user_id)
-            self.tabEditApplication.setModel(EditApplicationModel(self.starrs_data))
+            self.tabFoundApplicants.setModel(FoundApplicantModel(self.starrs_data))
 
     # 2) Admission process
     def add_transcripts(self):
