@@ -723,6 +723,14 @@ class StarrsData:
 
         return pending_applicants_ids
 
+    def get_applicants_by_id(self, user_id):
+
+        del self.pending_users[:]
+        del self.pending_applications[:]
+
+        self.pending_users.append(self.get_user(user_id))
+        self.pending_applications.append(self.get_application(user_id))
+
 
 # STARRS Application
 class AlignDelegate(QtGui.QItemDelegate):
@@ -1070,7 +1078,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnFindApplicant.pressed.connect(self.find_applicant)
         self.btnSetTranscripts.pressed.connect(self.add_transcripts)
         self.btnSetRecomendations.pressed.connect(self.add_recommendations)
-        self.btnLoadPendingApplicants.pressed.connect(self.update_applicants)
+        self.btnLoadPendingApplicants.pressed.connect(self.load_pending_applicants)
+        self.btnLoadApplicantByID.pressed.connect(self.load_applicant)
 
     # Data and UI setup
     def init_ui(self):
@@ -1203,12 +1212,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         table.horizontalHeader().setResizeMode(QtGui.QHeaderView.ResizeToContents)
         table.horizontalHeader().setStretchLastSection(True)
         table.setItemDelegate(AlignDelegate())
-
-    def update_applicants(self):
-
-        self.applicant_model.layoutAboutToBeChanged.emit()
-        self.starrs_data.get_pending_applicants()
-        self.applicant_model.layoutChanged.emit()
 
     # Common
     def send_email(self, email, user_name, user_id):
@@ -1401,6 +1404,19 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.starrs_data.add_recommendation(recommendation_tuple)
 
         self.statusBar().showMessage('>> Applicant {0} recommendations submitted!'.format(user_id))
+
+    def load_pending_applicants(self):
+
+        self.applicant_model.layoutAboutToBeChanged.emit()
+        self.starrs_data.get_pending_applicants()
+        self.applicant_model.layoutChanged.emit()
+
+    def load_applicant(self):
+
+        user_id = self.linLoadApplicantByID.text()
+        self.applicant_model.layoutAboutToBeChanged.emit()
+        self.starrs_data.get_applicants_by_id(user_id)
+        self.applicant_model.layoutChanged.emit()
 
 
 if __name__ == "__main__":
