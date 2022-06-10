@@ -580,89 +580,6 @@ class StarrsData:
         if application_tuples:
             return self.convert_to_application(application_tuples)
 
-    # def add_recommendation(self, recommendation_tuple):
-    #     """
-    #     GS enters recommendation
-    #     """
-    #
-    #     recommendation = Recommendation(recommendation_tuple)
-    #
-    #     connection = sqlite3.connect(self.sql_file_path)
-    #     cursor = connection.cursor()
-    #
-    #     cursor.execute("INSERT INTO recommendation VALUES ("
-    #                    ":id,"
-    #                    ":user_id,"
-    #                    ":name,"
-    #                    ":email,"
-    #                    ":title,"
-    #                    ":affiliation,"
-    #                    ":score,"
-    #                    ":description)",
-    #
-    #                    {'id': cursor.lastrowid,
-    #                     'user_id': recommendation.user_id,
-    #                     'name': recommendation.name,
-    #                     'email': recommendation.email,
-    #                     'title': recommendation.title,
-    #                     'affiliation': recommendation.affiliation,
-    #                     'score': recommendation.score,
-    #                     'description': recommendation.description})
-    #
-    #     connection.commit()
-    #     recommendation.id = cursor.lastrowid  # Add database ID to the object
-    #     connection.close()
-    #
-    #     return recommendation
-    #
-    # def get_recommendation(self, id):
-    #
-    #     connection = sqlite3.connect(self.sql_file_path)
-    #     cursor = connection.cursor()
-    #
-    #     cursor.execute("SELECT * FROM recommendation WHERE id=:id",
-    #                    {'id': id})
-    #
-    #     recommendation_tuple = cursor.fetchone()
-    #
-    #     connection.close()
-    #
-    #     if recommendation_tuple:
-    #         return self.convert_to_recommendation([recommendation_tuple])[0]
-    #
-    # def get_recommendations(self, user_id):
-    #
-    #     connection = sqlite3.connect(self.sql_file_path)
-    #     cursor = connection.cursor()
-    #
-    #     cursor.execute("SELECT * FROM recommendation WHERE user_id=:user_id",
-    #                    {'user_id': user_id})
-    #
-    #     recommendation_tuples = cursor.fetchall()
-    #
-    #     connection.close()
-    #
-    #     if recommendation_tuples:
-    #         return self.convert_to_recommendation(recommendation_tuples)
-    #
-    # def update_recommendation(self, recommendation_index, id, attribute_name, attribute_value):
-    #
-    #     connection = sqlite3.connect(self.sql_file_path)
-    #     cursor = connection.cursor()
-    #
-    #     cursor.execute("UPDATE recommendation SET "
-    #                    "{0}=:{0} WHERE "
-    #                    "id=:id".format(attribute_name),
-    #
-    #                    {'id': id,
-    #                     '{0}'.format(attribute_name): attribute_value})
-    #
-    #     connection.commit()
-    #     connection.close()
-    #
-    #     # Update root data
-    #     self.modify_recommendations[recommendation_index] = self.get_recommendation(id)
-
     def update_status(self, user_id, status):
         """
         Set applicant status
@@ -1116,7 +1033,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         # Starrs data
         self.starrs_data = None
-        # self.applicant_model = None
 
         # Init UI data
         self.init_ui()
@@ -1191,13 +1107,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def init_data(self):
 
         self.starrs_data = StarrsData(self.sql_file_path)
-        # self.applicant_model = ReviewApplicantModel(self.starrs_data)
-        # self.tabReviewAdmitApplicant.setModel(self.applicant_model)
-        #
-        # ranking = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
-        # decision = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
-        # self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking)
-        # self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, decision)
 
     def get_ui_apply(self):
 
@@ -1448,10 +1357,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.statusBar().showMessage('>> Applicant {0} recommendations submitted!'.format(user_id))
 
     def load_pending_applicants(self):
-
-        # self.applicant_model.layoutAboutToBeChanged.emit()
-        # self.starrs_data.get_pending_applicants()
-        # self.applicant_model.layoutChanged.emit()
 
         self.starrs_data.get_pending_applicants()
         applicant_model = ReviewApplicantModel(self.starrs_data)
