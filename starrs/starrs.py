@@ -1370,10 +1370,24 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def load_applicant(self):
 
         user_id = self.linLoadApplicantByID.text()
-        self.applicant_model.layoutAboutToBeChanged.emit()
-        self.starrs_data.get_applicants_by_id(user_id)
-        self.applicant_model.layoutChanged.emit()
 
+        # self.applicant_model.layoutAboutToBeChanged.emit()
+        # self.starrs_data.get_applicants_by_id(user_id)
+        # self.applicant_model.layoutChanged.emit()
+
+        if user_id != '':
+            self.starrs_data.get_applicants_by_id(user_id)
+            applicant_model = ReviewApplicantModel(self.starrs_data)
+            self.tabReviewAdmitApplicant.setModel(applicant_model)
+
+            ranking = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
+            decision = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
+            self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking)
+            self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, decision)
+        else:
+            self.starrs_data.clear_data()
+            applicant_model = ReviewApplicantModel(self.starrs_data)
+            self.tabReviewAdmitApplicant.setModel(applicant_model)
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])
