@@ -441,7 +441,39 @@
                 <string>Enter student ID:</string>
                </property>
               </widget>
-              <widget class="QLineEdit" name="linStudentID"/>
+              <widget class="QLineEdit" name="linStudentID">
+               <property name="maximumSize">
+                <size>
+                 <width>50</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_6">
+              <property name="title">
+               <string>Modify Appliction Data</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <item>
+                <widget class="QPushButton" name="btnLoadApplicationData">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Load Application Data</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTableView" name="tabEditApplication"/>
+               </item>
+              </layout>
              </widget>
             </item>
             <item>
@@ -485,31 +517,6 @@
                   </property>
                  </widget>
                 </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_6">
-              <property name="title">
-               <string>Modify Appliction Data</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_13">
-               <item>
-                <widget class="QPushButton" name="btnLoadApplicationData">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>35</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Load Application Data</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QTableView" name="tabEditApplication"/>
                </item>
               </layout>
              </widget>
@@ -589,6 +596,12 @@
            </item>
            <item>
             <widget class="QPushButton" name="btnFindApplicant">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>35</height>
+              </size>
+             </property>
              <property name="text">
               <string>Find Applicant</string>
              </property>
@@ -668,46 +681,24 @@
             </widget>
            </item>
            <item>
-            <widget class="QSplitter" name="splitter_36">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <widget class="QLabel" name="label">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>400</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Recomenatations: Name | email | Title | Affiliation | Score</string>
-              </property>
-             </widget>
-            </widget>
-           </item>
-           <item>
             <widget class="QSplitter" name="splitter_37">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
              <widget class="QCheckBox" name="chbDoRecommendation_1">
+              <property name="minimumSize">
+               <size>
+                <width>500</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
-               <string/>
+               <string> Set Recommendation Score for the 1 Recommendation:</string>
               </property>
               <property name="checked">
                <bool>true</bool>
               </property>
              </widget>
-             <widget class="QLineEdit" name="linRecomendationName_1"/>
-             <widget class="QLineEdit" name="linRecomendationEmail_1"/>
-             <widget class="QLineEdit" name="linRecomendationTitle_1"/>
-             <widget class="QLineEdit" name="linRecomendationAffiliation_1"/>
              <widget class="QComboBox" name="comRecomendationScore_1"/>
             </widget>
            </item>
@@ -717,17 +708,19 @@
               <enum>Qt::Horizontal</enum>
              </property>
              <widget class="QCheckBox" name="chbDoRecommendation_2">
+              <property name="minimumSize">
+               <size>
+                <width>500</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
-               <string/>
+               <string> Set Recommendation Score for the 2  Recommendation:</string>
               </property>
               <property name="checked">
                <bool>true</bool>
               </property>
              </widget>
-             <widget class="QLineEdit" name="linRecomendationName_2"/>
-             <widget class="QLineEdit" name="linRecomendationEmail_2"/>
-             <widget class="QLineEdit" name="linRecomendationTitle_2"/>
-             <widget class="QLineEdit" name="linRecomendationAffiliation_2"/>
              <widget class="QComboBox" name="comRecomendationScore_2"/>
             </widget>
            </item>
@@ -737,17 +730,19 @@
               <enum>Qt::Horizontal</enum>
              </property>
              <widget class="QCheckBox" name="chbDoRecommendation_3">
+              <property name="minimumSize">
+               <size>
+                <width>500</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
-               <string/>
+               <string> Set Recommendation Score for the 3  Recommendation:</string>
               </property>
               <property name="checked">
                <bool>true</bool>
               </property>
              </widget>
-             <widget class="QLineEdit" name="linRecomendationName_3"/>
-             <widget class="QLineEdit" name="linRecomendationEmail_3"/>
-             <widget class="QLineEdit" name="linRecomendationTitle_3"/>
-             <widget class="QLineEdit" name="linRecomendationAffiliation_3"/>
              <widget class="QComboBox" name="comRecomendationScore_3"/>
             </widget>
            </item>
@@ -764,7 +759,7 @@
                </size>
               </property>
               <property name="text">
-               <string>Submit/Updat Transcripts Status</string>
+               <string>Submit Transcripts Status</string>
               </property>
              </widget>
              <widget class="QPushButton" name="btnSetRecomendations">
@@ -775,7 +770,7 @@
                </size>
               </property>
               <property name="text">
-               <string>Submit/Update Recomendations</string>
+               <string>Submit Recomendations Scores</string>
               </property>
              </widget>
             </widget>

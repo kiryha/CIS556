@@ -20,22 +20,33 @@ schema = {
         6: 'phone'},
 
     'application': {
-         7: 'transcripts',
-         8: 'gre_verbal',
-         9: 'gre_quantitative',
-         10: 'gre_analytical',
-         11: 'experience',
-         12: 'interest',
-         13: 'admission_term',
-         14: 'degree_sought',
-         15: 'prior1_major',
-         16: 'prior1_year',
-         17: 'prior1_gpa',
-         18: 'prior1_university',
-         19: 'prior2_major',
-         20: 'prior2_year',
-         21: 'prior2_gpa',
-         22: 'prior2_university'},
+         7: 'gre_verbal',
+         8: 'gre_quantitative',
+         9: 'gre_analytical',
+         10: 'experience',
+         11: 'interest',
+         12: 'admission_term',
+         13: 'degree_sought',
+         14: 'prior1_major',
+         15: 'prior1_year',
+         16: 'prior1_gpa',
+         17: 'prior1_university',
+         18: 'prior2_major',
+         19: 'prior2_year',
+         20: 'prior2_gpa',
+         21: 'prior2_university',
+         22: 'rec1_name',
+         23: 'rec1_email',
+         24: 'rec1_title',
+         25: 'rec1_affiliation',
+         26: 'rec2_name',
+         27: 'rec2_email',
+         28: 'rec2_title',
+         29: 'rec2_affiliation',
+         30: 'rec3_name',
+         31: 'rec3_email',
+         32: 'rec3_title',
+         33: 'rec3_affiliation'},
 
     'recommendation': {
         23: 'name',
@@ -78,7 +89,6 @@ def init_database(sql_file_path):
                     id integer primary key autoincrement,
                     user_id integer,
                     date_received text,
-                    transcripts integer,
                     gre_verbal text,
                     gre_quantitative text,
                     gre_analytical text,
@@ -94,21 +104,25 @@ def init_database(sql_file_path):
                     prior2_year text,
                     prior2_gpa text,
                     prior2_university text,
+                    rec1_name text,
+                    rec1_email text,
+                    rec1_title text,
+                    rec1_affiliation text,
+                    rec1_score text,
+                    rec2_name text,
+                    rec2_email text,
+                    rec2_title text,
+                    rec2_affiliation text,
+                    rec2_score text,
+                    rec3_name text,
+                    rec3_email text,
+                    rec3_title text,
+                    rec3_affiliation text,
+                    rec3_score text,
+                    transcripts integer,
                     status text,
                     ranking text,
                     comments text,
-                    description text,
-                    FOREIGN KEY(user_id) REFERENCES user(id)
-                    )''')
-
-    cursor.execute('''CREATE TABLE recommendation (
-                    id integer primary key autoincrement,
-                    user_id integer,
-                    name text,
-                    email text,
-                    title text,
-                    affiliation text,
-                    score text,
                     description text,
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
@@ -154,7 +168,6 @@ class Application:
         self.id = None
         self.user_id = None
         self.date_received = ''
-        self.transcripts = None
         self.gre_verbal = ''
         self.gre_quantitative = ''
         self.gre_analytical = ''
@@ -170,6 +183,22 @@ class Application:
         self.prior2_year = ''
         self.prior2_gpa = ''
         self.prior2_university = ''
+        self.rec1_name = ''
+        self.rec1_email = ''
+        self.rec1_title = ''
+        self.rec1_affiliation = ''
+        self.rec1_score = ''
+        self.rec2_name = ''
+        self.rec2_email = ''
+        self.rec2_title = ''
+        self.rec2_affiliation = ''
+        self.rec2_score = ''
+        self.rec3_name = ''
+        self.rec3_email = ''
+        self.rec3_title = ''
+        self.rec3_affiliation = ''
+        self.rec3_score = ''
+        self.transcripts = None
         self.status = ''
         self.ranking = ''
         self.comments = ''
@@ -182,51 +211,41 @@ class Application:
         self.id = application_tuple[0]
         self.user_id = application_tuple[1]
         self.date_received = application_tuple[2]
-        self.transcripts = application_tuple[3]
-        self.gre_verbal = application_tuple[4]
-        self.gre_quantitative = application_tuple[5]
-        self.gre_analytical = application_tuple[6]
-        self.experience = application_tuple[7]
-        self.interest = application_tuple[8]
-        self.admission_term = application_tuple[9]
-        self.degree_sought = application_tuple[10]
-        self.prior1_major = application_tuple[11]
-        self.prior1_year = application_tuple[12]
-        self.prior1_gpa = application_tuple[13]
-        self.prior1_university = application_tuple[14]
-        self.prior2_major = application_tuple[15]
-        self.prior2_year = application_tuple[16]
-        self.prior2_gpa = application_tuple[17]
-        self.prior2_university = application_tuple[18]
-        self.status = application_tuple[19]
-        self.ranking = application_tuple[20]
-        self.comments = application_tuple[21]
-        self.description = application_tuple[22]
-
-
-class Recommendation:
-    def __init__(self, recommendation_tuple):
-        self.id = None
-        self.user_id = None
-        self.name = None
-        self.email = None
-        self.title = None
-        self.affiliation = None
-        self.score = None
-        self.description = None
-
-        self.init(recommendation_tuple)
-
-    def init(self, recommendation_tuple):
-
-        self.id = recommendation_tuple[0]
-        self.user_id = recommendation_tuple[1]
-        self.name = recommendation_tuple[2]
-        self.email = recommendation_tuple[3]
-        self.title = recommendation_tuple[4]
-        self.affiliation = recommendation_tuple[5]
-        self.score = recommendation_tuple[6]
-        self.description = recommendation_tuple[7]
+        self.gre_verbal = application_tuple[3]
+        self.gre_quantitative = application_tuple[4]
+        self.gre_analytical = application_tuple[5]
+        self.experience = application_tuple[6]
+        self.interest = application_tuple[7]
+        self.admission_term = application_tuple[8]
+        self.degree_sought = application_tuple[9]
+        self.prior1_major = application_tuple[10]
+        self.prior1_year = application_tuple[11]
+        self.prior1_gpa = application_tuple[12]
+        self.prior1_university = application_tuple[13]
+        self.prior2_major = application_tuple[14]
+        self.prior2_year = application_tuple[15]
+        self.prior2_gpa = application_tuple[16]
+        self.prior2_university = application_tuple[17]
+        self.rec1_name = application_tuple[18]
+        self.rec1_email = application_tuple[19]
+        self.rec1_title = application_tuple[20]
+        self.rec1_affiliation = application_tuple[21]
+        self.rec1_score = application_tuple[22]
+        self.rec2_name = application_tuple[23]
+        self.rec2_email = application_tuple[24]
+        self.rec2_title = application_tuple[24]
+        self.rec2_affiliation = application_tuple[26]
+        self.rec2_score = application_tuple[27]
+        self.rec3_name = application_tuple[28]
+        self.rec3_email = application_tuple[29]
+        self.rec3_title = application_tuple[30]
+        self.rec3_affiliation = application_tuple[31]
+        self.rec3_score = application_tuple[32]
+        self.transcripts = application_tuple[33]
+        self.status = application_tuple[34]
+        self.ranking = application_tuple[35]
+        self.comments = application_tuple[36]
+        self.description = application_tuple[37]
 
 
 class Student:
@@ -252,24 +271,20 @@ class StarrsData:
         # Processed data
         self.pending_users = []
         self.pending_applications = []
-        self.modify_user = None
-        self.modify_application = None
-        self.modify_recommendations = []
+        self.edit_user = None
+        self.edit_application = None
         self.display_users = []
         self.display_applications = []
-        self.display_recommendations = []
 
     # Init data
     def clear_data(self):
 
         del self.pending_users[:]
         del self.pending_applications[:]
-        self.modify_user = None
-        self.modify_application = None
-        del self.modify_recommendations[:]
+        self.edit_user = None
+        self.edit_application = None
         del self.display_users[:]
         del self.display_applications[:]
-        del self.display_recommendations[:]
 
     # Tuple to object conversion
     def convert_to_user(self, user_tuples):
@@ -303,6 +318,7 @@ class StarrsData:
         return recommendations
 
     # Basic CURDs
+    # User
     def add_user(self, user_tuple):
 
         user = User(user_tuple)
@@ -366,7 +382,7 @@ class StarrsData:
         if user_tuples:
             return self.convert_to_user(user_tuples)
 
-    def get_users_with_transcripts(self):
+    def _get_users_with_transcripts(self):
         """
         Get list of student ids for all students with transcripts submitted by GS
         """
@@ -402,8 +418,9 @@ class StarrsData:
         connection.close()
 
         # Update root data
-        self.modify_user = self.get_user(user_id)
+        self.edit_user = self.get_user(user_id)
 
+    # Application
     def add_application(self, application_tuple):
 
         application = Application(application_tuple)
@@ -416,7 +433,6 @@ class StarrsData:
                        ":id,"
                        ":user_id,"
                        ":date_received,"
-                       ":transcripts,"
                        ":gre_verbal,"
                        ":gre_quantitative,"
                        ":gre_analytical,"
@@ -431,7 +447,23 @@ class StarrsData:
                        ":prior2_major,"
                        ":prior2_year,"
                        ":prior2_gpa,"
-                       ":prior2_university,"
+                       ":prior2_university,"                       
+                       ":rec1_name,"
+                       ":rec1_email,"
+                       ":rec1_title,"
+                       ":rec1_affiliation,"
+                       ":rec1_score,"
+                       ":rec2_name,"
+                       ":rec2_email,"
+                       ":rec2_title,"
+                       ":rec2_affiliation,"
+                       ":rec2_score,"  
+                       ":rec3_name,"
+                       ":rec3_email,"
+                       ":rec3_title,"
+                       ":rec3_affiliation,"
+                       ":rec3_score,"
+                       ":transcripts,"
                        ":status,"
                        ":ranking,"
                        ":comments,"
@@ -440,7 +472,6 @@ class StarrsData:
                        {'id': cursor.lastrowid,
                         'user_id': application.user_id,
                         'date_received': application.date_received,
-                        'transcripts': application.transcripts,
                         'gre_verbal': application.gre_verbal,
                         'gre_quantitative': application.gre_quantitative,
                         'gre_analytical': application.gre_analytical,
@@ -456,6 +487,22 @@ class StarrsData:
                         'prior2_year': application.prior2_year,
                         'prior2_gpa': application.prior2_gpa,
                         'prior2_university': application.prior2_university,
+                        'rec1_name': application.rec1_name,
+                        'rec1_email': application.rec1_email,
+                        'rec1_title': application.rec1_title,
+                        'rec1_affiliation': application.rec1_affiliation,
+                        'rec1_score': application.rec1_score,
+                        'rec2_name': application.rec2_name,
+                        'rec2_email': application.rec2_email,
+                        'rec2_title': application.rec2_title,
+                        'rec2_affiliation': application.rec2_affiliation,
+                        'rec2_score': application.rec2_score,
+                        'rec3_name': application.rec3_name,
+                        'rec3_email': application.rec3_email,
+                        'rec3_title': application.rec3_title,
+                        'rec3_affiliation': application.rec3_affiliation,
+                        'rec3_score': application.rec3_score,
+                        'transcripts': application.transcripts,
                         'status': application.status,
                         'ranking': application.status,
                         'comments': application.status,
@@ -496,7 +543,7 @@ class StarrsData:
         connection.close()
 
         # Update root data
-        self.modify_application = self.get_application(user_id)
+        self.edit_application = self.get_application(user_id)
 
     def add_transcripts(self, user_id, transcripts):
         """
@@ -517,88 +564,104 @@ class StarrsData:
         connection.commit()
         connection.close()
 
-    def add_recommendation(self, recommendation_tuple):
-        """
-        GS enters recommendation
-        """
-
-        recommendation = Recommendation(recommendation_tuple)
+    def get_pending_applications(self):
 
         connection = sqlite3.connect(self.sql_file_path)
         cursor = connection.cursor()
 
-        cursor.execute("INSERT INTO recommendation VALUES ("
-                       ":id,"
-                       ":user_id,"
-                       ":name,"
-                       ":email,"
-                       ":title,"
-                       ":affiliation,"
-                       ":score,"
-                       ":description)",
+        cursor.execute("SELECT * FROM application WHERE "
+                       "transcripts IS 1 "
+                       "AND (rec1_score IS NOT NULL OR rec2_score IS NOT NULL OR rec3_score IS NOT NULL) "
+                       "AND status IS NULL")
 
-                       {'id': cursor.lastrowid,
-                        'user_id': recommendation.user_id,
-                        'name': recommendation.name,
-                        'email': recommendation.email,
-                        'title': recommendation.title,
-                        'affiliation': recommendation.affiliation,
-                        'score': recommendation.score,
-                        'description': recommendation.description})
-
-        connection.commit()
-        recommendation.id = cursor.lastrowid  # Add database ID to the object
+        application_tuples = cursor.fetchall()
         connection.close()
 
-        return recommendation
+        if application_tuples:
+            return self.convert_to_application(application_tuples)
 
-    def get_recommendation(self, id):
-
-        connection = sqlite3.connect(self.sql_file_path)
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT * FROM recommendation WHERE id=:id",
-                       {'id': id})
-
-        recommendation_tuple = cursor.fetchone()
-
-        connection.close()
-
-        if recommendation_tuple:
-            return self.convert_to_recommendation([recommendation_tuple])[0]
-
-    def get_recommendations(self, user_id):
-
-        connection = sqlite3.connect(self.sql_file_path)
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT * FROM recommendation WHERE user_id=:user_id",
-                       {'user_id': user_id})
-
-        recommendation_tuples = cursor.fetchall()
-
-        connection.close()
-
-        if recommendation_tuples:
-            return self.convert_to_recommendation(recommendation_tuples)
-
-    def update_recommendation(self, recommendation_index, id, attribute_name, attribute_value):
-
-        connection = sqlite3.connect(self.sql_file_path)
-        cursor = connection.cursor()
-
-        cursor.execute("UPDATE recommendation SET "
-                       "{0}=:{0} WHERE "
-                       "id=:id".format(attribute_name),
-
-                       {'id': id,
-                        '{0}'.format(attribute_name): attribute_value})
-
-        connection.commit()
-        connection.close()
-
-        # Update root data
-        self.modify_recommendations[recommendation_index] = self.get_recommendation(id)
+    # def add_recommendation(self, recommendation_tuple):
+    #     """
+    #     GS enters recommendation
+    #     """
+    #
+    #     recommendation = Recommendation(recommendation_tuple)
+    #
+    #     connection = sqlite3.connect(self.sql_file_path)
+    #     cursor = connection.cursor()
+    #
+    #     cursor.execute("INSERT INTO recommendation VALUES ("
+    #                    ":id,"
+    #                    ":user_id,"
+    #                    ":name,"
+    #                    ":email,"
+    #                    ":title,"
+    #                    ":affiliation,"
+    #                    ":score,"
+    #                    ":description)",
+    #
+    #                    {'id': cursor.lastrowid,
+    #                     'user_id': recommendation.user_id,
+    #                     'name': recommendation.name,
+    #                     'email': recommendation.email,
+    #                     'title': recommendation.title,
+    #                     'affiliation': recommendation.affiliation,
+    #                     'score': recommendation.score,
+    #                     'description': recommendation.description})
+    #
+    #     connection.commit()
+    #     recommendation.id = cursor.lastrowid  # Add database ID to the object
+    #     connection.close()
+    #
+    #     return recommendation
+    #
+    # def get_recommendation(self, id):
+    #
+    #     connection = sqlite3.connect(self.sql_file_path)
+    #     cursor = connection.cursor()
+    #
+    #     cursor.execute("SELECT * FROM recommendation WHERE id=:id",
+    #                    {'id': id})
+    #
+    #     recommendation_tuple = cursor.fetchone()
+    #
+    #     connection.close()
+    #
+    #     if recommendation_tuple:
+    #         return self.convert_to_recommendation([recommendation_tuple])[0]
+    #
+    # def get_recommendations(self, user_id):
+    #
+    #     connection = sqlite3.connect(self.sql_file_path)
+    #     cursor = connection.cursor()
+    #
+    #     cursor.execute("SELECT * FROM recommendation WHERE user_id=:user_id",
+    #                    {'user_id': user_id})
+    #
+    #     recommendation_tuples = cursor.fetchall()
+    #
+    #     connection.close()
+    #
+    #     if recommendation_tuples:
+    #         return self.convert_to_recommendation(recommendation_tuples)
+    #
+    # def update_recommendation(self, recommendation_index, id, attribute_name, attribute_value):
+    #
+    #     connection = sqlite3.connect(self.sql_file_path)
+    #     cursor = connection.cursor()
+    #
+    #     cursor.execute("UPDATE recommendation SET "
+    #                    "{0}=:{0} WHERE "
+    #                    "id=:id".format(attribute_name),
+    #
+    #                    {'id': id,
+    #                     '{0}'.format(attribute_name): attribute_value})
+    #
+    #     connection.commit()
+    #     connection.close()
+    #
+    #     # Update root data
+    #     self.modify_recommendations[recommendation_index] = self.get_recommendation(id)
 
     def update_status(self, user_id, status):
         """
@@ -694,44 +757,26 @@ class StarrsData:
     # Multi step actions
     def load_applicant_data(self, user_id):
 
-        # Clean existing data
-        del self.modify_recommendations[:]
-
-        self.modify_user = self.get_user(user_id)
-        self.modify_application = self.get_application(user_id)
-
-        recommendations = self.get_recommendations(user_id)
-        if recommendations:
-            self.modify_recommendations.extend(recommendations)
+        self.edit_user = self.get_user(user_id)
+        self.edit_application = self.get_application(user_id)
 
     def get_pending_applicants(self):
         """
         Get and return list of user IDs who applied to university, their data was entered, but decision was not made
         """
 
-        # Get pending applicants isd
-        pending_applicants_ids = []
-
-        user_ids = self.get_users_with_transcripts()
-
-        if not user_ids:
-            del self.pending_users[:]
-            del self.pending_applications[:]
-            return
-
-        for user_id in user_ids:
-            if self.get_recommendations(user_id):
-                pending_applicants_ids.append(user_id)
-
-        # Get pending applicants object and update class variables
+        # Clear data
         del self.pending_users[:]
         del self.pending_applications[:]
 
-        for user_id in pending_applicants_ids:
-            self.pending_users.append(self.get_user(user_id))
-            self.pending_applications.append(self.get_application(user_id))
+        pending_applications = self.get_pending_applications()
 
-        return pending_applicants_ids
+        if not pending_applications:
+            return
+
+        for application in pending_applications:
+            self.pending_applications.append(application)
+            self.pending_users.append(self.get_user(application.user_id))
 
     def get_applicants_by_id(self, user_id):
 
@@ -746,18 +791,14 @@ class StarrsData:
         # Clean existing data
         del self.display_users[:]
         del self.display_applications[:]
-        del self.display_recommendations[:]
 
         # Add new data
         for index, user_id in enumerate(user_ids):
 
-            self.display_users.append(self.get_user(user_id))
-            self.display_applications.append(self.get_application(user_id))
-
-            recommendations = self.get_recommendations(user_id)
-            if not recommendations:
-                recommendations = []
-            self.display_recommendations.append(recommendations)
+            user = self.get_user(user_id)
+            if user:
+                self.display_users.append(user)
+                self.display_applications.append(self.get_application(user_id))
 
 
 # STARRS Application
@@ -874,7 +915,7 @@ class ReviewApplicantModel(QtCore.QAbstractTableModel):
             return True
 
 
-class FoundApplicantModel(QtCore.QAbstractTableModel):
+class DisplayApplicantModel(QtCore.QAbstractTableModel):
     def __init__(self, starrs_data, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
@@ -883,10 +924,11 @@ class FoundApplicantModel(QtCore.QAbstractTableModel):
                        '  Email  ',
                        '  First Name ',
                        '  Last Name  ',
-                       '  Transcripts  ',
                        '  R1 Score  ',
                        '  R2 Score  ',
-                       '  R3 Score  ']
+                       '  R3 Score  ',
+                       '  Transcripts  ',
+                       '  Status  ']
 
     def flags(self, index):
 
@@ -912,7 +954,6 @@ class FoundApplicantModel(QtCore.QAbstractTableModel):
 
         row = index.row()
         column = index.column()
-        recommendations = self.starrs_data.display_recommendations[row]
 
         if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
             if column == 0:
@@ -928,19 +969,19 @@ class FoundApplicantModel(QtCore.QAbstractTableModel):
                 return self.starrs_data.display_users[row].last_name
 
             if column == 4:
-                return self.starrs_data.display_applications[row].transcripts
+                return self.starrs_data.display_applications[row].rec1_score
 
             if column == 5:
-                if len(recommendations) > 0:
-                    return recommendations[0].score
+                return self.starrs_data.display_applications[row].rec2_score
 
             if column == 6:
-                if len(recommendations) > 1:
-                    return recommendations[1].score
+                return self.starrs_data.display_applications[row].rec3_score
 
             if column == 7:
-                if len(recommendations) > 2:
-                    return recommendations[2].score
+                return self.starrs_data.display_applications[row].transcripts
+
+            if column == 8:
+                return self.starrs_data.display_applications[row].status
 
 
 class EditApplicationModel(QtCore.QAbstractTableModel):
@@ -949,15 +990,14 @@ class EditApplicationModel(QtCore.QAbstractTableModel):
 
         self.starrs_data = starrs_data
 
-        self.header = ['  User Id  ',  # User
+        self.header = ['  User Id  ',  # 0 User
                        '  First Name ',
                        '  Middle Name ',
                        '  Last Name',
                        '  Email ',
                        '  Address  ',
                        '  Phone  ',
-                       '  Transcripts ',  # Application
-                       '  GRE Verbal  ',
+                       '  GRE Verbal  ',  # 7 Application
                        '  GRE Quantitative  ',
                        '  GER Analytical  ',
                        '  Experience  ',
@@ -972,7 +1012,7 @@ class EditApplicationModel(QtCore.QAbstractTableModel):
                        '  Prior 2 Year  ',
                        '  Prior 2 GPA  ',
                        '  Prior 2 University  ',
-                       '  R1 Name  ',  # Recommendations
+                       '  R1 Name  ',
                        '  R1 Email  ',
                        '  R1 Title  ',
                        '  R1 Affiliation  ',
@@ -1014,30 +1054,26 @@ class EditApplicationModel(QtCore.QAbstractTableModel):
 
         column = index.column()
 
-        if not self.starrs_data.modify_user:
+        if not self.starrs_data.edit_user:
             return
 
         if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
 
             if column in range(0, 7):
                 attribute = schema['user'][column]
-                return eval('self.starrs_data.modify_user.{0}'.format(attribute))
-            elif column in range(7, 23):
-                attribute = schema['application'][column]
-                return eval('self.starrs_data.modify_application.{0}'.format(attribute))
+                return eval('self.starrs_data.edit_user.{0}'.format(attribute))
             else:
-                return self.get_recommendation(column)
+                attribute = schema['application'][column]
+                return eval('self.starrs_data.edit_application.{0}'.format(attribute))
 
         if role == QtCore.Qt.EditRole:
 
             if column in range(0, 7):
                 attribute = schema['user'][column]
-                return eval('self.starrs_data.modify_user.{0}'.format(attribute))
-            elif column in range(7, 23):
-                attribute = schema['application'][column]
-                return eval('self.starrs_data.modify_application.{0}'.format(attribute))
+                return eval('self.starrs_data.edit_user.{0}'.format(attribute))
             else:
-                return self.get_recommendation(column)
+                attribute = schema['application'][column]
+                return eval('self.starrs_data.edit_application.{0}'.format(attribute))
 
     def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
         """
@@ -1045,49 +1081,18 @@ class EditApplicationModel(QtCore.QAbstractTableModel):
         """
 
         column = index.column()
-        user_id = self.starrs_data.modify_user.id
+        user_id = self.starrs_data.edit_user.id
 
         if role == QtCore.Qt.EditRole:
 
             if column in range(1, 7):
                 attribute = schema['user'][column]
                 self.starrs_data.update_user_attribute(attribute, user_id, cell_data)
-            elif column in range(7, 23):
+            else:
                 attribute = schema['application'][column]
                 self.starrs_data.update_application_attribute(attribute, user_id, cell_data)
-            else:
-                recommendation_index = self.get_index(column)
-                recommendation = self.starrs_data.modify_recommendations[recommendation_index]
-                attribute = schema['recommendation'][column]
-                self.starrs_data.update_recommendation(recommendation_index, recommendation.id, attribute, cell_data)
 
             return True
-
-    # Custom
-    def get_index(self, column):
-        """
-        Return index of recommendation object by column
-        """
-
-        if column in range(23, 27):
-            index = 0
-        elif column in range(27, 31):
-            index = 1
-        else:
-            index = 2
-
-        return index
-
-    def get_recommendation(self, column):
-        """
-        Return recommendation table data for current column and list index
-        """
-
-        attribute = schema['recommendation'][column]
-        index = self.get_index(column)
-
-        if index + 1 <= len(self.starrs_data.modify_recommendations):
-            return eval('self.starrs_data.modify_recommendations[{0}].{1}'.format(index, attribute))
 
 
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
@@ -1111,7 +1116,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         # Starrs data
         self.starrs_data = None
-        self.applicant_model = None
+        # self.applicant_model = None
 
         # Init UI data
         self.init_ui()
@@ -1170,19 +1175,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linRecomendation3Email.setText('rick@morty.com')
         self.linRecomendation3Title.setText('psycho')
         self.linRecomendation3Affiliation.setText('universe')
-        # Admission
-        self.linRecomendationName_1.setText('Richard Feynman')
-        self.linRecomendationEmail_1.setText('atom@alamos.net')
-        self.linRecomendationTitle_1.setText('physicist')
-        self.linRecomendationAffiliation_1.setText('nuclear')
-        self.linRecomendationName_2.setText('Hubert J Farnsworth')
-        self.linRecomendationEmail_2.setText('express@futurama.com')
-        self.linRecomendationTitle_2.setText('professor')
-        self.linRecomendationAffiliation_2.setText('space')
-        self.linRecomendationName_3.setText('Rick Sanchez')
-        self.linRecomendationEmail_3.setText('rick@morty.com')
-        self.linRecomendationTitle_3.setText('psycho')
-        self.linRecomendationAffiliation_3.setText('universe')
 
         # UI controls
         self.comDegreeSought.addItems(self.degrees)
@@ -1199,13 +1191,13 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def init_data(self):
 
         self.starrs_data = StarrsData(self.sql_file_path)
-        self.applicant_model = ReviewApplicantModel(self.starrs_data)
-        self.tabReviewAdmitApplicant.setModel(self.applicant_model)
-
-        ranking = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
-        decision = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
-        self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking)
-        self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, decision)
+        # self.applicant_model = ReviewApplicantModel(self.starrs_data)
+        # self.tabReviewAdmitApplicant.setModel(self.applicant_model)
+        #
+        # ranking = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
+        # decision = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
+        # self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking)
+        # self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, decision)
 
     def get_ui_apply(self):
 
@@ -1226,7 +1218,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             None,  # id
             None,  # user_id
             date.today().strftime('%Y/%m/%d'),  # date received
-            0,  # transcripts
             self.linGREVErbal.text(),
             self.linGREVQuant.text(),
             self.linGREVAnalitical.text(),
@@ -1242,15 +1233,26 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.linPriorYear2.text(),
             self.linPriorGPA2.text(),
             self.linPriorUniversity2.text(),
+            self.linRecomendation1Name.text(),
+            self.linRecomendation1Email.text(),
+            self.linRecomendation1Title.text(),
+            self.linRecomendation1Affiliation.text(),
+            None,
+            self.linRecomendation2Name.text(),
+            self.linRecomendation2Email.text(),
+            self.linRecomendation2Title.text(),
+            self.linRecomendation2Affiliation.text(),
+            None,
+            self.linRecomendation3Name.text(),
+            self.linRecomendation3Email.text(),
+            self.linRecomendation3Title.text(),
+            self.linRecomendation3Affiliation.text(),
+            None,
+            0,  # transcripts
             None,  # status
             '',  # reviewer ranking
             '',  # reviewer comments
             '']
-
-        recommendation_tuple = [
-            None,  # id
-            None,  # user id
-        ]
 
         return user_tuple, application_tuple
 
@@ -1299,10 +1301,16 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         application_tuple[1] = user.id
         self.starrs_data.add_application(application_tuple)
 
-        # Add recommendations
-
         # Sent password
-        self.statusBar().showMessage('>> Password is: >{0}<'.format(user.id))
+        self.statusBar().showMessage('>> Password is: {0}'.format(user.id))
+
+    def check_recommendations(self, application):
+        """
+        Check if GS set recommendation score
+        """
+
+        if application.rec1_score or application.rec2_score or application.rec3_score:
+            return True
 
     def check_application_status(self):
         """
@@ -1325,16 +1333,13 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.linApplicationStatus.setText('Admission Decision: {}'.format(application.status))
 
         else:
-            # Get recommendations
-            recommendations = self.starrs_data.get_recommendations(user_id)
-
-            if application.transcripts and recommendations:
+            if application.transcripts and self.check_recommendations(application):
                 self.linApplicationStatus.setText('Application Received and Decision Pending')
             else:
                 missing = ''
                 if not application.transcripts:
                     missing = 'transcripts'
-                if not recommendations:
+                if not self.check_recommendations(application):
                     if not application.transcripts:
                         missing += ' and recommendations'
                     else:
@@ -1375,6 +1380,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         self.tabEditApplication.setModel(EditApplicationModel(self.starrs_data))
 
+    # 2) Admission process
     def find_applicants(self):
 
         user_id = self.linSearchApplicantID.text()
@@ -1392,14 +1398,13 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
                     user_ids.append(user.id)
         else:
             self.starrs_data.clear_data()
-            self.tabFoundApplicants.setModel(FoundApplicantModel(self.starrs_data))
+            self.tabFoundApplicants.setModel(DisplayApplicantModel(self.starrs_data))
             self.statusBar().showMessage('>> Enter applicant ID or Last Name!')
 
         if user_ids:
             self.starrs_data.get_users_for_display(user_ids)
-            self.tabFoundApplicants.setModel(FoundApplicantModel(self.starrs_data))
+            self.tabFoundApplicants.setModel(DisplayApplicantModel(self.starrs_data))
 
-    # 2) Admission process
     def add_transcripts(self):
         """
         Add transcripts by GS
@@ -1423,61 +1428,39 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         Add recommendations by GS
         """
 
-        # TODO: check existing recommendations, should not be more than 3 in total
-
         user_id = self.linStudentIDAdmission.text()
         if user_id == '':
             self.statusBar().showMessage('>> Please, enter the user id!')
             return
 
         if self.chbDoRecommendation_1.isChecked():
-
-            recommendation_tuple = [
-                None,
-                user_id,
-                self.linRecomendationName_1.text(),
-                self.linRecomendationEmail_1.text(),
-                self.linRecomendationTitle_1.text(),
-                self.linRecomendationAffiliation_1.text(),
-                self.comRecomendationScore_1.currentText(),
-                'For Student {}'.format(user_id)]
-            self.starrs_data.add_recommendation(recommendation_tuple)
+            score = self.comRecomendationScore_1.currentText()
+            self.starrs_data.update_application_attribute('rec1_score', user_id, score)
 
         if self.chbDoRecommendation_2.isChecked():
-
-            recommendation_tuple = [
-                None,
-                user_id,
-                self.linRecomendationName_2.text(),
-                self.linRecomendationEmail_2.text(),
-                self.linRecomendationTitle_2.text(),
-                self.linRecomendationAffiliation_2.text(),
-                self.comRecomendationScore_2.currentText(),
-                'For Student {}'.format(user_id)]
-
-            self.starrs_data.add_recommendation(recommendation_tuple)
+            score = self.comRecomendationScore_2.currentText()
+            self.starrs_data.update_application_attribute('rec2_score', user_id, score)
 
         if self.chbDoRecommendation_3.isChecked():
-
-            recommendation_tuple = [
-                None,
-                user_id,
-                self.linRecomendationName_3.text(),
-                self.linRecomendationEmail_3.text(),
-                self.linRecomendationTitle_3.text(),
-                self.linRecomendationAffiliation_3.text(),
-                self.comRecomendationScore_3.currentText(),
-                'For Student {}'.format(user_id)]
-
-            self.starrs_data.add_recommendation(recommendation_tuple)
+            score = self.comRecomendationScore_3.currentText()
+            self.starrs_data.update_application_attribute('rec3_score', user_id, score)
 
         self.statusBar().showMessage('>> Applicant {0} recommendations submitted!'.format(user_id))
 
     def load_pending_applicants(self):
 
-        self.applicant_model.layoutAboutToBeChanged.emit()
+        # self.applicant_model.layoutAboutToBeChanged.emit()
+        # self.starrs_data.get_pending_applicants()
+        # self.applicant_model.layoutChanged.emit()
+
         self.starrs_data.get_pending_applicants()
-        self.applicant_model.layoutChanged.emit()
+        applicant_model = ReviewApplicantModel(self.starrs_data)
+        self.tabReviewAdmitApplicant.setModel(applicant_model)
+
+        ranking = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
+        decision = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
+        self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking)
+        self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, decision)
 
     def load_applicant(self):
 
