@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Thu Jun  9 18:30:06 2022
+# Created: Fri Jun 10 12:37:25 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -399,19 +399,6 @@ class Ui_STARRS(object):
         self.btnSetRecomendations.setMinimumSize(QtCore.QSize(0, 35))
         self.btnSetRecomendations.setObjectName("btnSetRecomendations")
         self.verticalLayout_10.addWidget(self.splitter_14)
-        self.splitter_26 = QtGui.QSplitter(self.groupBox)
-        self.splitter_26.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter_26.setObjectName("splitter_26")
-        self.btnLoadTransRecom = QtGui.QPushButton(self.splitter_26)
-        self.btnLoadTransRecom.setMinimumSize(QtCore.QSize(0, 35))
-        self.btnLoadTransRecom.setObjectName("btnLoadTransRecom")
-        self.btnUpdateTranscripts = QtGui.QPushButton(self.splitter_26)
-        self.btnUpdateTranscripts.setMinimumSize(QtCore.QSize(0, 35))
-        self.btnUpdateTranscripts.setObjectName("btnUpdateTranscripts")
-        self.btnUpdateRecomendations = QtGui.QPushButton(self.splitter_26)
-        self.btnUpdateRecomendations.setMinimumSize(QtCore.QSize(0, 35))
-        self.btnUpdateRecomendations.setObjectName("btnUpdateRecomendations")
-        self.verticalLayout_10.addWidget(self.splitter_26)
         self.verticalLayout_6.addWidget(self.groupBox)
         self.groupBox_4 = QtGui.QGroupBox(self.tab_2)
         self.groupBox_4.setObjectName("groupBox_4")
@@ -506,11 +493,8 @@ class Ui_STARRS(object):
         self.label_15.setText(QtGui.QApplication.translate("STARRS", "Enter student ID:", None, QtGui.QApplication.UnicodeUTF8))
         self.chbTranscripts.setText(QtGui.QApplication.translate("STARRS", "Transcripts Were Received", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("STARRS", "Recomenatations: Name | email | Title | Affiliation | Score", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnSetTranscripts.setText(QtGui.QApplication.translate("STARRS", "Submit Transcripts Status", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnSetRecomendations.setText(QtGui.QApplication.translate("STARRS", "Submit Recomendations", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnLoadTransRecom.setText(QtGui.QApplication.translate("STARRS", "Load Applicant Transcripts and Recomendations", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnUpdateTranscripts.setText(QtGui.QApplication.translate("STARRS", "Update Transcripts", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnUpdateRecomendations.setText(QtGui.QApplication.translate("STARRS", "Update Reccomendations", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnSetTranscripts.setText(QtGui.QApplication.translate("STARRS", "Submit/Updat Transcripts Status", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnSetRecomendations.setText(QtGui.QApplication.translate("STARRS", "Submit/Update Recomendations", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_4.setTitle(QtGui.QApplication.translate("STARRS", "Review Application | Admit Applicants", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("STARRS", "List of Applicants Pending Decision:", None, QtGui.QApplication.UnicodeUTF8))
         self.btnLoadPendingApplicants.setText(QtGui.QApplication.translate("STARRS", "Load Decision Pending Applicants", None, QtGui.QApplication.UnicodeUTF8))

@@ -255,6 +255,9 @@ class StarrsData:
         self.modify_user = None
         self.modify_application = None
         self.modify_recommendations = []
+        self.display_users = []
+        self.display_applications = []
+        self.display_recommendations = []
 
         self.init_starrs_data()
 
@@ -354,7 +357,7 @@ class StarrsData:
         if user_tuple:
             return self.convert_to_user([user_tuple])[0]
 
-    def get_user_by_name(self, last_name):
+    def get_users_by_name(self, last_name):
 
         connection = sqlite3.connect(self.sql_file_path)
         cursor = connection.cursor()
@@ -367,6 +370,28 @@ class StarrsData:
 
         if user_tuples:
             return self.convert_to_user(user_tuples)
+
+    def get_users_with_transcripts(self):
+        """
+        Get list of student ids for all students with transcripts submitted by GS
+        """
+
+        user_ids = []
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM application WHERE "
+                       "transcripts IS 1 "
+                       "AND status IS NULL")
+
+        application_tuples = cursor.fetchall()
+        connection.close()
+
+        for application_tuple in application_tuples:
+            user_ids.append(str(application_tuple[1]))
+
+        return user_ids
 
     def update_user_attribute(self, attribute_name, user_id, attribute_value):
 
@@ -603,28 +628,6 @@ class StarrsData:
         # Update pending applicant data
         self.update_pending_applications(user_id)
 
-    def get_users_with_transcripts(self):
-        """
-        Get list of student ids for all students with transcripts submitted by GS
-        """
-
-        user_ids = []
-
-        connection = sqlite3.connect(self.sql_file_path)
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT * FROM application WHERE "
-                       "transcripts IS 1 "
-                       "AND status IS NULL")
-
-        application_tuples = cursor.fetchall()
-        connection.close()
-
-        for application_tuple in application_tuples:
-            user_ids.append(str(application_tuple[1]))
-
-        return user_ids
-
     def add_student(self, student_tuple):
 
         student = Student(student_tuple)
@@ -730,6 +733,24 @@ class StarrsData:
 
         self.pending_users.append(self.get_user(user_id))
         self.pending_applications.append(self.get_application(user_id))
+
+    def get_users_for_display(self, user_ids):
+
+        # Clean existing data
+        del self.display_users[:]
+        del self.display_applications[:]
+        del self.display_recommendations[:]
+
+        # Add new data
+        for index, user_id in enumerate(user_ids):
+
+            self.display_users.append(self.get_user(user_id))
+            self.display_applications.append(self.get_application(user_id))
+
+            recommendations = self.get_recommendations(user_id)
+            if not recommendations:
+                recommendations = []
+            self.display_recommendations.append(recommendations)
 
 
 # STARRS Application
@@ -847,11 +868,18 @@ class ReviewApplicantModel(QtCore.QAbstractTableModel):
 
 
 class FoundApplicantModel(QtCore.QAbstractTableModel):
-    def __init__(self, users, parent=None):
+    def __init__(self, starrs_data, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
-        self.users = users
-        self.header = ['  Id  ', ' Email ', '  First Name ', '  Last Name  ', '  Phone  ']
+        self.starrs_data = starrs_data
+        self.header = ['  Id  ',
+                       '  Email  ',
+                       '  First Name ',
+                       '  Last Name  ',
+                       '  Transcripts  ',
+                       '  R1 Score  ',
+                       '  R2 Score  ',
+                       '  R3 Score  ']
 
     def flags(self, index):
 
@@ -864,7 +892,7 @@ class FoundApplicantModel(QtCore.QAbstractTableModel):
 
     def rowCount(self, parent):
 
-        return len(self.users)
+        return len(self.starrs_data.display_users)
 
     def columnCount(self, parent):
 
@@ -877,22 +905,35 @@ class FoundApplicantModel(QtCore.QAbstractTableModel):
 
         row = index.row()
         column = index.column()
+        recommendations = self.starrs_data.display_recommendations[row]
 
         if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
             if column == 0:
-                return self.users[row].id
+                return self.starrs_data.display_users[row].id
 
             if column == 1:
-                return self.users[row].email
+                return self.starrs_data.display_users[row].email
 
             if column == 2:
-                return self.users[row].first_name
+                return self.starrs_data.display_users[row].first_name
 
             if column == 3:
-                return self.users[row].last_name
+                return self.starrs_data.display_users[row].last_name
 
             if column == 4:
-                return self.users[row].phone
+                return self.starrs_data.display_applications[row].transcripts
+
+            if column == 5:
+                if len(recommendations) > 0:
+                    return recommendations[0].score
+
+            if column == 6:
+                if len(recommendations) > 1:
+                    return recommendations[1].score
+
+            if column == 7:
+                if len(recommendations) > 2:
+                    return recommendations[2].score
 
 
 class EditApplicationModel(QtCore.QAbstractTableModel):
@@ -1075,7 +1116,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnLoadApplicationData.pressed.connect(self.load_application_data)
         self.btnEnroll.pressed.connect(self.enroll)
         # 2)
-        self.btnFindApplicant.pressed.connect(self.find_applicant)
+        self.btnFindApplicant.pressed.connect(self.find_applicants)
         self.btnSetTranscripts.pressed.connect(self.add_transcripts)
         self.btnSetRecomendations.pressed.connect(self.add_recommendations)
         self.btnLoadPendingApplicants.pressed.connect(self.load_pending_applicants)
@@ -1306,30 +1347,37 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             student_tuple = [None, user_id, 'I accept']
             self.starrs_data.add_student(student_tuple)
 
-    def find_applicant(self):
+    def find_applicants(self):
 
         user_id = self.linSearchApplicantID.text()
         last_name = self.linSearchApplicantLastname.text()
 
-        users = None
+        user_ids = []
 
         if user_id != '':
-            users = [self.starrs_data.get_user(user_id)]
+            user_ids = [user_id]
         elif last_name != '':
-            users = self.starrs_data.get_user_by_name(last_name)
+            users = self.starrs_data.get_users_by_name(last_name)
+            if users:
+                for user in users:
+                    user_ids.append(user.id)
         else:
             self.tabFoundApplicants.setModel(FoundApplicantModel([]))
             self.statusBar().showMessage('>> Enter applicant ID or Last Name!')
 
-        if users:
-            self.tabFoundApplicants.setModel(FoundApplicantModel(users))
+        if user_ids:
+            self.starrs_data.get_users_for_display(user_ids)
+            model = FoundApplicantModel(self.starrs_data)
+            self.tabFoundApplicants.setModel(model)
 
     def load_application_data(self):
 
         user_id = self.linStudentID.text()
-        self.starrs_data.init_update_application(user_id)
-
-        self.tabEditApplication.setModel(EditApplicationModel(self.starrs_data))
+        if user_id == '':
+            self.tabEditApplication.setModel(EditApplicationModel([]))
+        else:
+            self.starrs_data.init_update_application(user_id)
+            self.tabEditApplication.setModel(EditApplicationModel(self.starrs_data))
 
     # 2) Admission process
     def add_transcripts(self):
