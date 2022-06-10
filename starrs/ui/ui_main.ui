@@ -346,9 +346,12 @@
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <widget class="QLabel" name="label_16">
+              <widget class="QCheckBox" name="chb1DoRecommendation">
                <property name="text">
-                <string>1) </string>
+                <string/>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
               <widget class="QLineEdit" name="linRecomendation1Name"/>
@@ -362,9 +365,12 @@
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <widget class="QLabel" name="label_18">
+              <widget class="QCheckBox" name="chb2DoRecommendation">
                <property name="text">
-                <string>2) </string>
+                <string/>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
               <widget class="QLineEdit" name="linRecomendation2Name"/>
@@ -374,13 +380,16 @@
              </widget>
             </item>
             <item>
-             <widget class="QSplitter" name="splitter_35">
+             <widget class="QSplitter" name="splitter_26">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <widget class="QLabel" name="label_35">
+              <widget class="QCheckBox" name="chb3DoRecommendation">
                <property name="text">
-                <string>3) </string>
+                <string/>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
                </property>
               </widget>
               <widget class="QLineEdit" name="linRecomendation3Name"/>

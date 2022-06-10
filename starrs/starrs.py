@@ -1247,6 +1247,11 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             '',  # reviewer comments
             '']
 
+        recommendation_tuple = [
+            None,  # id
+            None,  # user id
+        ]
+
         return user_tuple, application_tuple
 
     def init_database(self):
@@ -1290,12 +1295,14 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         user_tuple, application_tuple = self.get_ui_apply()
         user = self.starrs_data.add_user(user_tuple)
 
-        # Sent password
-        self.statusBar().showMessage('>> Password is: >{0}<'.format(user.id))
-
         # Add application
         application_tuple[1] = user.id
         self.starrs_data.add_application(application_tuple)
+
+        # Add recommendations
+
+        # Sent password
+        self.statusBar().showMessage('>> Password is: >{0}<'.format(user.id))
 
     def check_application_status(self):
         """
