@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>691</width>
-    <height>889</height>
+    <width>676</width>
+    <height>941</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -622,7 +622,7 @@
              <property name="maximumSize">
               <size>
                <width>16777215</width>
-               <height>200</height>
+               <height>120</height>
               </size>
              </property>
             </widget>
@@ -691,63 +691,49 @@
             </widget>
            </item>
            <item>
-            <widget class="QSplitter" name="splitter_37">
+            <widget class="QSplitter" name="splitter_18">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
              <widget class="QCheckBox" name="chbDoRecommendation_1">
               <property name="minimumSize">
                <size>
-                <width>500</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
               <property name="text">
-               <string> Set Recommendation Score for the 1 Recommendation:</string>
+               <string>Score 1</string>
               </property>
               <property name="checked">
                <bool>true</bool>
               </property>
              </widget>
              <widget class="QComboBox" name="comRecomendationScore_1"/>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSplitter" name="splitter_38">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
              <widget class="QCheckBox" name="chbDoRecommendation_2">
               <property name="minimumSize">
                <size>
-                <width>500</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
               <property name="text">
-               <string> Set Recommendation Score for the 2  Recommendation:</string>
+               <string>Score 2</string>
               </property>
               <property name="checked">
                <bool>true</bool>
               </property>
              </widget>
              <widget class="QComboBox" name="comRecomendationScore_2"/>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSplitter" name="splitter_39">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
              <widget class="QCheckBox" name="chbDoRecommendation_3">
               <property name="minimumSize">
                <size>
-                <width>500</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
               <property name="text">
-               <string> Set Recommendation Score for the 3  Recommendation:</string>
+               <string>Score 3</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -852,6 +838,22 @@
          </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="groupBox_8">
+          <property name="title">
+           <string>GS Querries</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QPushButton" name="pushButton_2">
+             <property name="text">
+              <string>PushButton</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer_3">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -885,7 +887,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>691</width>
+     <width>676</width>
      <height>21</height>
     </rect>
    </property>

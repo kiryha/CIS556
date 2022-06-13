@@ -17,15 +17,8 @@ init_data = {
          'acopper@umich.edu',
          '48067, MI, Royal Oak, W 6th st, 310',
          '734-780-0001',
-         'Graduate Secretary'],
-
-        ['Adam',
-         None,
-         'Smith',
-         'asmith@umich.edu',
-         '48120, MI, Dearborn, W Warren Ave, 1440',
-         '734-780-0002',
-         'Adviser'],
+         'Graduate Secretary',
+         'GS'],
 
         ['Kimberly',
          None,
@@ -33,7 +26,17 @@ init_data = {
          'kprare@umich.edu',
          '48120, MI, Dearborn, W Warren Ave, 1530',
          '734-780-0003',
-         'Adviser']
+         'Adviser',
+         'Adviser'],
+
+        ['Adam',
+         None,
+         'Smith',
+         'asmith@umich.edu',
+         '48120, MI, Dearborn, W Warren Ave, 1440',
+         '734-780-0002',
+         'Instructor',
+         'Instructor']
     ]
 }
 
@@ -165,6 +168,24 @@ def populate_database(sql_file_path):
                         'address': user[4],
                         'phone': user[5],
                         'description': user[6]})
+
+        connection.commit()
+        user_id = cursor.lastrowid
+        connection.close()
+
+        connection = sqlite3.connect(sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO role VALUES ("
+                       ":id,"
+                       ":user_id,"
+                       ":role,"
+                       ":description)",
+
+                       {'id': cursor.lastrowid,
+                        'user_id': user_id,
+                        'role': user[7],
+                        'description': ''})
 
         connection.commit()
         connection.close()
@@ -738,7 +759,7 @@ class StarrsData:
     def submit_application(self, application_tuple):
 
         self.add_application(application_tuple)
-        role_tuple = [None, application_tuple[1], 'Applicant', 'Submit application']
+        role_tuple = [None, application_tuple[1], 'Applicant', '']
         self.add_role(role_tuple)
 
     def load_applicant_data(self, user_id):
@@ -1384,10 +1405,12 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         if not application:
             return
 
-        if application.status in ['Admitted With Aid', 'Admitted'] :
+        if application.status in ['Admitted With Aid', 'Admitted']:
 
-            student_tuple = [None, user_id, 'I accept']
-            self.starrs_data.add_student(student_tuple)
+            # student_tuple = [None, user_id, 'I accept']
+            # self.starrs_data.add_student(student_tuple)
+            # TODO: change user role from Applicant to Student
+            pass
 
     def load_application_data(self):
 
