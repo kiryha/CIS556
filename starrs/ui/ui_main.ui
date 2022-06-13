@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>676</width>
-    <height>941</height>
+    <height>924</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -578,176 +578,284 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Find Applicant by ID or Last Name</string>
+         <widget class="QTabWidget" name="tabWidget_2">
+          <property name="currentIndex">
+           <number>0</number>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_8">
-           <item>
-            <widget class="QSplitter" name="splitter_13">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <widget class="QLabel" name="label_27">
-              <property name="text">
-               <string>Applicant ID | Last Name</string>
+          <widget class="QWidget" name="tab_6">
+           <attribute name="title">
+            <string>Admission Process</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <widget class="QGroupBox" name="groupBox_2">
+              <property name="title">
+               <string>Find Applicant by ID or Last Name</string>
               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_8">
+               <item>
+                <widget class="QSplitter" name="splitter_13">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <widget class="QLabel" name="label_27">
+                  <property name="text">
+                   <string>Applicant ID | Last Name</string>
+                  </property>
+                 </widget>
+                 <widget class="QLineEdit" name="linSearchApplicantID">
+                  <property name="maximumSize">
+                   <size>
+                    <width>50</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                 </widget>
+                 <widget class="QLineEdit" name="linSearchApplicantLastname"/>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnFindApplicant">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Find Applicant</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTableView" name="tabFoundApplicants">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>120</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
-             <widget class="QLineEdit" name="linSearchApplicantID">
-              <property name="maximumSize">
-               <size>
-                <width>50</width>
-                <height>16777215</height>
-               </size>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox">
+              <property name="title">
+               <string>Set or Update Student Transcripts and Recomendations</string>
               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_10">
+               <item>
+                <widget class="QSplitter" name="splitter_12">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <widget class="QLabel" name="label_15">
+                  <property name="minimumSize">
+                   <size>
+                    <width>200</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>200</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Enter student ID:</string>
+                  </property>
+                 </widget>
+                 <widget class="QLineEdit" name="linStudentIDAdmission"/>
+                </widget>
+               </item>
+               <item>
+                <widget class="Line" name="line_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="chbTranscripts">
+                 <property name="minimumSize">
+                  <size>
+                   <width>200</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>200</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Transcripts Were Received</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSplitter" name="splitter_18">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <widget class="QCheckBox" name="chbDoRecommendation_1">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Score 1:</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                 <widget class="QComboBox" name="comRecomendationScore_1"/>
+                 <widget class="QCheckBox" name="chbDoRecommendation_2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Score 2:</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                 <widget class="QComboBox" name="comRecomendationScore_2"/>
+                 <widget class="QCheckBox" name="chbDoRecommendation_3">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Score 3:</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                 <widget class="QComboBox" name="comRecomendationScore_3"/>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSplitter" name="splitter_14">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <widget class="QPushButton" name="btnSetTranscripts">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>35</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Submit Transcripts Status</string>
+                  </property>
+                 </widget>
+                 <widget class="QPushButton" name="btnSetRecomendations">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>35</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Submit Recomendations Scores</string>
+                  </property>
+                 </widget>
+                </widget>
+               </item>
+              </layout>
              </widget>
-             <widget class="QLineEdit" name="linSearchApplicantLastname"/>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnFindApplicant">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>35</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Find Applicant</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QTableView" name="tabFoundApplicants">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>120</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Set or Update Student Transcripts and Recomendations</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_10">
-           <item>
-            <widget class="QSplitter" name="splitter_12">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <widget class="QLabel" name="label_15">
-              <property name="minimumSize">
-               <size>
-                <width>200</width>
-                <height>0</height>
-               </size>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_4">
+              <property name="title">
+               <string>Review Application | Admit Applicants</string>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>200</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Enter student ID:</string>
-              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_11">
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>List of Applicants Pending Decision:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTableView" name="tabReviewAdmitApplicant"/>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btnLoadPendingApplicants">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>45</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Load Decision Pending Applicants</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSplitter" name="splitter_40">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <widget class="QLabel" name="label_36">
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Applicant ID:</string>
+                  </property>
+                 </widget>
+                 <widget class="QLineEdit" name="linLoadApplicantByID">
+                  <property name="maximumSize">
+                   <size>
+                    <width>50</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                 </widget>
+                 <widget class="QPushButton" name="btnLoadApplicantByID">
+                  <property name="text">
+                   <string>Load Applicant By ID</string>
+                  </property>
+                 </widget>
+                </widget>
+               </item>
+              </layout>
              </widget>
-             <widget class="QLineEdit" name="linStudentIDAdmission"/>
-            </widget>
-           </item>
-           <item>
-            <widget class="Line" name="line_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="chbTranscripts">
-             <property name="minimumSize">
-              <size>
-               <width>200</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Transcripts Were Received</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSplitter" name="splitter_18">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <widget class="QCheckBox" name="chbDoRecommendation_1">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Score 1</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-             <widget class="QComboBox" name="comRecomendationScore_1"/>
-             <widget class="QCheckBox" name="chbDoRecommendation_2">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Score 2</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-             <widget class="QComboBox" name="comRecomendationScore_2"/>
-             <widget class="QCheckBox" name="chbDoRecommendation_3">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Score 3</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-             <widget class="QComboBox" name="comRecomendationScore_3"/>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSplitter" name="splitter_14">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <widget class="QPushButton" name="btnSetTranscripts">
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_7">
+           <attribute name="title">
+            <string>Admissions Querries</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QPushButton" name="pushButton_2">
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -755,10 +863,12 @@
                </size>
               </property>
               <property name="text">
-               <string>Submit Transcripts Status</string>
+               <string>Get Graduate Applicants</string>
               </property>
              </widget>
-             <widget class="QPushButton" name="btnSetRecomendations">
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_3">
               <property name="minimumSize">
                <size>
                 <width>0</width>
@@ -766,95 +876,84 @@
                </size>
               </property>
               <property name="text">
-               <string>Submit Recomendations Scores</string>
+               <string>Get Admited Students</string>
               </property>
              </widget>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_4">
-          <property name="title">
-           <string>Review Application | Admit Applicants</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_11">
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="text">
-              <string>List of Applicants Pending Decision:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QTableView" name="tabReviewAdmitApplicant"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btnLoadPendingApplicants">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>45</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Load Decision Pending Applicants</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSplitter" name="splitter_40">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <widget class="QLabel" name="label_36">
-              <property name="maximumSize">
+            </item>
+            <item>
+             <widget class="QTableView" name="tabAdmissionQuerries"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_4">
+              <property name="minimumSize">
                <size>
-                <width>80</width>
-                <height>16777215</height>
+                <width>0</width>
+                <height>35</height>
                </size>
               </property>
               <property name="text">
-               <string>Applicant ID:</string>
+               <string>Get Total Number of Applicants</string>
               </property>
              </widget>
-             <widget class="QLineEdit" name="linLoadApplicantByID">
-              <property name="maximumSize">
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_5">
+              <property name="minimumSize">
                <size>
-                <width>50</width>
-                <height>16777215</height>
+                <width>0</width>
+                <height>35</height>
                </size>
               </property>
-             </widget>
-             <widget class="QPushButton" name="btnLoadApplicantByID">
               <property name="text">
-               <string>Load Applicant By ID</string>
+               <string>Get Total Number of Admitted</string>
               </property>
              </widget>
-            </widget>
-           </item>
-          </layout>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_6">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>35</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Get Total Number of Rejected</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_7">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>35</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Get Averege GRE for Admitted</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupBox_8">
-          <property name="title">
-           <string>GS Querries</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QPushButton" name="pushButton_2">
-             <property name="text">
-              <string>PushButton</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_3">
+         <spacer name="verticalSpacer_4">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
