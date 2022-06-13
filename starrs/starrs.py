@@ -9,58 +9,32 @@ scripts_root = os.path.dirname(__file__).replace('\\', '/')
 
 
 # Database
-schema = {
-    'user': {
-        0: 'id',
-        1: 'first_name',
-        2: 'middle_name',
-        3: 'last_name',
-        4: 'email',
-        5: 'address',
-        6: 'phone'},
+init_data = {
+    'users': [
+        ['Alexander',
+         'S',
+         'Copper',
+         'acopper@umich.edu',
+         '48067, MI, Royal Oak, W 6th st, 310',
+         '734-780-0001',
+         'Graduate Secretary'],
 
-    'application': {
-         7: 'gre_verbal',
-         8: 'gre_quantitative',
-         9: 'gre_analytical',
-         10: 'experience',
-         11: 'interest',
-         12: 'admission_term',
-         13: 'degree_sought',
-         14: 'prior1_major',
-         15: 'prior1_year',
-         16: 'prior1_gpa',
-         17: 'prior1_university',
-         18: 'prior2_major',
-         19: 'prior2_year',
-         20: 'prior2_gpa',
-         21: 'prior2_university',
-         22: 'rec1_name',
-         23: 'rec1_email',
-         24: 'rec1_title',
-         25: 'rec1_affiliation',
-         26: 'rec2_name',
-         27: 'rec2_email',
-         28: 'rec2_title',
-         29: 'rec2_affiliation',
-         30: 'rec3_name',
-         31: 'rec3_email',
-         32: 'rec3_title',
-         33: 'rec3_affiliation'},
+        ['Adam',
+         None,
+         'Smith',
+         'asmith@umich.edu',
+         '48120, MI, Dearborn, W Warren Ave, 1440',
+         '734-780-0002',
+         'Adviser'],
 
-    'recommendation': {
-        23: 'name',
-        24: 'email',
-        25: 'title',
-        26: 'affiliation',
-        27: 'name',
-        28: 'email',
-        29: 'title',
-        30: 'affiliation',
-        31: 'name',
-        32: 'email',
-        33: 'title',
-        34: 'affiliation'}
+        ['Kimberly',
+         None,
+         'Prare',
+         'kprare@umich.edu',
+         '48120, MI, Dearborn, W Warren Ave, 1530',
+         '734-780-0003',
+         'Adviser']
+    ]
 }
 
 
@@ -82,6 +56,14 @@ def init_database(sql_file_path):
                     address text,
                     phone text,
                     description text
+                    )''')
+
+    cursor.execute('''CREATE TABLE role (
+                    id integer primary key autoincrement,
+                    user_id integer,
+                    role text,
+                    description text,
+                    FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
 
     # Student application
@@ -134,8 +116,58 @@ def init_database(sql_file_path):
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
 
+    cursor.execute('''CREATE TABLE course (
+                    id integer primary key autoincrement,
+                    name text,
+                    number integer,
+                    credit_hour integer,
+                    section integer,
+                    professor text,
+                    grade integer,
+                    description text
+                    )''')
+
+    cursor.execute('''CREATE TABLE department (
+                    id integer primary key autoincrement,
+                    name text,
+                    description text
+                    )''')
+
     connection.commit()
     connection.close()
+
+
+def populate_database(sql_file_path):
+    """
+    Add data to the database: users
+    """
+
+    for user in init_data['users']:
+
+        connection = sqlite3.connect(sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO user VALUES ("
+                       ":id,"
+                       ":first_name,"
+                       ":middle_name,"
+                       ":last_name,"
+                       ":email,"
+                       ":address,"
+                       ":phone,"
+                       ":description)",
+
+                       {'id': cursor.lastrowid,
+                        'first_name': user[0],
+                        'middle_name': user[1],
+                        'last_name': user[2],
+                        'email': user[3],
+                        'address': user[4],
+                        'phone': user[5],
+                        'description': user[6]})
+
+        connection.commit()
+        connection.close()
 
 
 class User:
@@ -161,6 +193,23 @@ class User:
         self.address = user_tuple[5]
         self.phone = user_tuple[6]
         self.description = user_tuple[7]
+
+
+class Role:
+    def __init__(self, role_tuple):
+        self.id = None
+        self.user_id = None
+        self.role = ''
+        self.description = ''
+
+        self.init(role_tuple)
+
+    def init(self, role_tuple):
+
+        self.id = role_tuple[0]
+        self.user_id = role_tuple[1]
+        self.role = role_tuple[2]
+        self.description = role_tuple[3]
 
 
 class Application:
@@ -307,16 +356,6 @@ class StarrsData:
 
         return applications
 
-    def convert_to_recommendation(self, recommendation_tuples):
-
-        recommendations = []
-
-        for recommendation_tuple in recommendation_tuples:
-            recommendation = Recommendation(recommendation_tuple)
-            recommendations.append(recommendation)
-
-        return recommendations
-
     # Basic CURDs
     # User
     def add_user(self, user_tuple):
@@ -419,6 +458,30 @@ class StarrsData:
 
         # Update root data
         self.edit_user = self.get_user(user_id)
+
+    # Role
+    def add_role(self, role_tuple):
+
+        role = Role(role_tuple)
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        # Add object to DB
+        cursor.execute("INSERT INTO role VALUES ("
+                       ":id,"
+                       ":user_id,"
+                       ":role,"
+                       ":description)",
+
+                       {'id': cursor.lastrowid,
+                        'user_id': role.user_id,
+                        'role': role.role,
+                        'description': role.description})
+
+        connection.commit()
+        role.id = cursor.lastrowid  # Add database ID to the object
+        connection.close()
 
     # Application
     def add_application(self, application_tuple):
@@ -672,6 +735,12 @@ class StarrsData:
                 self.pending_applications[index] = self.get_application(user_id)
 
     # Multi step actions
+    def submit_application(self, application_tuple):
+
+        self.add_application(application_tuple)
+        role_tuple = [None, application_tuple[1], 'Applicant', 'Submit application']
+        self.add_role(role_tuple)
+
     def load_applicant_data(self, user_id):
 
         self.edit_user = self.get_user(user_id)
@@ -941,6 +1010,44 @@ class EditApplicationModel(QtCore.QAbstractTableModel):
                        '  R3 Email  ',
                        '  R3 Title  ',
                        '  R3 Affiliation']
+        self.schema = {
+            'user': {
+                0: 'id',
+                1: 'first_name',
+                2: 'middle_name',
+                3: 'last_name',
+                4: 'email',
+                5: 'address',
+                6: 'phone'},
+
+            'application': {
+                 7: 'gre_verbal',
+                 8: 'gre_quantitative',
+                 9: 'gre_analytical',
+                 10: 'experience',
+                 11: 'interest',
+                 12: 'admission_term',
+                 13: 'degree_sought',
+                 14: 'prior1_major',
+                 15: 'prior1_year',
+                 16: 'prior1_gpa',
+                 17: 'prior1_university',
+                 18: 'prior2_major',
+                 19: 'prior2_year',
+                 20: 'prior2_gpa',
+                 21: 'prior2_university',
+                 22: 'rec1_name',
+                 23: 'rec1_email',
+                 24: 'rec1_title',
+                 25: 'rec1_affiliation',
+                 26: 'rec2_name',
+                 27: 'rec2_email',
+                 28: 'rec2_title',
+                 29: 'rec2_affiliation',
+                 30: 'rec3_name',
+                 31: 'rec3_email',
+                 32: 'rec3_title',
+                 33: 'rec3_affiliation'}}
 
     # Build-in functions
     def flags(self, index):
@@ -977,19 +1084,19 @@ class EditApplicationModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
 
             if column in range(0, 7):
-                attribute = schema['user'][column]
+                attribute = self.schema['user'][column]
                 return eval('self.starrs_data.edit_user.{0}'.format(attribute))
             else:
-                attribute = schema['application'][column]
+                attribute = self.schema['application'][column]
                 return eval('self.starrs_data.edit_application.{0}'.format(attribute))
 
         if role == QtCore.Qt.EditRole:
 
             if column in range(0, 7):
-                attribute = schema['user'][column]
+                attribute = self.schema['user'][column]
                 return eval('self.starrs_data.edit_user.{0}'.format(attribute))
             else:
-                attribute = schema['application'][column]
+                attribute = self.schema['application'][column]
                 return eval('self.starrs_data.edit_application.{0}'.format(attribute))
 
     def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
@@ -1003,10 +1110,10 @@ class EditApplicationModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.EditRole:
 
             if column in range(1, 7):
-                attribute = schema['user'][column]
+                attribute = self.schema['user'][column]
                 self.starrs_data.update_user_attribute(attribute, user_id, cell_data)
             else:
-                attribute = schema['application'][column]
+                attribute = self.schema['application'][column]
                 self.starrs_data.update_application_attribute(attribute, user_id, cell_data)
 
             return True
@@ -1025,6 +1132,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.terms = ['Summer 2022', 'Fall 2022', 'Winter 2023', 'Summer 2023', 'Fall 2023']
         self.degrees = ['MS', 'MSE']
         self.scores = ['95-100', '85-94', '70-84', '0-70']
+        self.roles = ['GS', 'Reviewer', 'Instructor', 'Applicant', 'Student', 'Alumni']
 
         # Database
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
@@ -1069,6 +1177,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linAddressState.setText('MI')
         self.linAddressCity.setText('Royal Oak')
         self.linAddressStreet.setText('W 6th st')
+        self.linAddressNumber.setText('310')
         self.linWorkExpirience.setText('I was working as developer at Google. In my dreams.')
         self.linAreaOfInterest.setText('Computer Graphics')
         self.linPriorDegree1.setText('Bachelor')
@@ -1116,10 +1225,11 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.linStudentMidName.text(),
             self.linStudentLastName.text(),
             self.linApplicantEmail.text(),
-            '{0}, {1}, {2}, {3}'.format(self.linAddressZip.text(),
+            '{0}, {1}, {2}, {3}, {4}'.format(self.linAddressZip.text(),
                                         self.linAddressState.text(),
                                         self.linAddressCity.text(),
-                                        self.linAddressStreet.text()),
+                                        self.linAddressStreet.text(),
+                                        self.linAddressNumber.text()),
             self.linApplicantPhone.text(),
             '']
 
@@ -1171,6 +1281,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         """
 
         init_database(self.sql_file_path)
+        populate_database(self.sql_file_path)
 
     def setup_table(self, table):
 
@@ -1208,7 +1319,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         # Add application
         application_tuple[1] = user.id
-        self.starrs_data.add_application(application_tuple)
+        self.starrs_data.submit_application(application_tuple)
 
         # Sent password
         self.statusBar().showMessage('>> Password is: {0}'.format(user.id))
@@ -1388,6 +1499,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.starrs_data.clear_data()
             applicant_model = ReviewApplicantModel(self.starrs_data)
             self.tabReviewAdmitApplicant.setModel(applicant_model)
+
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])
