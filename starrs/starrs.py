@@ -1007,10 +1007,8 @@ class DisplayApplicantModel(QtCore.QAbstractTableModel):
                        '  Email  ',
                        '  First Name ',
                        '  Last Name  ',
-                       '  R1 Score  ',
-                       '  R2 Score  ',
-                       '  R3 Score  ',
-                       '  Transcripts  ',
+                       '  Admission Term  ',
+                       '  Degree  ',
                        '  Status  ']
 
     def flags(self, index):
@@ -1052,18 +1050,12 @@ class DisplayApplicantModel(QtCore.QAbstractTableModel):
                 return self.starrs_data.display_users[row].last_name
 
             if column == 4:
-                return self.starrs_data.display_applications[row].rec1_score
+                return self.starrs_data.display_applications[row].admission_term
 
             if column == 5:
-                return self.starrs_data.display_applications[row].rec2_score
+                return self.starrs_data.display_applications[row].degree_sought
 
             if column == 6:
-                return self.starrs_data.display_applications[row].rec3_score
-
-            if column == 7:
-                return self.starrs_data.display_applications[row].transcripts
-
-            if column == 8:
                 return self.starrs_data.display_applications[row].status
 
 
@@ -1315,6 +1307,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.setup_table(self.tabReviewAdmitApplicant)
         self.setup_table(self.tabEditApplication)
         self.setup_table(self.tabFoundApplicants)
+        self.setup_table(self.tabAdmissionQuerries)
 
     def init_data(self):
 
