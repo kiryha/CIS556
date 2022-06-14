@@ -853,6 +853,36 @@ class StarrsData:
                 self.display_users.append(user)
                 self.display_applications.append(application)
 
+    def get_students_by_attribute(self, attribute_name, attribute_value):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM application "
+                       "WHERE {0}=:{0} "
+                       "AND status LIKE 'Admitted With Aid' "
+                       "OR status LIKE 'Admitted'".format(attribute_name),
+                       {'{0}'.format(attribute_name): attribute_value})
+
+        application_tuples = cursor.fetchall()
+        connection.close()
+
+        if not application_tuples:
+            del self.display_users[:]
+            del self.display_applications[:]
+            return
+
+        applications = self.convert_to_application(application_tuples)
+
+        # Clean existing data
+        del self.display_users[:]
+        del self.display_applications[:]
+
+        for application in applications:
+            user = self.get_user(application.user_id)
+            self.display_users.append(user)
+            self.display_applications.append(application)
+
 
 # STARRS Application
 class AlignDelegate(QtGui.QItemDelegate):
@@ -1229,7 +1259,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnLoadApplicantByID.pressed.connect(self.load_applicant)
         # Queries
         self.btnGetApplicants.pressed.connect(self.query_applicants)
-        # self.btnGetStudents.pressed.connect(self.query_students)
+        self.btnGetStudents.pressed.connect(self.query_students)
 
     # Data and UI setup
     def init_ui(self):
@@ -1584,14 +1614,24 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             admission_term = self.comAdmissionTermQ.currentText()
             self.starrs_data.get_applicants_by_attribute('admission_term', admission_term)
 
-        elif self.radByDegree.isChecked():
+        else:
             degree_sought = self.comDegreeSoughtQ.currentText()
             self.starrs_data.get_applicants_by_attribute('degree_sought', degree_sought)
 
         self.tabAdmissionQuerries.setModel(DisplayApplicantModel(self.starrs_data))
 
     def query_students(self):
-        pass
+
+        if self.radByTerm.isChecked():
+            admission_term = self.comAdmissionTermQ.currentText()
+            self.starrs_data.get_students_by_attribute('admission_term', admission_term)
+
+        else:
+            degree_sought = self.comDegreeSoughtQ.currentText()
+            self.starrs_data.get_students_by_attribute('degree_sought', degree_sought)
+
+        self.tabAdmissionQuerries.setModel(DisplayApplicantModel(self.starrs_data))
+
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])
