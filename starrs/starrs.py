@@ -136,6 +136,12 @@ def init_database(sql_file_path):
                     description text
                     )''')
 
+    cursor.execute('''CREATE TABLE section (
+                    id integer primary key autoincrement,
+                    name text,
+                    description text
+                    )''')
+
     connection.commit()
     connection.close()
 
@@ -367,6 +373,16 @@ class StarrsData:
 
         return users
 
+    def convert_to_role(self, role_tuples):
+
+        roles = []
+
+        for role_tuple in role_tuples:
+            role = Role(role_tuple)
+            roles.append(role)
+
+        return roles
+
     def convert_to_application(self, application_tuples):
 
         applications = []
@@ -442,28 +458,6 @@ class StarrsData:
         if user_tuples:
             return self.convert_to_user(user_tuples)
 
-    def _get_users_with_transcripts(self):
-        """
-        Get list of student ids for all students with transcripts submitted by GS
-        """
-
-        user_ids = []
-
-        connection = sqlite3.connect(self.sql_file_path)
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT * FROM application WHERE "
-                       "transcripts IS 1 "
-                       "AND status IS NULL")
-
-        application_tuples = cursor.fetchall()
-        connection.close()
-
-        for application_tuple in application_tuples:
-            user_ids.append(str(application_tuple[1]))
-
-        return user_ids
-
     def update_user_attribute(self, attribute_name, user_id, attribute_value):
 
         connection = sqlite3.connect(self.sql_file_path)
@@ -503,6 +497,21 @@ class StarrsData:
         connection.commit()
         role.id = cursor.lastrowid  # Add database ID to the object
         connection.close()
+
+    def get_user_roles(self, user_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM role WHERE user_id=:user_id",
+                       {'user_id': user_id})
+
+        role_tuples = cursor.fetchall()
+
+        connection.close()
+
+        if role_tuples:
+            return self.convert_to_role(role_tuples)
 
     # Application
     def add_application(self, application_tuple):
@@ -806,6 +815,43 @@ class StarrsData:
             if user:
                 self.display_users.append(user)
                 self.display_applications.append(self.get_application(user_id))
+
+    # Additional Queries
+    def get_applicants_by_attribute(self, attribute_name, attribute_value):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM application WHERE {0}=:{0}".format(attribute_name),
+                       {'{0}'.format(attribute_name): attribute_value})
+
+        application_tuples = cursor.fetchall()
+        connection.close()
+
+        if not application_tuples:
+            del self.display_users[:]
+            del self.display_applications[:]
+            return
+
+        applications = self.convert_to_application(application_tuples)
+
+        # Clean existing data
+        del self.display_users[:]
+        del self.display_applications[:]
+
+        for application in applications:
+            user = self.get_user(application.user_id)
+            roles = self.get_user_roles(user.id)
+
+            # Check if user is applicant
+            is_applicant = False
+            for role in roles:
+                if role.role == 'Applicant':
+                    is_applicant = True
+
+            if is_applicant:
+                self.display_users.append(user)
+                self.display_applications.append(application)
 
 
 # STARRS Application
@@ -1181,6 +1227,9 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnSetRecomendations.pressed.connect(self.add_recommendations)
         self.btnLoadPendingApplicants.pressed.connect(self.load_pending_applicants)
         self.btnLoadApplicantByID.pressed.connect(self.load_applicant)
+        # Queries
+        self.btnGetApplicants.pressed.connect(self.query_applicants)
+        # self.btnGetStudents.pressed.connect(self.query_students)
 
     # Data and UI setup
     def init_ui(self):
@@ -1228,6 +1277,9 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.comRecomendationScore_1.addItems(self.scores)
         self.comRecomendationScore_2.addItems(self.scores)
         self.comRecomendationScore_3.addItems(self.scores)
+
+        self.comDegreeSoughtQ.addItems(self.degrees)
+        self.comAdmissionTermQ.addItems(self.terms)
 
         # Tables
         self.setup_table(self.tabReviewAdmitApplicant)
@@ -1523,6 +1575,23 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             applicant_model = ReviewApplicantModel(self.starrs_data)
             self.tabReviewAdmitApplicant.setModel(applicant_model)
 
+    def query_applicants(self):
+        """
+        Get list of applicants by term/degree
+        """
+
+        if self.radByTerm.isChecked():
+            admission_term = self.comAdmissionTermQ.currentText()
+            self.starrs_data.get_applicants_by_attribute('admission_term', admission_term)
+
+        elif self.radByDegree.isChecked():
+            degree_sought = self.comDegreeSoughtQ.currentText()
+            self.starrs_data.get_applicants_by_attribute('degree_sought', degree_sought)
+
+        self.tabAdmissionQuerries.setModel(DisplayApplicantModel(self.starrs_data))
+
+    def query_students(self):
+        pass
 
 if __name__ == "__main__":
     app = QtGui.QApplication([])

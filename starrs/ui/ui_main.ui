@@ -851,33 +851,72 @@
           </widget>
           <widget class="QWidget" name="tab_7">
            <attribute name="title">
-            <string>Admissions Querries</string>
+            <string>Admissions Queries</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <widget class="QPushButton" name="pushButton_2">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>35</height>
-               </size>
+             <widget class="QSplitter" name="splitter_19">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
-              <property name="text">
-               <string>Get Graduate Applicants</string>
-              </property>
+              <widget class="QRadioButton" name="radByTerm">
+               <property name="text">
+                <string>By Term</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+              <widget class="QComboBox" name="comAdmissionTermQ">
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+              <widget class="QRadioButton" name="radByDegree">
+               <property name="text">
+                <string>By Degree</string>
+               </property>
+              </widget>
+              <widget class="QComboBox" name="comDegreeSoughtQ">
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_3">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>35</height>
-               </size>
+             <widget class="QSplitter" name="splitter_20">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
-              <property name="text">
-               <string>Get Admited Students</string>
-              </property>
+              <widget class="QPushButton" name="btnGetApplicants">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Get Graduate Applicants</string>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="btnGetStudents">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Get Admited Students</string>
+               </property>
+              </widget>
              </widget>
             </item>
             <item>
