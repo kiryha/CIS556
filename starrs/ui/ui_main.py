@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Tue Jun 14 20:57:31 2022
+# Created: Wed Jun 15 18:41:40 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -434,9 +434,11 @@ class Ui_STARRS(object):
         self.btnGetApplicants = QtGui.QPushButton(self.splitter_20)
         self.btnGetApplicants.setMinimumSize(QtCore.QSize(0, 35))
         self.btnGetApplicants.setObjectName("btnGetApplicants")
-        self.btnGetStudents = QtGui.QPushButton(self.splitter_20)
-        self.btnGetStudents.setMinimumSize(QtCore.QSize(0, 35))
-        self.btnGetStudents.setObjectName("btnGetStudents")
+        self.btnGetAdmittedStudents = QtGui.QPushButton(self.splitter_20)
+        self.btnGetAdmittedStudents.setMinimumSize(QtCore.QSize(0, 35))
+        self.btnGetAdmittedStudents.setObjectName("btnGetAdmittedStudents")
+        self.btnGetCurrentStudents = QtGui.QPushButton(self.splitter_20)
+        self.btnGetCurrentStudents.setObjectName("btnGetCurrentStudents")
         self.verticalLayout_4.addWidget(self.splitter_20)
         self.tabAdmissionQuerries = QtGui.QTableView(self.tab_7)
         self.tabAdmissionQuerries.setObjectName("tabAdmissionQuerries")
@@ -471,6 +473,17 @@ class Ui_STARRS(object):
         self.tabSections.addTab(self.tab_2, "")
         self.tab_3 = QtGui.QWidget()
         self.tab_3.setObjectName("tab_3")
+        self.verticalLayout_15 = QtGui.QVBoxLayout(self.tab_3)
+        self.verticalLayout_15.setObjectName("verticalLayout_15")
+        self.tabWidget_3 = QtGui.QTabWidget(self.tab_3)
+        self.tabWidget_3.setObjectName("tabWidget_3")
+        self.tab_8 = QtGui.QWidget()
+        self.tab_8.setObjectName("tab_8")
+        self.tabWidget_3.addTab(self.tab_8, "")
+        self.tab_9 = QtGui.QWidget()
+        self.tab_9.setObjectName("tab_9")
+        self.tabWidget_3.addTab(self.tab_9, "")
+        self.verticalLayout_15.addWidget(self.tabWidget_3)
         self.tabSections.addTab(self.tab_3, "")
         self.tab_4 = QtGui.QWidget()
         self.tab_4.setObjectName("tab_4")
@@ -495,6 +508,7 @@ class Ui_STARRS(object):
         self.tabSections.setCurrentIndex(0)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
+        self.tabWidget_3.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(STARRS)
 
     def retranslateUi(self, STARRS):
@@ -543,11 +557,14 @@ class Ui_STARRS(object):
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_6), QtGui.QApplication.translate("STARRS", "Admission Process", None, QtGui.QApplication.UnicodeUTF8))
         self.radByTerm.setText(QtGui.QApplication.translate("STARRS", "By Term", None, QtGui.QApplication.UnicodeUTF8))
         self.radByDegree.setText(QtGui.QApplication.translate("STARRS", "By Degree", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnGetApplicants.setText(QtGui.QApplication.translate("STARRS", "Get Graduate Applicants", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnGetStudents.setText(QtGui.QApplication.translate("STARRS", "Get Admited Students", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnGetApplicants.setText(QtGui.QApplication.translate("STARRS", "Get Applicants", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnGetAdmittedStudents.setText(QtGui.QApplication.translate("STARRS", "Get Admited Students", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnGetCurrentStudents.setText(QtGui.QApplication.translate("STARRS", "Get Current Students", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("STARRS", "Numberl of Applicants               | Number of Admitted                 | Number of Rejected                 | Averege GRE of Admitted", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_7), QtGui.QApplication.translate("STARRS", "Admissions Queries", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_2), QtGui.QApplication.translate("STARRS", "Admissions Process", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_8), QtGui.QApplication.translate("STARRS", "Enrol to Courses", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_9), QtGui.QApplication.translate("STARRS", "Assign Grades", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_3), QtGui.QApplication.translate("STARRS", "Online Registration", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_4), QtGui.QApplication.translate("STARRS", "Graduation Process", None, QtGui.QApplication.UnicodeUTF8))
         self.menuEdit.setTitle(QtGui.QApplication.translate("STARRS", "Edit", None, QtGui.QApplication.UnicodeUTF8))

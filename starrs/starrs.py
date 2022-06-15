@@ -112,15 +112,23 @@ def init_database(sql_file_path):
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
 
+    cursor.execute('''CREATE TABLE academic (
+                    id integer primary key autoincrement,
+                    program text,
+                    description text
+                    )''')
+
     cursor.execute('''CREATE TABLE course (
                     id integer primary key autoincrement,
                     name text,
                     number integer,
+                    department integer,
                     credit_hour integer,
                     section integer,
                     professor text,
                     grade integer,
-                    description text
+                    description text, 
+                    FOREIGN KEY(department) REFERENCES department(id)
                     )''')
 
     cursor.execute('''CREATE TABLE department (
@@ -723,30 +731,6 @@ class StarrsData:
         # Update pending applicant data
         self.update_pending_applications(user_id)
 
-    def add_student(self, student_tuple):
-
-        student = Student(student_tuple)
-
-        connection = sqlite3.connect(self.sql_file_path)
-        cursor = connection.cursor()
-
-        # Add object to DB
-        cursor.execute("INSERT INTO student VALUES ("
-                       ":id,"
-                       ":user_id,"
-                       ":description)",
-
-                       {'id': cursor.lastrowid,
-                        'user_id': student.user_id,
-                        'description': student.description})
-
-        connection.commit()
-        student.id = cursor.lastrowid  # Add database ID to the object
-        connection.close()
-
-        print 'Student {0} added!'.format(student.user_id)
-        return student
-
     def update_comments(self, user_id, comments):
 
         connection = sqlite3.connect(self.sql_file_path)
@@ -844,6 +828,17 @@ class StarrsData:
                 self.display_applications.append(self.get_application(user_id))
 
     # Additional Queries
+    def check_roles(self, user_id, role_name):
+        """
+        Check if user has a certain role
+        """
+
+        roles = self.get_user_roles(user_id)
+
+        for role in roles:
+            if role.name == role_name:
+                return True
+
     def query_applicants_by_attribute(self, attribute_name, attribute_value):
         """
         Get applicants for given term/degree
@@ -860,19 +855,12 @@ class StarrsData:
 
         for application in applications:
             user = self.get_user(application.user_id)
-            roles = self.get_user_roles(user.id)
 
-            # Check if user is applicant
-            is_applicant = False
-            for role in roles:
-                if role.name == 'Applicant':
-                    is_applicant = True
-
-            if is_applicant:
+            if self.check_roles(user.id, 'Applicant'):
                 self.display_users.append(user)
                 self.display_applications.append(application)
 
-    def query_students_by_attribute(self, attribute_name, attribute_value):
+    def query_admitted_by_attribute(self, attribute_name, attribute_value):
 
         # Clean existing data
         del self.display_users[:]
@@ -887,6 +875,24 @@ class StarrsData:
             user = self.get_user(application.user_id)
             self.display_users.append(user)
             self.display_applications.append(application)
+
+    def query_students_by_attribute(self, attribute_name, attribute_value):
+
+        # Clean existing data
+        del self.display_users[:]
+        del self.display_applications[:]
+
+        applications = self.get_admitted_applications(attribute_name, attribute_value)
+
+        if not applications:
+            return
+
+        for application in applications:
+            user = self.get_user(application.user_id)
+
+            if self.check_roles(user.id, 'Student'):
+                self.display_users.append(user)
+                self.display_applications.append(application)
 
     def get_average_gre(self, attribute_name, attribute_value):
         """
@@ -1284,8 +1290,9 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # Queries
         self.btnGetApplicants.pressed.connect(self.query_applicants)
         self.btnGetApplicants.pressed.connect(self.query_statistic)
-        self.btnGetStudents.pressed.connect(self.query_students)
-        self.btnGetStudents.pressed.connect(self.query_statistic)
+        self.btnGetAdmittedStudents.pressed.connect(self.query_admitted)
+        self.btnGetAdmittedStudents.pressed.connect(self.query_statistic)
+        self.btnGetCurrentStudents.pressed.connect(self.query_students)
 
     # Data and UI setup
     def init_ui(self):
@@ -1646,6 +1653,18 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         else:
             degree_sought = self.comDegreeSoughtQ.currentText()
             self.starrs_data.query_applicants_by_attribute('degree_sought', degree_sought)
+
+        self.tabAdmissionQuerries.setModel(DisplayApplicantModel(self.starrs_data))
+
+    def query_admitted(self):
+
+        if self.radByTerm.isChecked():
+            admission_term = self.comAdmissionTermQ.currentText()
+            self.starrs_data.query_admitted_by_attribute('admission_term', admission_term)
+
+        else:
+            degree_sought = self.comDegreeSoughtQ.currentText()
+            self.starrs_data.query_admitted_by_attribute('degree_sought', degree_sought)
 
         self.tabAdmissionQuerries.setModel(DisplayApplicantModel(self.starrs_data))
 
