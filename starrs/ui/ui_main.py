@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Tue Jun 14 20:28:11 2022
+# Created: Tue Jun 14 20:57:31 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -438,6 +438,9 @@ class Ui_STARRS(object):
         self.btnGetStudents.setMinimumSize(QtCore.QSize(0, 35))
         self.btnGetStudents.setObjectName("btnGetStudents")
         self.verticalLayout_4.addWidget(self.splitter_20)
+        self.tabAdmissionQuerries = QtGui.QTableView(self.tab_7)
+        self.tabAdmissionQuerries.setObjectName("tabAdmissionQuerries")
+        self.verticalLayout_4.addWidget(self.tabAdmissionQuerries)
         self.label = QtGui.QLabel(self.tab_7)
         self.label.setObjectName("label")
         self.verticalLayout_4.addWidget(self.label)
@@ -461,9 +464,6 @@ class Ui_STARRS(object):
         self.linStatGRE.setAlignment(QtCore.Qt.AlignCenter)
         self.linStatGRE.setObjectName("linStatGRE")
         self.verticalLayout_4.addWidget(self.splitter_21)
-        self.tabAdmissionQuerries = QtGui.QTableView(self.tab_7)
-        self.tabAdmissionQuerries.setObjectName("tabAdmissionQuerries")
-        self.verticalLayout_4.addWidget(self.tabAdmissionQuerries)
         self.tabWidget_2.addTab(self.tab_7, "")
         self.verticalLayout_6.addWidget(self.tabWidget_2)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)

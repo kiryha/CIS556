@@ -920,6 +920,9 @@
              </widget>
             </item>
             <item>
+             <widget class="QTableView" name="tabAdmissionQuerries"/>
+            </item>
+            <item>
              <widget class="QLabel" name="label">
               <property name="text">
                <string>Numberl of Applicants               | Number of Admitted                 | Number of Rejected                 | Averege GRE of Admitted</string>
@@ -964,9 +967,6 @@
                </property>
               </widget>
              </widget>
-            </item>
-            <item>
-             <widget class="QTableView" name="tabAdmissionQuerries"/>
             </item>
            </layout>
           </widget>
