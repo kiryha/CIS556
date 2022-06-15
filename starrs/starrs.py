@@ -49,7 +49,6 @@ def init_database(sql_file_path):
     connection = sqlite3.connect(sql_file_path)
     cursor = connection.cursor()
 
-    # User
     cursor.execute('''CREATE TABLE user (
                     id integer primary key autoincrement,
                     first_name text,
@@ -64,12 +63,11 @@ def init_database(sql_file_path):
     cursor.execute('''CREATE TABLE role (
                     id integer primary key autoincrement,
                     user_id integer,
-                    role text,
+                    name text,
                     description text,
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
 
-    # Student application
     cursor.execute('''CREATE TABLE application (
                     id integer primary key autoincrement,
                     user_id integer,
@@ -185,12 +183,12 @@ def populate_database(sql_file_path):
         cursor.execute("INSERT INTO role VALUES ("
                        ":id,"
                        ":user_id,"
-                       ":role,"
+                       ":name,"
                        ":description)",
 
                        {'id': cursor.lastrowid,
                         'user_id': user_id,
-                        'role': user[7],
+                        'name': user[7],
                         'description': ''})
 
         connection.commit()
@@ -226,7 +224,7 @@ class Role:
     def __init__(self, role_tuple):
         self.id = None
         self.user_id = None
-        self.role = ''
+        self.name = ''
         self.description = ''
 
         self.init(role_tuple)
@@ -235,7 +233,7 @@ class Role:
 
         self.id = role_tuple[0]
         self.user_id = role_tuple[1]
-        self.role = role_tuple[2]
+        self.name = role_tuple[2]
         self.description = role_tuple[3]
 
 
@@ -486,12 +484,12 @@ class StarrsData:
         cursor.execute("INSERT INTO role VALUES ("
                        ":id,"
                        ":user_id,"
-                       ":role,"
+                       ":name,"
                        ":description)",
 
                        {'id': cursor.lastrowid,
                         'user_id': role.user_id,
-                        'role': role.role,
+                        'name': role.name,
                         'description': role.description})
 
         connection.commit()
@@ -885,7 +883,7 @@ class StarrsData:
             # Check if user is applicant
             is_applicant = False
             for role in roles:
-                if role.role == 'Applicant':
+                if role.name == 'Applicant':
                     is_applicant = True
 
             if is_applicant:
