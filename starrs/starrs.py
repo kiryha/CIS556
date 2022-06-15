@@ -37,7 +37,9 @@ init_data = {
          '734-780-0002',
          'Instructor',
          'Instructor']
-    ]
+    ],
+
+    'courses': {}
 }
 
 
@@ -110,13 +112,6 @@ def init_database(sql_file_path):
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
 
-    cursor.execute('''CREATE TABLE student (
-                    id integer primary key autoincrement,
-                    user_id integer,
-                    description text,
-                    FOREIGN KEY(user_id) REFERENCES user(id)
-                    )''')
-
     cursor.execute('''CREATE TABLE course (
                     id integer primary key autoincrement,
                     name text,
@@ -136,8 +131,10 @@ def init_database(sql_file_path):
 
     cursor.execute('''CREATE TABLE section (
                     id integer primary key autoincrement,
-                    name text,
-                    description text
+                    number text,
+                    admission_term integer,
+                    description text,
+                    FOREIGN KEY(admission_term) REFERENCES application(admission_term)
                     )''')
 
     connection.commit()
@@ -320,21 +317,6 @@ class Application:
         self.ranking = application_tuple[35]
         self.comments = application_tuple[36]
         self.description = application_tuple[37]
-
-
-class Student:
-    def __init__(self, student_tuple):
-        self.id = None
-        self.user_id = None
-        self.description = None
-
-        self.init(student_tuple)
-
-    def init(self, student_tuple):
-
-        self.id = student_tuple[0]
-        self.user_id = student_tuple[1]
-        self.description = student_tuple[2]
 
 
 # Database manipulations
@@ -1534,10 +1516,12 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         if application.status in ['Admitted With Aid', 'Admitted']:
 
-            # student_tuple = [None, user_id, 'I accept']
-            # self.starrs_data.add_student(student_tuple)
-            # TODO: change user role from Applicant to Student
-            pass
+            role_tuple = [None, user_id, 'Student', '']
+            self.starrs_data.add_role(role_tuple)
+            self.statusBar().showMessage('>> Student {0} enrolled to the Database University!'.format(user_id))
+
+        else:
+            self.statusBar().showMessage('>> Only admitted students can enroll to the Database University!')
 
     def load_application_data(self):
 
