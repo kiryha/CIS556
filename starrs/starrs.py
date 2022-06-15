@@ -673,6 +673,53 @@ class StarrsData:
         if application_tuples:
             return self.convert_to_application(application_tuples)
 
+    def get_rejected_applications(self, attribute_name, attribute_value):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM application "
+                       "WHERE {0}=:{0} "
+                       "AND status LIKE 'Rejected'".format(attribute_name),
+                       {'{0}'.format(attribute_name): attribute_value})
+
+        application_tuples = cursor.fetchall()
+        connection.close()
+
+        if application_tuples:
+            return self.convert_to_application(application_tuples)
+
+    def get_admitted_applications(self, attribute_name, attribute_value):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM application "
+                       "WHERE {0}=:{0} "
+                       "AND (status LIKE 'Admitted With Aid' "
+                       "OR status LIKE 'Admitted')".format(attribute_name),
+                       {'{0}'.format(attribute_name): attribute_value})
+
+        application_tuples = cursor.fetchall()
+        connection.close()
+
+        if application_tuples:
+            return self.convert_to_application(application_tuples)
+
+    def get_applications_by_attribute(self, attribute_name, attribute_value):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM application WHERE {0}=:{0}".format(attribute_name),
+                       {'{0}'.format(attribute_name): attribute_value})
+
+        application_tuples = cursor.fetchall()
+        connection.close()
+
+        if application_tuples:
+            return self.convert_to_application(application_tuples)
+
     def update_status(self, user_id, status):
         """
         Set applicant status
@@ -817,27 +864,19 @@ class StarrsData:
                 self.display_applications.append(self.get_application(user_id))
 
     # Additional Queries
-    def get_applicants_by_attribute(self, attribute_name, attribute_value):
-
-        connection = sqlite3.connect(self.sql_file_path)
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT * FROM application WHERE {0}=:{0}".format(attribute_name),
-                       {'{0}'.format(attribute_name): attribute_value})
-
-        application_tuples = cursor.fetchall()
-        connection.close()
-
-        if not application_tuples:
-            del self.display_users[:]
-            del self.display_applications[:]
-            return
-
-        applications = self.convert_to_application(application_tuples)
+    def query_applicants_by_attribute(self, attribute_name, attribute_value):
+        """
+        Get applicants for given term/degree
+        """
 
         # Clean existing data
         del self.display_users[:]
         del self.display_applications[:]
+
+        applications = self.get_applications_by_attribute(attribute_name, attribute_value)
+
+        if not applications:
+            return
 
         for application in applications:
             user = self.get_user(application.user_id)
@@ -853,35 +892,48 @@ class StarrsData:
                 self.display_users.append(user)
                 self.display_applications.append(application)
 
-    def get_students_by_attribute(self, attribute_name, attribute_value):
-
-        connection = sqlite3.connect(self.sql_file_path)
-        cursor = connection.cursor()
-
-        cursor.execute("SELECT * FROM application "
-                       "WHERE {0}=:{0} "
-                       "AND status LIKE 'Admitted With Aid' "
-                       "OR status LIKE 'Admitted'".format(attribute_name),
-                       {'{0}'.format(attribute_name): attribute_value})
-
-        application_tuples = cursor.fetchall()
-        connection.close()
-
-        if not application_tuples:
-            del self.display_users[:]
-            del self.display_applications[:]
-            return
-
-        applications = self.convert_to_application(application_tuples)
+    def query_students_by_attribute(self, attribute_name, attribute_value):
 
         # Clean existing data
         del self.display_users[:]
         del self.display_applications[:]
 
+        applications = self.get_admitted_applications(attribute_name, attribute_value)
+
+        if not applications:
+            return
+
         for application in applications:
             user = self.get_user(application.user_id)
             self.display_users.append(user)
             self.display_applications.append(application)
+
+    def get_average_gre(self, attribute_name, attribute_value):
+        """
+        Get average GRE of admitted students for current degree/term
+        """
+
+        verbal = 0
+        quantitative = 0
+        analytical = 0
+
+        applications = self.get_admitted_applications(attribute_name, attribute_value)
+
+        if not applications:
+            return verbal, quantitative, analytical
+
+        number_of_applications = len(applications)
+
+        for application in applications:
+            verbal += int(application.gre_verbal)
+            quantitative += int(application.gre_quantitative)
+            analytical += int(application.gre_analytical)
+
+        verbal = verbal/number_of_applications
+        quantitative = quantitative/number_of_applications
+        analytical = analytical/number_of_applications
+
+        return verbal, quantitative, analytical
 
 
 # STARRS Application
@@ -1251,7 +1303,9 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnLoadApplicantByID.pressed.connect(self.load_applicant)
         # Queries
         self.btnGetApplicants.pressed.connect(self.query_applicants)
+        self.btnGetApplicants.pressed.connect(self.query_statistic)
         self.btnGetStudents.pressed.connect(self.query_students)
+        self.btnGetStudents.pressed.connect(self.query_statistic)
 
     # Data and UI setup
     def init_ui(self):
@@ -1605,11 +1659,11 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         if self.radByTerm.isChecked():
             admission_term = self.comAdmissionTermQ.currentText()
-            self.starrs_data.get_applicants_by_attribute('admission_term', admission_term)
+            self.starrs_data.query_applicants_by_attribute('admission_term', admission_term)
 
         else:
             degree_sought = self.comDegreeSoughtQ.currentText()
-            self.starrs_data.get_applicants_by_attribute('degree_sought', degree_sought)
+            self.starrs_data.query_applicants_by_attribute('degree_sought', degree_sought)
 
         self.tabAdmissionQuerries.setModel(DisplayApplicantModel(self.starrs_data))
 
@@ -1617,13 +1671,66 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         if self.radByTerm.isChecked():
             admission_term = self.comAdmissionTermQ.currentText()
-            self.starrs_data.get_students_by_attribute('admission_term', admission_term)
+            self.starrs_data.query_students_by_attribute('admission_term', admission_term)
 
         else:
             degree_sought = self.comDegreeSoughtQ.currentText()
-            self.starrs_data.get_students_by_attribute('degree_sought', degree_sought)
+            self.starrs_data.query_students_by_attribute('degree_sought', degree_sought)
 
         self.tabAdmissionQuerries.setModel(DisplayApplicantModel(self.starrs_data))
+
+    def process_statistic(self, attribute_name, attribute_value):
+
+        # Clear fields
+        self.linStatApplicants.setText('')
+        self.linStatAdmitted.setText('')
+        self.linStatRejected.setText('')
+        self.linStatGRE.setText('')
+
+        # Total number of Applicants
+        applicants = self.starrs_data.get_applications_by_attribute(attribute_name, attribute_value)
+
+        if applicants:
+            applicants = str(len(applicants))
+        else:
+            applicants = '0'
+
+        self.linStatApplicants.setText(applicants)
+
+        # Total number of Admitted
+        admitted = self.starrs_data.get_admitted_applications(attribute_name, attribute_value)
+
+        if admitted:
+            admitted = str(len(admitted))
+        else:
+            admitted = '0'
+
+        self.linStatAdmitted.setText(admitted)
+
+        # Total number of rejected
+        rejected = self.starrs_data.get_rejected_applications(attribute_name, attribute_value)
+
+        if rejected:
+            rejected = str(len(rejected))
+        else:
+            rejected = '0'
+
+        self.linStatRejected.setText(rejected)
+
+        # Average GRE
+        verbal, quantitative, analytical = self.starrs_data.get_average_gre(attribute_name, attribute_value)
+        average_gre = '{0} {1} {2}'.format(verbal, quantitative, analytical)
+        self.linStatGRE.setText(average_gre)
+
+    def query_statistic(self):
+
+        if self.radByTerm.isChecked():
+            admission_term = self.comAdmissionTermQ.currentText()
+            self.process_statistic('admission_term', admission_term)
+
+        else:
+            degree_sought = self.comDegreeSoughtQ.currentText()
+            self.process_statistic('degree_sought', degree_sought)
 
 
 if __name__ == "__main__":
