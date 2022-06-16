@@ -11,35 +11,74 @@ scripts_root = os.path.dirname(__file__).replace('\\', '/')
 # Database
 init_data = {
     'users': [
-        ['Alexander',
-         'S',
-         'Copper',
-         'acopper@umich.edu',
-         '48067, MI, Royal Oak, W 6th st, 310',
-         '734-780-0001',
-         'Graduate Secretary',
-         'GS'],
+        {'id': 1,
+         'first_name': 'Alexander',
+         'middle_name': 'S',
+         'last_name': 'Copper',
+         'email': 'acopper@umich.edu',
+         'address': '48067, MI, Royal Oak, W 6th st, 310',
+         'phone': '734-780-0001',
+         'role': 'GS'},
 
-        ['Kimberly',
-         None,
-         'Prare',
-         'kprare@umich.edu',
-         '48120, MI, Dearborn, W Warren Ave, 1530',
-         '734-780-0003',
-         'Adviser',
-         'Adviser'],
+        {'id': 2,
+         'first_name': 'Sumanth',
+         'middle_name': 'Shiva',
+         'last_name': 'Pracah',
+         'email': 'sshiva@umich.edu',
+         'address': '48226, MI, Detroit, Woodward ave, 1435',
+         'phone': '734-780-0002',
+         'role': 'Reviewer'},
 
-        ['Adam',
-         None,
-         'Smith',
-         'asmith@umich.edu',
-         '48120, MI, Dearborn, W Warren Ave, 1440',
-         '734-780-0002',
-         'Instructor',
-         'Instructor']
+        {'id': 3,
+         'first_name': 'Kimberly',
+         'middle_name': 'La',
+         'last_name': 'Praire',
+         'email': 'kim@umich.edu',
+         'address': '48226, MI, Detroit, 555 Brush St, 2530',
+         'phone': '734-780-0003',
+         'role': 'Adviser'},
+
+        {'id': 4,
+         'first_name': 'Thomas',
+         'middle_name': '',
+         'last_name': 'Steiner',
+         'email': 'tstain@umich.edu',
+         'address': '48120, MI, Dearborn, W Warren Ave, 1440',
+         'phone': '734-780-0004',
+         'role': 'Instructor'}
     ],
 
-    'courses': {}
+    'departments': [{'id': 1, 'name': 'CIS'}, {'id': 2, 'name': 'ECE'}],
+
+    'courses': [
+        {'id': 1,
+         'name': 'Database Systems',
+         'number': '556',
+         'department_id': 1,
+         'credit_hours': 3,
+         'instructor_id': 4},
+
+        {'id': 2,
+         'name': 'Software Engineering',
+         'number': '553',
+         'department_id': 1,
+         'credit_hours': 3,
+         'instructor_id': 4},
+
+        {'id': 3,
+         'name': 'Embedded Systems',
+         'number': '554',
+         'department_id': 2,
+         'credit_hours': 3,
+         'instructor_id': 4}],
+
+    'sections': [
+        {'id': 1,
+         'course_id': 1,
+         'number': '001',
+         'admission_term': 'Summer 2022',
+         'instructor_id': 4}
+    ]
 }
 
 
@@ -114,21 +153,24 @@ def init_database(sql_file_path):
 
     cursor.execute('''CREATE TABLE academic (
                     id integer primary key autoincrement,
-                    program text,
-                    description text
+                    user_id integer,
+                    course_id integer,
+                    section_id integer, 
+                    grade text,
+                    description text,
+                    FOREIGN KEY(user_id) REFERENCES user(id)
+                    FOREIGN KEY(course_id) REFERENCES course(id)
+                    FOREIGN KEY(section_id) REFERENCES section(id)
                     )''')
 
     cursor.execute('''CREATE TABLE course (
                     id integer primary key autoincrement,
                     name text,
                     number integer,
-                    department integer,
-                    credit_hour integer,
-                    section integer,
-                    professor text,
-                    grade integer,
+                    department_id integer,
+                    credit_hours integer,
                     description text, 
-                    FOREIGN KEY(department) REFERENCES department(id)
+                    FOREIGN KEY(department_id) REFERENCES department(id)
                     )''')
 
     cursor.execute('''CREATE TABLE department (
@@ -139,10 +181,13 @@ def init_database(sql_file_path):
 
     cursor.execute('''CREATE TABLE section (
                     id integer primary key autoincrement,
+                    course_id integer,
                     number text,
-                    admission_term integer,
+                    admission_term text,
+                    instructor_id integer,
                     description text,
-                    FOREIGN KEY(admission_term) REFERENCES application(admission_term)
+                    FOREIGN KEY(course_id) REFERENCES course(id)
+                    FOREIGN KEY(instructor_id) REFERENCES user(id)
                     )''')
 
     connection.commit()
@@ -154,7 +199,7 @@ def populate_database(sql_file_path):
     Add data to the database: users
     """
 
-    for user in init_data['users']:
+    for user_data in init_data['users']:
 
         connection = sqlite3.connect(sql_file_path)
         cursor = connection.cursor()
@@ -169,21 +214,16 @@ def populate_database(sql_file_path):
                        ":phone,"
                        ":description)",
 
-                       {'id': cursor.lastrowid,
-                        'first_name': user[0],
-                        'middle_name': user[1],
-                        'last_name': user[2],
-                        'email': user[3],
-                        'address': user[4],
-                        'phone': user[5],
-                        'description': user[6]})
+                       {'id': user_data['id'],
+                        'first_name': user_data['first_name'],
+                        'middle_name': user_data['middle_name'],
+                        'last_name': user_data['last_name'],
+                        'email': user_data['email'],
+                        'address': user_data['address'],
+                        'phone': user_data['phone'],
+                        'description': ''})
 
         connection.commit()
-        user_id = cursor.lastrowid
-        connection.close()
-
-        connection = sqlite3.connect(sql_file_path)
-        cursor = connection.cursor()
 
         cursor.execute("INSERT INTO role VALUES ("
                        ":id,"
@@ -192,8 +232,71 @@ def populate_database(sql_file_path):
                        ":description)",
 
                        {'id': cursor.lastrowid,
-                        'user_id': user_id,
-                        'name': user[7],
+                        'user_id': user_data['id'],
+                        'name': user_data['role'],
+                        'description': ''})
+
+        connection.commit()
+        connection.close()
+
+    for department_data in init_data['departments']:
+
+        connection = sqlite3.connect(sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO department VALUES ("
+                       ":id,"
+                       ":name,"
+                       ":description)",
+
+                       {'id': department_data['id'],
+                        'name': department_data['name'],
+                        'description': ''})
+
+        connection.commit()
+        connection.close()
+
+    for course_data in init_data['courses']:
+
+        connection = sqlite3.connect(sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO course VALUES ("
+                       ":id,"
+                       ":name,"
+                       ":number,"
+                       ":department_id,"
+                       ":credit_hours,"
+                       ":description)",
+
+                       {'id': course_data['id'],
+                        'name': course_data['name'],
+                        'number': course_data['number'],
+                        'department_id': course_data['department_id'],
+                        'credit_hours': course_data['credit_hours'],
+                        'description': ''})
+
+        connection.commit()
+        connection.close()
+
+    for section_data in init_data['sections']:
+
+        connection = sqlite3.connect(sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("INSERT INTO section VALUES ("
+                       ":id,"
+                       ":course_id,"
+                       ":number,"
+                       ":admission_term,"
+                       ":instructor_id,"
+                       ":description)",
+
+                       {'id': section_data['id'],
+                        'course_id': section_data['course_id'],
+                        'number': section_data['number'],
+                        'admission_term': section_data['admission_term'],
+                        'instructor_id': section_data['instructor_id'],
                         'description': ''})
 
         connection.commit()
@@ -1259,7 +1362,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.terms = ['Summer 2022', 'Fall 2022', 'Winter 2023', 'Summer 2023', 'Fall 2023']
         self.degrees = ['MS', 'MSE']
         self.scores = ['95-100', '85-94', '70-84', '0-70']
-        self.roles = ['GS', 'Reviewer', 'Instructor', 'Applicant', 'Student', 'Alumni']
+        self.roles = ['GS', 'Reviewer', 'Adviser', 'Instructor', 'Applicant', 'Student', 'Alumni']
 
         # Database
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
