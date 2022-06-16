@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Wed Jun 15 22:07:42 2022
+# Created: Thu Jun 16 16:43:17 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -486,6 +486,12 @@ class Ui_STARRS(object):
         self.splitter_22.setObjectName("splitter_22")
         self.label_16 = QtGui.QLabel(self.splitter_22)
         self.label_16.setObjectName("label_16")
+        self.linStudentIDRegistration = QtGui.QLineEdit(self.splitter_22)
+        self.linStudentIDRegistration.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.linStudentIDRegistration.setText("")
+        self.linStudentIDRegistration.setObjectName("linStudentIDRegistration")
+        self.label_18 = QtGui.QLabel(self.splitter_22)
+        self.label_18.setObjectName("label_18")
         self.comAdmissionTermReg = QtGui.QComboBox(self.splitter_22)
         self.comAdmissionTermReg.setMaximumSize(QtCore.QSize(120, 16777215))
         self.comAdmissionTermReg.setObjectName("comAdmissionTermReg")
@@ -579,7 +585,8 @@ class Ui_STARRS(object):
         self.label.setText(QtGui.QApplication.translate("STARRS", "Numberl of Applicants               | Number of Admitted                 | Number of Rejected                 | Averege GRE of Admitted", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_7), QtGui.QApplication.translate("STARRS", "Admissions Queries", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_2), QtGui.QApplication.translate("STARRS", "Admissions Process", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_16.setText(QtGui.QApplication.translate("STARRS", "Select Admittion Term", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_16.setText(QtGui.QApplication.translate("STARRS", "Student ID:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_18.setText(QtGui.QApplication.translate("STARRS", "Admittion Term", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_8), QtGui.QApplication.translate("STARRS", "Enrol to Courses", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_9), QtGui.QApplication.translate("STARRS", "Assign Grades", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_3), QtGui.QApplication.translate("STARRS", "Online Registration", None, QtGui.QApplication.UnicodeUTF8))

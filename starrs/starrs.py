@@ -181,18 +181,6 @@ def create_database(sql_file_path):
                     FOREIGN KEY(user_id) REFERENCES user(id)
                     )''')
 
-    cursor.execute('''CREATE TABLE academic (
-                    id integer primary key autoincrement,
-                    user_id integer,
-                    course_id integer,
-                    section_id integer, 
-                    grade text,
-                    description text,
-                    FOREIGN KEY(user_id) REFERENCES user(id)
-                    FOREIGN KEY(course_id) REFERENCES course(id)
-                    FOREIGN KEY(section_id) REFERENCES section(id)
-                    )''')
-
     cursor.execute('''CREATE TABLE course (
                     id integer primary key autoincrement,
                     name text,
@@ -201,12 +189,6 @@ def create_database(sql_file_path):
                     credit_hours integer,
                     description text, 
                     FOREIGN KEY(department_id) REFERENCES department(id)
-                    )''')
-
-    cursor.execute('''CREATE TABLE department (
-                    id integer primary key autoincrement,
-                    name text,
-                    description text
                     )''')
 
     cursor.execute('''CREATE TABLE section (
@@ -219,6 +201,24 @@ def create_database(sql_file_path):
                     FOREIGN KEY(course_id) REFERENCES course(id)
                     FOREIGN KEY(instructor_id) REFERENCES user(id)
                     )''')
+
+    cursor.execute('''CREATE TABLE department (
+                    id integer primary key autoincrement,
+                    name text,
+                    description text
+                    )''')
+
+    cursor.execute('''CREATE TABLE academic (
+                    id integer primary key autoincrement,
+                    user_id integer,
+                    section_id integer, 
+                    grade text,
+                    description text,
+                    FOREIGN KEY(user_id) REFERENCES user(id)
+                    FOREIGN KEY(course_id) REFERENCES course(id)
+                    FOREIGN KEY(section_id) REFERENCES section(id)
+                    )''')
+
 
     connection.commit()
     connection.close()
@@ -502,6 +502,52 @@ class Section:
         self.description = section_tuple[5]
 
 
+class Department:
+    def __init__(self, department_tuple):
+        self.id = None
+        self.name = ''
+        self.description = ''
+
+        self.init(department_tuple)
+
+    def init(self, department_tuple):
+
+        self.id = department_tuple[0]
+        self.name = department_tuple[1]
+        self.description = department_tuple[2]
+
+
+class Academic:
+    def __init__(self, academic_tuple):
+        self.id = None
+        self.user_id = None
+        self.section_id = None
+        self.grade = ''
+        self.description = ''
+
+        self.init(academic_tuple)
+
+    def init(self, academic_tuple):
+
+        self.id = academic_tuple[0]
+        self.user_id = academic_tuple[1]
+        self.section_id = academic_tuple[2]
+        self.grade = academic_tuple[3]
+        self.description = academic_tuple[4]
+
+
+class AcademicDisplay:
+    def __init__(self):
+        self.department_name = ''
+        self.course_number = ''
+        self.course_name = ''
+        self.section = ''
+        self.instructor = ''
+        self.term = ''
+        self.register = ''
+        self.grade = ''
+
+
 # Database manipulations
 class StarrsData:
     def __init__(self, sql_file_path):
@@ -514,8 +560,7 @@ class StarrsData:
         self.edit_application = None
         self.display_users = []
         self.display_applications = []
-        self.courses = []
-        self.sections = []
+        self.display_academics = []
 
     # Init data
     def clear_data(self):
@@ -577,6 +622,26 @@ class StarrsData:
             sections.append(section)
 
         return sections
+
+    def convert_to_department(self, department_tuples):
+
+        departments = []
+
+        for department_tuple in department_tuples:
+            department = Department(department_tuple)
+            departments.append(department)
+
+        return departments
+
+    def convert_to_academic(self, academic_tuples):
+
+        academics = []
+
+        for academic_tuple in academic_tuples:
+            academic = Academic(academic_tuple)
+            academics.append(academic)
+
+        return academics
 
     # Basic CURDs
     # User
@@ -979,8 +1044,8 @@ class StarrsData:
         connection = sqlite3.connect(self.sql_file_path)
         cursor = connection.cursor()
 
-        cursor.execute("SELECT * FROM course WHERE course_id=:course_id",
-                       {'course_id': course_id})
+        cursor.execute("SELECT * FROM course WHERE id=:id",
+                       {'id': course_id})
 
         course_tuple = cursor.fetchone()
 
@@ -1004,6 +1069,41 @@ class StarrsData:
 
         if section_tuples:
             return self.convert_to_section(section_tuples)
+
+    # Department
+    def get_department(self, department_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM department WHERE id=:id",
+                       {'id': department_id})
+
+        department_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if department_tuple:
+            return self.convert_to_department([department_tuple])[0]
+
+    # Academic
+    def get_academic(self, user_id, section_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM academic WHERE "
+                       "user_id=:user_id "
+                       "AND section_id=:section_id",
+
+                       {'user_id': user_id, 'section_id': section_id})
+
+        academic_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if academic_tuple:
+            return self.convert_to_academic([academic_tuple])[0]
 
     # Multi step actions
     def submit_application(self, application_tuple):
@@ -1057,18 +1157,41 @@ class StarrsData:
                 self.display_users.append(user)
                 self.display_applications.append(self.get_application(user_id))
 
-    def get_term_courses(self, admission_term):
+    def get_term_courses(self, student_id, admission_term):
 
-        # Clean existing data
-        del self.courses[:]
-        del self.sections[:]
+        # Clear data
+        del self.display_academics[:]
 
         sections = self.get_sections_of_term(admission_term)
-        
+
         if not sections:
             return
 
-        self.sections.extend(sections)
+        for section in sections:
+
+            academic_display = AcademicDisplay()
+
+            course = self.get_course(section.course_id)
+            department = self.get_department(course.department_id)
+            instructor = self.get_user(section.instructor_id)
+
+            academic = self.get_academic(student_id, section.id)
+            # student = self.get_user(student_id)
+
+            # Get grade
+            grade = ''
+            if academic:
+                grade = academic.grade
+
+            academic_display.department_name = department.name
+            academic_display.course_number = course.number
+            academic_display.course_name = course.name
+            academic_display.section = section.number
+            academic_display.instructor = instructor.last_name
+            academic_display.term = section.admission_term
+            academic_display.grade = grade
+
+            self.display_academics.append(academic_display)
 
     # Additional Queries
     def check_roles(self, user_id, role_name):
@@ -1489,15 +1612,19 @@ class EditApplicationModel(QtCore.QAbstractTableModel):
             return True
 
 
-class AcademicModel(QtCore.QAbstractTableModel):
+class AcademicDisplayModel(QtCore.QAbstractTableModel):
     def __init__(self, starrs_data, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
         self.starrs_data = starrs_data
-        self.header = ['  Name  ',
-                       '  Department  ',
-                       '  Number ',
-                       '  Term  ']
+        self.header = ['  Dep  ',
+                       '  Number  ',
+                       '  Name ',
+                       '  Section ',
+                       '  Instructor ',
+                       '  Term ',
+                       '  Register  ',
+                       '  Grade  ']
 
     def flags(self, index):
 
@@ -1510,7 +1637,7 @@ class AcademicModel(QtCore.QAbstractTableModel):
 
     def rowCount(self, parent):
 
-        return len(self.starrs_data.sections)
+        return len(self.starrs_data.display_academics)
 
     def columnCount(self, parent):
 
@@ -1527,7 +1654,21 @@ class AcademicModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
 
             if column == 0:
-                return self.starrs_data.sections[row].number
+                return self.starrs_data.display_academics[row].department_name
+            if column == 1:
+                return self.starrs_data.display_academics[row].course_number
+            if column == 2:
+                return self.starrs_data.display_academics[row].course_name
+            if column == 3:
+                return self.starrs_data.display_academics[row].section
+            if column == 4:
+                return self.starrs_data.display_academics[row].instructor
+            if column == 5:
+                return self.starrs_data.display_academics[row].term
+            if column == 6:
+                return self.starrs_data.display_academics[row].grade
+            if column == 7:
+                return self.starrs_data.display_academics[row].grade
 
 
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
@@ -1544,6 +1685,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.degrees = ['MS', 'MSE']
         self.scores = ['95-100', '85-94', '70-84', '0-70']
         self.roles = ['GS', 'Reviewer', 'Adviser', 'Instructor', 'Applicant', 'Student', 'Alumni']
+        self.register = ['Registered', 'Drop']
 
         # Database
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
@@ -1619,6 +1761,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linRecomendation3Email.setText('rick@morty.com')
         self.linRecomendation3Title.setText('psycho')
         self.linRecomendation3Affiliation.setText('universe')
+        self.linStudentIDRegistration.setText('5')
 
         # UI controls
         self.comDegreeSought.addItems(self.degrees)
@@ -2026,10 +2169,11 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def load_courses(self):
 
         admission_term = self.comAdmissionTermReg.currentText()
+        student_id = self.linStudentIDRegistration.text()
 
         # Get sections
-        self.starrs_data.get_term_courses(admission_term)
-        self.tabCourses.setModel(AcademicModel(self.starrs_data))
+        self.starrs_data.get_term_courses(student_id, admission_term)
+        self.tabCourses.setModel(AcademicDisplayModel(self.starrs_data))
 
 
 if __name__ == "__main__":
