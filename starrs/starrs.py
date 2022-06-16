@@ -1059,7 +1059,15 @@ class StarrsData:
 
     def get_term_courses(self, admission_term):
 
+        # Clean existing data
+        del self.courses[:]
+        del self.sections[:]
+
         sections = self.get_sections_of_term(admission_term)
+        
+        if not sections:
+            return
+
         self.sections.extend(sections)
 
     # Additional Queries
