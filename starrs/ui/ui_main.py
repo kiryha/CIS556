@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Wed Jun 15 18:41:40 2022
+# Created: Wed Jun 15 22:07:42 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -479,6 +479,22 @@ class Ui_STARRS(object):
         self.tabWidget_3.setObjectName("tabWidget_3")
         self.tab_8 = QtGui.QWidget()
         self.tab_8.setObjectName("tab_8")
+        self.verticalLayout_16 = QtGui.QVBoxLayout(self.tab_8)
+        self.verticalLayout_16.setObjectName("verticalLayout_16")
+        self.splitter_22 = QtGui.QSplitter(self.tab_8)
+        self.splitter_22.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter_22.setObjectName("splitter_22")
+        self.label_16 = QtGui.QLabel(self.splitter_22)
+        self.label_16.setObjectName("label_16")
+        self.comAdmissionTermReg = QtGui.QComboBox(self.splitter_22)
+        self.comAdmissionTermReg.setMaximumSize(QtCore.QSize(120, 16777215))
+        self.comAdmissionTermReg.setObjectName("comAdmissionTermReg")
+        self.verticalLayout_16.addWidget(self.splitter_22)
+        self.tabCourses = QtGui.QTableView(self.tab_8)
+        self.tabCourses.setObjectName("tabCourses")
+        self.verticalLayout_16.addWidget(self.tabCourses)
+        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_16.addItem(spacerItem3)
         self.tabWidget_3.addTab(self.tab_8, "")
         self.tab_9 = QtGui.QWidget()
         self.tab_9.setObjectName("tab_9")
@@ -563,6 +579,7 @@ class Ui_STARRS(object):
         self.label.setText(QtGui.QApplication.translate("STARRS", "Numberl of Applicants               | Number of Admitted                 | Number of Rejected                 | Averege GRE of Admitted", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_7), QtGui.QApplication.translate("STARRS", "Admissions Queries", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_2), QtGui.QApplication.translate("STARRS", "Admissions Process", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_16.setText(QtGui.QApplication.translate("STARRS", "Select Admittion Term", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_8), QtGui.QApplication.translate("STARRS", "Enrol to Courses", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab_9), QtGui.QApplication.translate("STARRS", "Assign Grades", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_3), QtGui.QApplication.translate("STARRS", "Online Registration", None, QtGui.QApplication.UnicodeUTF8))
