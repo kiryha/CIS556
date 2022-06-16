@@ -1486,7 +1486,6 @@ class AcademicModel(QtCore.QAbstractTableModel):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
         self.starrs_data = starrs_data
-        print 'OLA'
         self.header = ['  Name  ',
                        '  Department  ',
                        '  Number ',
@@ -1503,7 +1502,7 @@ class AcademicModel(QtCore.QAbstractTableModel):
 
     def rowCount(self, parent):
 
-        return len(self.starrs_data.courses)
+        return len(self.starrs_data.sections)
 
     def columnCount(self, parent):
 
@@ -1518,10 +1517,9 @@ class AcademicModel(QtCore.QAbstractTableModel):
         column = index.column()
 
         if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
-            print 'AMIGO'
+
             if column == 0:
-                print '--', self.starrs_data.sections
-                return ')))'  #self.starrs_data.sections[row].number
+                return self.starrs_data.sections[row].number
 
 
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
@@ -2023,7 +2021,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         # Get sections
         self.starrs_data.get_term_courses(admission_term)
-        print ':', self.starrs_data.sections
         self.tabCourses.setModel(AcademicModel(self.starrs_data))
 
 
