@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Thu Jun 16 16:43:17 2022
+# Created: Thu Jun 16 18:20:49 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_STARRS(object):
     def setupUi(self, STARRS):
         STARRS.setObjectName("STARRS")
-        STARRS.resize(676, 924)
+        STARRS.resize(692, 924)
         self.centralwidget = QtGui.QWidget(STARRS)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
@@ -513,7 +513,7 @@ class Ui_STARRS(object):
         self.verticalLayout.addWidget(self.tabSections)
         STARRS.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(STARRS)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 676, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 692, 21))
         self.menubar.setObjectName("menubar")
         self.menuEdit = QtGui.QMenu(self.menubar)
         self.menuEdit.setObjectName("menuEdit")

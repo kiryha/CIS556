@@ -45,6 +45,24 @@ populate_data = {
          'email': 'tstain@umich.edu',
          'address': '48120, MI, Dearborn, W Warren Ave, 1440',
          'phone': '734-780-0004',
+         'role': 'Instructor'},
+
+        {'id': 5,
+         'first_name': 'Arman',
+         'middle_name': 'Dou',
+         'last_name': 'Ahan',
+         'email': 'arman@umich.edu',
+         'address': '48120, MI, Dearborn, W Steps Ave, 1560',
+         'phone': '734-780-0005',
+         'role': 'Instructor'},
+
+        {'id': 6,
+         'first_name': 'Sarah',
+         'middle_name': 'J',
+         'last_name': 'Cole',
+         'email': 'tstscoleain@umich.edu',
+         'address': '48226, MI, Detroit, State, 256',
+         'phone': '734-780-0006',
          'role': 'Instructor'}
     ],
 
@@ -55,22 +73,26 @@ populate_data = {
          'name': 'Database Systems',
          'number': '556',
          'department_id': 1,
-         'credit_hours': 3,
-         'instructor_id': 4},
+         'credit_hours': 3},
 
         {'id': 2,
          'name': 'Software Engineering',
          'number': '553',
          'department_id': 1,
-         'credit_hours': 3,
-         'instructor_id': 4},
+         'credit_hours': 3},
 
         {'id': 3,
          'name': 'Embedded Systems',
          'number': '554',
          'department_id': 2,
-         'credit_hours': 3,
-         'instructor_id': 4}],
+         'credit_hours': 3},
+
+        {'id': 4,
+         'name': 'Computer Graphics',
+         'number': '555',
+         'department_id': 2,
+         'credit_hours': 3}
+    ],
 
     'sections': [
         {'id': 1,
@@ -89,13 +111,13 @@ populate_data = {
          'course_id': 2,
          'number': '001',
          'admission_term': 'Summer 2022',
-         'instructor_id': 4},
+         'instructor_id': 5},
 
         {'id': 4,
          'course_id': 2,
          'number': '001',
          'admission_term': 'Fall 2022',
-         'instructor_id': 4},
+         'instructor_id': 5},
 
         {'id': 5,
          'course_id': 3,
@@ -107,7 +129,13 @@ populate_data = {
          'course_id': 3,
          'number': '001',
          'admission_term': 'Fall 2022',
-         'instructor_id': 4}
+         'instructor_id': 4},
+
+        {'id': 7,
+         'course_id': 4,
+         'number': '001',
+         'admission_term': 'Summer 2022',
+         'instructor_id': 6}
     ]
 }
 
@@ -215,10 +243,8 @@ def create_database(sql_file_path):
                     grade text,
                     description text,
                     FOREIGN KEY(user_id) REFERENCES user(id)
-                    FOREIGN KEY(course_id) REFERENCES course(id)
                     FOREIGN KEY(section_id) REFERENCES section(id)
                     )''')
-
 
     connection.commit()
     connection.close()
@@ -538,6 +564,8 @@ class Academic:
 
 class AcademicDisplay:
     def __init__(self):
+        self.student_id = None
+        self.section_id = None
         self.department_name = ''
         self.course_number = ''
         self.course_name = ''
@@ -1070,6 +1098,28 @@ class StarrsData:
         if section_tuples:
             return self.convert_to_section(section_tuples)
 
+    # Academic
+    def get_registered_academic(self, section_id, user_id):
+        """
+        Check if section registered by a student
+        """
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM academic "
+                       "WHERE section_id=:section_id "
+                       "AND user_id=:user_id",
+
+                       {'section_id': section_id, 'user_id': user_id})
+
+        academic_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if academic_tuple:
+            return self.convert_to_academic([academic_tuple])[0]
+
     # Department
     def get_department(self, department_id):
 
@@ -1105,7 +1155,36 @@ class StarrsData:
         if academic_tuple:
             return self.convert_to_academic([academic_tuple])[0]
 
+    def add_academic(self, academic_tuple):
+
+        academic = Academic(academic_tuple)
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        # Add object to DB
+        cursor.execute("INSERT INTO academic VALUES ("
+                       ":id,"
+                       ":user_id,"
+                       ":section_id,"
+                       ":grade,"
+                       ":description)",
+
+                       {'id': cursor.lastrowid,
+                        'user_id': academic.user_id,
+                        'section_id': academic.section_id,
+                        'grade': academic.grade,
+                        'description': academic.description})
+
+        connection.commit()
+        academic.id = cursor.lastrowid  # Add database ID to the object
+        connection.close()
+
+        print 'Academic for user/section {0}/{1} added!'.format(academic.user_id, academic.section_id)
+        return academic
+
     # Multi step actions
+    # 1) Submit app
     def submit_application(self, application_tuple):
 
         self.add_application(application_tuple)
@@ -1117,6 +1196,7 @@ class StarrsData:
         self.edit_user = self.get_user(user_id)
         self.edit_application = self.get_application(user_id)
 
+    # 2) Admission
     def get_pending_applicants(self):
         """
         Get and return list of user IDs who applied to university, their data was entered, but decision was not made
@@ -1157,7 +1237,18 @@ class StarrsData:
                 self.display_users.append(user)
                 self.display_applications.append(self.get_application(user_id))
 
+    # 3) Registration
+    def is_section_registered(self, section_id, student_id):
+
+        academic = self.get_registered_academic(section_id, student_id)
+        if academic:
+            return 'Registered'
+        else:
+            return None
+
     def get_term_courses(self, student_id, admission_term):
+
+        # TODO: Check if the user is student
 
         # Clear data
         del self.display_academics[:]
@@ -1176,22 +1267,36 @@ class StarrsData:
             instructor = self.get_user(section.instructor_id)
 
             academic = self.get_academic(student_id, section.id)
-            # student = self.get_user(student_id)
+            student = self.get_user(student_id)
 
             # Get grade
             grade = ''
             if academic:
                 grade = academic.grade
 
+            academic_display.student_id = student_id
+            academic_display.section_id = section.id
             academic_display.department_name = department.name
             academic_display.course_number = course.number
             academic_display.course_name = course.name
             academic_display.section = section.number
             academic_display.instructor = instructor.last_name
             academic_display.term = section.admission_term
+            academic_display.register = self.is_section_registered(section.id, student_id)
             academic_display.grade = grade
 
             self.display_academics.append(academic_display)
+
+    def register_for_course(self, index, action):
+
+        academic_display = self.display_academics[index]
+
+        if action == 'Registered':
+            academic = self.add_academic([None, academic_display.student_id, academic_display.section_id, None, ''])
+
+            # Update academic display
+            academic_display.register = action
+            self.display_academics[index] = academic_display
 
     # Additional Queries
     def check_roles(self, user_id, role_name):
@@ -1628,7 +1733,12 @@ class AcademicDisplayModel(QtCore.QAbstractTableModel):
 
     def flags(self, index):
 
-        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+        column = index.column()
+
+        if column in [6, 7]:
+            return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+        else:
+            return QtCore.Qt.ItemIsEnabled
 
     def headerData(self, col, orientation, role):
 
@@ -1666,9 +1776,23 @@ class AcademicDisplayModel(QtCore.QAbstractTableModel):
             if column == 5:
                 return self.starrs_data.display_academics[row].term
             if column == 6:
-                return self.starrs_data.display_academics[row].grade
+                return self.starrs_data.display_academics[row].register
             if column == 7:
                 return self.starrs_data.display_academics[row].grade
+
+    def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
+
+        row = index.row()
+        column = index.column()
+        # student_id = self.starrs_data.display_academics[row].student_id
+        # section_id = self.starrs_data.display_academics[row].section_id
+
+        if role == QtCore.Qt.EditRole:
+
+            if column == 6:
+                self.starrs_data.register_for_course(row, cell_data)
+
+            return True
 
 
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
@@ -1686,6 +1810,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.scores = ['95-100', '85-94', '70-84', '0-70']
         self.roles = ['GS', 'Reviewer', 'Adviser', 'Instructor', 'Applicant', 'Student', 'Alumni']
         self.register = ['Registered', 'Drop']
+        self.grades = ['A', 'B', 'C', 'F']
 
         # Database
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
@@ -1761,7 +1886,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linRecomendation3Email.setText('rick@morty.com')
         self.linRecomendation3Title.setText('psycho')
         self.linRecomendation3Affiliation.setText('universe')
-        self.linStudentIDRegistration.setText('5')
+        self.linStudentIDRegistration.setText('7')
 
         # UI controls
         self.comDegreeSought.addItems(self.degrees)
@@ -2171,9 +2296,14 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         admission_term = self.comAdmissionTermReg.currentText()
         student_id = self.linStudentIDRegistration.text()
 
-        # Get sections
+        # Get courses data
         self.starrs_data.get_term_courses(student_id, admission_term)
         self.tabCourses.setModel(AcademicDisplayModel(self.starrs_data))
+
+        register = DropdownDelegate(self.register, self.tabCourses)
+        grades = DropdownDelegate(self.grades, self.tabCourses)
+        self.tabCourses.setItemDelegateForColumn(6, register)
+        self.tabCourses.setItemDelegateForColumn(7, grades)
 
 
 if __name__ == "__main__":
