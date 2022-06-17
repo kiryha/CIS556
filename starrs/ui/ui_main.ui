@@ -918,8 +918,25 @@
                </property>
               </widget>
               <widget class="QPushButton" name="btnGetCurrentStudents">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>35</height>
+                </size>
+               </property>
                <property name="text">
                 <string>Get Current Students</string>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="btnGetGraduatingStudents">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Get Graduating Students</string>
                </property>
               </widget>
              </widget>

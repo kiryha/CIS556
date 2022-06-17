@@ -1180,8 +1180,25 @@ class StarrsData:
         academic.id = cursor.lastrowid  # Add database ID to the object
         connection.close()
 
-        print 'Academic for user/section {0}/{1} added!'.format(academic.user_id, academic.section_id)
+        print '>> Academic for user:section {0}:{1} added!'.format(academic.user_id, academic.section_id)
+
         return academic
+
+    def delete_academic(self, user_id, section_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("DELETE FROM shots "
+                       "WHERE user_id=:user_id "
+                       "AND section_id=:section_id",
+
+                       {'user_id': user_id, 'section_id': section_id})
+
+        connection.commit()
+        connection.close()
+
+        print '>> Academic for user:section {0}:{1} deleted!'.format(user_id, section_id)
 
     # Multi step actions
     # 1) Submit app
@@ -1288,15 +1305,40 @@ class StarrsData:
             self.display_academics.append(academic_display)
 
     def register_for_course(self, index, action):
+        """
+
+        :param index: index of academic object in self.display_academics list
+        :param action: Register of Drop course
+        """
 
         academic_display = self.display_academics[index]
+        student_id = academic_display.student_id
+        section_id = academic_display.section_id
 
         if action == 'Registered':
-            academic = self.add_academic([None, academic_display.student_id, academic_display.section_id, None, ''])
 
-            # Update academic display
-            academic_display.register = action
-            self.display_academics[index] = academic_display
+            # Skip if user already registered for this course
+            if self.get_academic(student_id, section_id):
+                print '>> Course allready registered for this student!'
+                return
+
+            # Register to course via academic table
+            self.add_academic([None, student_id, section_id, None, ''])
+
+            print '>> Course registered'
+
+        if action == 'Drop':
+
+            # Skip if user already registered for this course
+            if not self.get_academic(student_id, section_id):
+                print '>> Student should register for the course before  drop it!'
+                return
+
+            self.delete_academic(student_id, section_id)
+
+        # Update academic display
+        academic_display.register = action
+        self.display_academics[index] = academic_display
 
     # Additional Queries
     def check_roles(self, user_id, role_name):
