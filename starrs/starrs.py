@@ -1815,6 +1815,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # Database
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
         if not os.path.exists(self.sql_file_path):
+            os.makedirs(os.path.dirname(self.sql_file_path))
             self.create_database()
 
         # Starrs data
