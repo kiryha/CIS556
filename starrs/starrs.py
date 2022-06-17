@@ -1189,7 +1189,7 @@ class StarrsData:
         connection = sqlite3.connect(self.sql_file_path)
         cursor = connection.cursor()
 
-        cursor.execute("DELETE FROM shots "
+        cursor.execute("DELETE FROM academic "
                        "WHERE user_id=:user_id "
                        "AND section_id=:section_id",
 
@@ -1327,7 +1327,7 @@ class StarrsData:
 
             print '>> Course registered'
 
-        if action == 'Drop':
+        if action == 'Dropped':
 
             # Skip if user already registered for this course
             if not self.get_academic(student_id, section_id):
@@ -1851,7 +1851,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.degrees = ['MS', 'MSE']
         self.scores = ['95-100', '85-94', '70-84', '0-70']
         self.roles = ['GS', 'Reviewer', 'Adviser', 'Instructor', 'Applicant', 'Student', 'Alumni']
-        self.register = ['Registered', 'Drop']
+        self.register = ['Registered', 'Dropped']
         self.grades = ['A', 'B', 'C', 'F']
 
         # Database
