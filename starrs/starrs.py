@@ -205,8 +205,10 @@ def create_database(sql_file_path):
                     status text,
                     ranking text,
                     comments text,
+                    advisor_id integer,
                     description text,
                     FOREIGN KEY(user_id) REFERENCES user(id)
+                    FOREIGN KEY(advisor_id) REFERENCES user(id)
                     )''')
 
     cursor.execute('''CREATE TABLE course (
@@ -440,6 +442,7 @@ class Application:
         self.status = ''
         self.ranking = ''
         self.comments = ''
+        self.advisor_id = None
         self.description = ''
 
         self.init(application_tuple)
@@ -483,7 +486,8 @@ class Application:
         self.status = application_tuple[34]
         self.ranking = application_tuple[35]
         self.comments = application_tuple[36]
-        self.description = application_tuple[37]
+        self.advisor_id = application_tuple[37]
+        self.description = application_tuple[38]
 
 
 class Course:
@@ -838,6 +842,7 @@ class StarrsData:
                        ":status,"
                        ":ranking,"
                        ":comments,"
+                       ":advisor_id,"
                        ":description)",
 
                        {'id': cursor.lastrowid,
@@ -877,6 +882,7 @@ class StarrsData:
                         'status': application.status,
                         'ranking': application.status,
                         'comments': application.status,
+                        'advisor_id': application.advisor_id,
                         'description': application.description})
 
         connection.commit()
@@ -1505,7 +1511,7 @@ class ReviewApplicantModel(QtCore.QAbstractTableModel):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
         self.starrs_data = starrs_data
-        self.header = ['  Id  ', ' Email ', '  Verbal ', '      Ranking      ', '  Comments  ', '  Status  ']
+        self.header = ['  Id  ', ' Email ', '  Verbal ', '      Ranking      ', '  Comments  ', '  Adviser  ', '  Status  ']
 
     # Build-in functions
     def flags(self, index):
@@ -1553,7 +1559,7 @@ class ReviewApplicantModel(QtCore.QAbstractTableModel):
             if column == 4:
                 return self.starrs_data.pending_applications[row].comments
 
-            if column == 5:
+            if column == 6:
                 return self.starrs_data.pending_applications[row].status
 
     def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
@@ -1575,7 +1581,7 @@ class ReviewApplicantModel(QtCore.QAbstractTableModel):
                 self.starrs_data.update_comments(user_id, cell_data)
                 print '>> Comment updated: {}'.format(cell_data)
 
-            if column == 5:
+            if column == 6:
                 self.starrs_data.update_status(user_id, cell_data)
                 print '>> Status updated: {}'.format(cell_data)
 
@@ -1893,7 +1899,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # Database
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
         if not os.path.exists(self.sql_file_path):
-            os.makedirs(os.path.dirname(self.sql_file_path))
+            if not os.path.exists(os.path.dirname(self.sql_file_path)):
+                os.makedirs(os.path.dirname(self.sql_file_path))
             self.create_database()
 
         # Starrs data
@@ -1990,7 +1997,6 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def init_data(self):
 
         self.starrs_data = StarrsData(self.sql_file_path)
-        # self.load_courses()
 
     def get_ui_apply(self):
 
@@ -2046,6 +2052,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             None,  # status
             '',  # reviewer ranking
             '',  # reviewer comments
+            None,  # adviser
             '']
 
         return user_tuple, application_tuple
@@ -2254,8 +2261,10 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         ranking = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
         decision = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
+        advisers = DropdownDelegate(['John Smith'], self.tabReviewAdmitApplicant)
         self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking)
-        self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, decision)
+        self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, advisers)
+        self.tabReviewAdmitApplicant.setItemDelegateForColumn(6, decision)
 
     def load_applicant(self):
 
