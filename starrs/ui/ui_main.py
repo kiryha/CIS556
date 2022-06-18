@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Thu Jun 16 18:20:49 2022
+# Created: Sat Jun 18 12:07:47 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -438,7 +438,11 @@ class Ui_STARRS(object):
         self.btnGetAdmittedStudents.setMinimumSize(QtCore.QSize(0, 35))
         self.btnGetAdmittedStudents.setObjectName("btnGetAdmittedStudents")
         self.btnGetCurrentStudents = QtGui.QPushButton(self.splitter_20)
+        self.btnGetCurrentStudents.setMinimumSize(QtCore.QSize(0, 35))
         self.btnGetCurrentStudents.setObjectName("btnGetCurrentStudents")
+        self.btnGetGraduatingStudents = QtGui.QPushButton(self.splitter_20)
+        self.btnGetGraduatingStudents.setMinimumSize(QtCore.QSize(0, 35))
+        self.btnGetGraduatingStudents.setObjectName("btnGetGraduatingStudents")
         self.verticalLayout_4.addWidget(self.splitter_20)
         self.tabAdmissionQuerries = QtGui.QTableView(self.tab_7)
         self.tabAdmissionQuerries.setObjectName("tabAdmissionQuerries")
@@ -582,6 +586,7 @@ class Ui_STARRS(object):
         self.btnGetApplicants.setText(QtGui.QApplication.translate("STARRS", "Get Applicants", None, QtGui.QApplication.UnicodeUTF8))
         self.btnGetAdmittedStudents.setText(QtGui.QApplication.translate("STARRS", "Get Admited Students", None, QtGui.QApplication.UnicodeUTF8))
         self.btnGetCurrentStudents.setText(QtGui.QApplication.translate("STARRS", "Get Current Students", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnGetGraduatingStudents.setText(QtGui.QApplication.translate("STARRS", "Get Graduating Students", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("STARRS", "Numberl of Applicants               | Number of Admitted                 | Number of Rejected                 | Averege GRE of Admitted", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_7), QtGui.QApplication.translate("STARRS", "Admissions Queries", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_2), QtGui.QApplication.translate("STARRS", "Admissions Process", None, QtGui.QApplication.UnicodeUTF8))

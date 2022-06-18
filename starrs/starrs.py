@@ -1184,6 +1184,24 @@ class StarrsData:
 
         return academic
 
+    def update_academic(self, user_id, section_id, grade):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE academic SET "
+                       "grade=:grade "
+
+                       "WHERE user_id=:user_id "
+                       "AND section_id=:section_id",
+
+                       {'user_id': user_id,
+                        'section_id': section_id,
+                        'grade': grade})
+
+        connection.commit()
+        connection.close()
+
     def delete_academic(self, user_id, section_id):
 
         connection = sqlite3.connect(self.sql_file_path)
@@ -1265,10 +1283,13 @@ class StarrsData:
 
     def get_term_courses(self, student_id, admission_term):
 
-        # TODO: Check if the user is student
-
         # Clear data
         del self.display_academics[:]
+
+        # Check if the user is student
+        if not self.check_roles(student_id, 'Student'):
+            print '>> No student with id {} exists!'.format(student_id)
+            return
 
         sections = self.get_sections_of_term(admission_term)
 
@@ -1338,6 +1359,18 @@ class StarrsData:
 
         # Update academic display
         academic_display.register = action
+        self.display_academics[index] = academic_display
+
+    def set_grade(self, index, grade):
+
+        academic_display = self.display_academics[index]
+        student_id = academic_display.student_id
+        section_id = academic_display.section_id
+
+        self.update_academic(student_id, section_id, grade)
+
+        # Update table data
+        academic_display.grade = grade
         self.display_academics[index] = academic_display
 
     # Additional Queries
@@ -1834,6 +1867,9 @@ class AcademicDisplayModel(QtCore.QAbstractTableModel):
             if column == 6:
                 self.starrs_data.register_for_course(row, cell_data)
 
+            if column == 7:
+                self.starrs_data.set_grade(row, cell_data)
+
             return True
 
 
@@ -1883,6 +1919,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnLoadApplicantByID.pressed.connect(self.load_applicant)
         # 3)
         self.comAdmissionTermReg.currentIndexChanged.connect(self.load_courses)
+        self.linStudentIDRegistration.textChanged.connect(self.load_courses)
+
         # Queries
         self.btnGetApplicants.pressed.connect(self.query_applicants)
         self.btnGetApplicants.pressed.connect(self.query_statistic)
@@ -1929,7 +1967,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.linRecomendation3Email.setText('rick@morty.com')
         self.linRecomendation3Title.setText('psycho')
         self.linRecomendation3Affiliation.setText('universe')
-        self.linStudentIDRegistration.setText('7')
+        # self.linStudentIDRegistration.setText('7')
 
         # UI controls
         self.comDegreeSought.addItems(self.degrees)
@@ -1952,7 +1990,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def init_data(self):
 
         self.starrs_data = StarrsData(self.sql_file_path)
-        self.load_courses()
+        # self.load_courses()
 
     def get_ui_apply(self):
 
@@ -2338,6 +2376,10 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         admission_term = self.comAdmissionTermReg.currentText()
         student_id = self.linStudentIDRegistration.text()
+
+        if student_id == '':
+            self.statusBar().showMessage('>> Enter Student ID!')
+            return
 
         # Get courses data
         self.starrs_data.get_term_courses(student_id, admission_term)
