@@ -36,7 +36,7 @@ populate_data = {
          'email': 'kim@umich.edu',
          'address': '48226, MI, Detroit, 555 Brush St, 2530',
          'phone': '734-780-0003',
-         'role': 'Adviser'},
+         'role': 'Advisor'},
 
         {'id': 4,
          'first_name': 'Jennifer',
@@ -45,7 +45,7 @@ populate_data = {
          'email': 'jarch@umich.edu',
          'address': '48226, MI, Detroit, 777 Brush St, 1234',
          'phone': '734-780-0004',
-         'role': 'Adviser'},
+         'role': 'Advisor'},
 
         {'id': 5,
          'first_name': 'Thomas',
@@ -821,7 +821,6 @@ class StarrsData:
             return self.convert_to_role(role_tuples)
 
     # Application
-
     def add_application(self, application_tuple):
 
         application = Application(application_tuple)
@@ -1323,6 +1322,7 @@ class StarrsData:
         del self.pending_applications[:]
 
         pending_applications = self.get_pending_applications()
+        print pending_applications
 
         if not pending_applications:
             return
@@ -1353,27 +1353,27 @@ class StarrsData:
                 self.display_users.append(user)
                 self.display_applications.append(self.get_application(user_id))
 
-    def get_advisers(self):
+    def get_advisors(self):
 
         connection = sqlite3.connect(self.sql_file_path)
         cursor = connection.cursor()
 
         cursor.execute("SELECT * FROM role WHERE name=:name",
-                       {'name': 'Adviser'})
+                       {'name': 'Advisor'})
 
         role_tuples = cursor.fetchall()
         connection.close()
 
-        advisers = []
+        advisors = []
         for role_tuple in role_tuples:
             user_id = role_tuple[1]
-            advisers.append(self.get_user(user_id))
+            advisors.append(self.get_user(user_id))
 
-        return advisers
+        return advisors
 
-    def set_advisor(self, user_id, adviser_name):
+    def set_advisor(self, user_id, advisor_name):
 
-        first_name, last_name = adviser_name.split(' ')
+        first_name, last_name = advisor_name.split(' ')
 
         advisors = self.get_users_by_name(last_name)
 
@@ -1650,7 +1650,7 @@ class ReviewApplicantModel(QtCore.QAbstractTableModel):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
         self.starrs_data = starrs_data
-        self.header = ['  Id  ', ' Email ', '  Verbal ', '   Ranking  ', '  Comments  ', '    Status   ', '  Adviser  ']
+        self.header = ['  Id  ', ' Email ', '  Verbal ', '   Ranking  ', '  Comments  ', '    Status   ', '  Advisor  ']
 
     # Build-in functions
     def flags(self, index):
@@ -2084,6 +2084,53 @@ class CoursesDisplayModel(QtCore.QAbstractTableModel):
                 return self.starrs_data.display_courses[row].grade
 
 
+class AdvisorsModel(QtCore.QAbstractTableModel):
+    def __init__(self, advisors, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+
+        self.advisors = advisors
+        self.header = ['  First Name  ',
+                       '  Last Name  ',
+                       '  Email ',
+                       '  Phone Number ']
+
+    def flags(self, index):
+
+        return QtCore.Qt.ItemIsEnabled
+
+    def headerData(self, col, orientation, role):
+
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+            return self.header[col]
+
+    def rowCount(self, parent):
+
+        return len(self.advisors)
+
+    def columnCount(self, parent):
+
+        return len(self.header)
+
+    def data(self, index, role):
+
+        if not index.isValid():
+            return
+
+        row = index.row()
+        column = index.column()
+
+        if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
+
+            if column == 0:
+                return self.advisors[row].first_name
+            if column == 1:
+                return self.advisors[row].last_name
+            if column == 2:
+                return self.advisors[row].email
+            if column == 3:
+                return self.advisors[row].phone
+
+
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def __init__(self, parent=None):
         super(STARRS, self).__init__(parent=parent)
@@ -2097,7 +2144,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.terms = ['Summer 2022', 'Fall 2022', 'Winter 2023', 'Summer 2023', 'Fall 2023']
         self.degrees = ['MS', 'MSE']
         self.scores = ['95-100', '85-94', '70-84', '0-70']
-        self.roles = ['GS', 'Reviewer', 'Adviser', 'Instructor', 'Applicant', 'Student', 'Alumni']
+        self.roles = ['GS', 'Reviewer', 'Advisor', 'Instructor', 'Applicant', 'Student', 'Alumni']
         self.register = ['Registered', 'Dropped']
         self.grades = ['A', 'B', 'C', 'F']
 
@@ -2140,6 +2187,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnGetAdmittedStudents.pressed.connect(self.query_admitted)
         self.btnGetAdmittedStudents.pressed.connect(self.query_statistic)
         self.btnGetCurrentStudents.pressed.connect(self.query_students)
+        self.btnGetAdvisors.pressed.connect(self.get_advisors)
 
     # Data and UI setup
     def init_ui(self):
@@ -2200,6 +2248,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.setup_table(self.tabAdmissionQuerries)
         self.setup_table(self.tabCourses)
         self.setup_table(self.tabGSCourses)
+        self.setup_table(self.tabAdvisors)
 
     def init_data(self):
 
@@ -2259,7 +2308,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             None,  # status
             '',  # reviewer ranking
             '',  # reviewer comments
-            None,  # adviser
+            None,  # advisor
             '']
 
         return user_tuple, application_tuple
@@ -2462,17 +2511,17 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
     def delegate_applicants(self):
 
-        adviser_names = []
-        advisers = self.starrs_data.get_advisers()
-        for adviser in advisers:
-            adviser_names.append('{0} {1}'.format(adviser.first_name, adviser.last_name))
+        advisor_names = []
+        advisors = self.starrs_data.get_advisors()
+        for advisor in advisors:
+            advisor_names.append('{0} {1}'.format(advisor.first_name, advisor.last_name))
 
         ranking_delegate = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
         decision_delegate = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
-        adviser_delegate = DropdownDelegate(adviser_names, self.tabReviewAdmitApplicant)
+        advisor_delegate = DropdownDelegate(advisor_names, self.tabReviewAdmitApplicant)
         self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking_delegate)
         self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, decision_delegate)
-        self.tabReviewAdmitApplicant.setItemDelegateForColumn(6, adviser_delegate)
+        self.tabReviewAdmitApplicant.setItemDelegateForColumn(6, advisor_delegate)
 
     def load_pending_applicants(self):
 
@@ -2604,6 +2653,11 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         self.starrs_data.get_courses(student_id)
         self.tabGSCourses.setModel(CoursesDisplayModel(self.starrs_data))
+
+    def get_advisors(self):
+
+        advisors = self.starrs_data.get_advisors()
+        self.tabAdvisors.setModel(AdvisorsModel(advisors))
 
     # 3) Course Registration
     def load_courses(self):
