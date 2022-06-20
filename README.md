@@ -3,7 +3,7 @@ CIS556 Databases Course (UMICH).
 
 The Course project is STARRS application for Database University.
 
-# Summary
+# Summary task
 The project is to implement an on-line admissions and graduation clearance system for graduate students applying 
 to the University. 
 
@@ -13,6 +13,17 @@ the workflow process in the admissions, registration and graduation system for M
 
 You can implement this project using any DBMS the team has access to, you must be able to demo the application 
 in the final presentation.
+
+# STARRS Implementation
+STARRS implemented as Windows Python application. 
+
+We're using PySide for UI and sqlite for the database. 
+
+This setup provides extremely easy workflow with full functionality of the project. All components, front end, back end 
+and database are ready to go without any extra steps (you just need to install pyside and sqlite to your Python).
+
+In UI we are using data models tables that gives interactivity while retrieve or update data. Each table has 
+it's own class that defines wat we see in the table and how we can change the data.
 
 # How to run STARRS
 ### Install Pytnon
