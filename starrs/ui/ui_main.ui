@@ -851,7 +851,7 @@
           </widget>
           <widget class="QWidget" name="tab_7">
            <attribute name="title">
-            <string>Admissions Queries</string>
+            <string>GS Queries</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
@@ -989,6 +989,44 @@
                </property>
               </widget>
              </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSplitter" name="splitter_23">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <widget class="QLabel" name="label_20">
+               <property name="text">
+                <string>Student ID:</string>
+               </property>
+              </widget>
+              <widget class="QLineEdit" name="linStudentIDQ">
+               <property name="maximumSize">
+                <size>
+                 <width>50</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+              <widget class="QPushButton" name="btnGeStudentCourses">
+               <property name="text">
+                <string>Get List of Courses for Student</string>
+               </property>
+              </widget>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTableView" name="tabGSCourses"/>
             </item>
            </layout>
           </widget>

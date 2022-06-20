@@ -602,6 +602,7 @@ class StarrsData:
         self.display_users = []
         self.display_applications = []
         self.display_academics = []
+        self.display_courses = []
 
     # Init data
     def clear_data(self):
@@ -1148,6 +1149,21 @@ class StarrsData:
         if section_tuples:
             return self.convert_to_section(section_tuples)
 
+    def get_section(self, section_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM section WHERE id=:id",
+                       {'id': section_id})
+
+        section_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if section_tuple:
+            return self.convert_to_section([section_tuple])[0]
+
     # Academic
     def get_registered_academic(self, section_id, user_id):
         """
@@ -1204,6 +1220,21 @@ class StarrsData:
 
         if academic_tuple:
             return self.convert_to_academic([academic_tuple])[0]
+
+    def get_academics(self, user_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM academic WHERE user_id=:user_id",
+                       {'user_id': user_id})
+
+        academic_tuples = cursor.fetchall()
+
+        connection.close()
+
+        if academic_tuples:
+            return self.convert_to_academic(academic_tuples)
 
     def add_academic(self, academic_tuple):
 
@@ -1551,6 +1582,36 @@ class StarrsData:
 
         return verbal, quantitative, analytical
 
+    def get_courses(self, student_id):
+
+        # Clear data
+        del self.display_courses[:]
+
+        # Get academics
+        academics = self.get_academics(student_id)
+
+        if not academics:
+            return
+
+        for academic in academics:
+
+            # Get related data
+            section_id = academic.section_id
+            section = self.get_section(section_id)
+            course = self.get_course(section.course_id)
+            department = self.get_department(course.department_id)
+
+            # Gather data from several tables into one object
+            academic_display = AcademicDisplay()
+            academic_display.department_name = department.name
+            academic_display.course_number = course.number
+            academic_display.course_name = course.name
+            academic_display.section = section.number
+            academic_display.term = section.admission_term
+            academic_display.grade = academic.grade
+
+            self.display_courses.append(academic_display)
+
 
 # STARRS Application
 class AlignDelegate(QtGui.QItemDelegate):
@@ -1642,7 +1703,7 @@ class ReviewApplicantModel(QtCore.QAbstractTableModel):
 
             if column == 6:
                 advisor_id = self.starrs_data.pending_applications[row].advisor_id
-                
+
                 if not advisor_id:
                     return
 
@@ -1970,6 +2031,59 @@ class AcademicDisplayModel(QtCore.QAbstractTableModel):
             return True
 
 
+class CoursesDisplayModel(QtCore.QAbstractTableModel):
+    def __init__(self, starrs_data, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+
+        self.starrs_data = starrs_data
+        self.header = ['  Dep  ',
+                       '  Number  ',
+                       '  Name ',
+                       '  Section ',
+                       '  Term ',
+                       '  Grade  ']
+
+    def flags(self, index):
+
+        return QtCore.Qt.ItemIsEnabled
+
+    def headerData(self, col, orientation, role):
+
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+            return self.header[col]
+
+    def rowCount(self, parent):
+
+        return len(self.starrs_data.display_courses)
+
+    def columnCount(self, parent):
+
+        return len(self.header)
+
+    def data(self, index, role):
+
+        if not index.isValid():
+            return
+
+        row = index.row()
+        column = index.column()
+
+        if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
+
+            if column == 0:
+                return self.starrs_data.display_courses[row].department_name
+            if column == 1:
+                return self.starrs_data.display_courses[row].course_number
+            if column == 2:
+                return self.starrs_data.display_courses[row].course_name
+            if column == 3:
+                return self.starrs_data.display_courses[row].section
+            if column == 4:
+                return self.starrs_data.display_courses[row].term
+            if column == 5:
+                return self.starrs_data.display_courses[row].grade
+
+
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def __init__(self, parent=None):
         super(STARRS, self).__init__(parent=parent)
@@ -2015,6 +2129,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnSetRecomendations.pressed.connect(self.add_recommendations)
         self.btnLoadPendingApplicants.pressed.connect(self.load_pending_applicants)
         self.btnLoadApplicantByID.pressed.connect(self.load_applicant)
+        self.btnGeStudentCourses.pressed.connect(self.load_courses_and_grades)
         # 3)
         self.comAdmissionTermReg.currentIndexChanged.connect(self.load_courses)
         self.linStudentIDRegistration.textChanged.connect(self.load_courses)
@@ -2084,6 +2199,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.setup_table(self.tabFoundApplicants)
         self.setup_table(self.tabAdmissionQuerries)
         self.setup_table(self.tabCourses)
+        self.setup_table(self.tabGSCourses)
 
     def init_data(self):
 
@@ -2277,7 +2393,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         self.tabEditApplication.setModel(EditApplicationModel(self.starrs_data))
 
-    # 2) Admission process
+    # 2) Admission process and GS queries
     def find_applicants(self):
 
         user_id = self.linSearchApplicantID.text()
@@ -2477,6 +2593,17 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         else:
             degree_sought = self.comDegreeSoughtQ.currentText()
             self.process_statistic('degree_sought', degree_sought)
+
+    def load_courses_and_grades(self):
+
+        student_id = self.linStudentIDQ.text()
+
+        if student_id == '':
+            self.statusBar().showMessage('>> Enter Student ID!')
+            return
+
+        self.starrs_data.get_courses(student_id)
+        self.tabGSCourses.setModel(CoursesDisplayModel(self.starrs_data))
 
     # 3) Course Registration
     def load_courses(self):

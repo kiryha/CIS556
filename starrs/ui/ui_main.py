@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Sat Jun 18 12:07:47 2022
+# Created: Mon Jun 20 14:19:19 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -470,6 +470,26 @@ class Ui_STARRS(object):
         self.linStatGRE.setAlignment(QtCore.Qt.AlignCenter)
         self.linStatGRE.setObjectName("linStatGRE")
         self.verticalLayout_4.addWidget(self.splitter_21)
+        self.line = QtGui.QFrame(self.tab_7)
+        self.line.setFrameShape(QtGui.QFrame.HLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.verticalLayout_4.addWidget(self.line)
+        self.splitter_23 = QtGui.QSplitter(self.tab_7)
+        self.splitter_23.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter_23.setObjectName("splitter_23")
+        self.label_20 = QtGui.QLabel(self.splitter_23)
+        self.label_20.setObjectName("label_20")
+        self.linStudentIDQ = QtGui.QLineEdit(self.splitter_23)
+        self.linStudentIDQ.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.linStudentIDQ.setText("")
+        self.linStudentIDQ.setObjectName("linStudentIDQ")
+        self.btnGeStudentCourses = QtGui.QPushButton(self.splitter_23)
+        self.btnGeStudentCourses.setObjectName("btnGeStudentCourses")
+        self.verticalLayout_4.addWidget(self.splitter_23)
+        self.tabGSCourses = QtGui.QTableView(self.tab_7)
+        self.tabGSCourses.setObjectName("tabGSCourses")
+        self.verticalLayout_4.addWidget(self.tabGSCourses)
         self.tabWidget_2.addTab(self.tab_7, "")
         self.verticalLayout_6.addWidget(self.tabWidget_2)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -588,7 +608,9 @@ class Ui_STARRS(object):
         self.btnGetCurrentStudents.setText(QtGui.QApplication.translate("STARRS", "Get Current Students", None, QtGui.QApplication.UnicodeUTF8))
         self.btnGetGraduatingStudents.setText(QtGui.QApplication.translate("STARRS", "Get Graduating Students", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("STARRS", "Numberl of Applicants               | Number of Admitted                 | Number of Rejected                 | Averege GRE of Admitted", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_7), QtGui.QApplication.translate("STARRS", "Admissions Queries", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_20.setText(QtGui.QApplication.translate("STARRS", "Student ID:", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnGeStudentCourses.setText(QtGui.QApplication.translate("STARRS", "Get List of Courses for Student", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_7), QtGui.QApplication.translate("STARRS", "GS Queries", None, QtGui.QApplication.UnicodeUTF8))
         self.tabSections.setTabText(self.tabSections.indexOf(self.tab_2), QtGui.QApplication.translate("STARRS", "Admissions Process", None, QtGui.QApplication.UnicodeUTF8))
         self.label_16.setText(QtGui.QApplication.translate("STARRS", "Student ID:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_18.setText(QtGui.QApplication.translate("STARRS", "Admittion Term", None, QtGui.QApplication.UnicodeUTF8))
