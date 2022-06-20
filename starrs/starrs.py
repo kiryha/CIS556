@@ -39,30 +39,39 @@ populate_data = {
          'role': 'Adviser'},
 
         {'id': 4,
+         'first_name': 'Jennifer',
+         'middle_name': 'Van',
+         'last_name': 'Archembau',
+         'email': 'jarch@umich.edu',
+         'address': '48226, MI, Detroit, 777 Brush St, 1234',
+         'phone': '734-780-0004',
+         'role': 'Adviser'},
+
+        {'id': 5,
          'first_name': 'Thomas',
          'middle_name': '',
          'last_name': 'Steiner',
          'email': 'tstain@umich.edu',
          'address': '48120, MI, Dearborn, W Warren Ave, 1440',
-         'phone': '734-780-0004',
+         'phone': '734-780-0005',
          'role': 'Instructor'},
 
-        {'id': 5,
+        {'id': 6,
          'first_name': 'Arman',
          'middle_name': 'Dou',
          'last_name': 'Ahan',
          'email': 'arman@umich.edu',
          'address': '48120, MI, Dearborn, W Steps Ave, 1560',
-         'phone': '734-780-0005',
+         'phone': '734-780-0006',
          'role': 'Instructor'},
 
-        {'id': 6,
+        {'id': 7,
          'first_name': 'Sarah',
          'middle_name': 'J',
          'last_name': 'Cole',
          'email': 'tstscoleain@umich.edu',
          'address': '48226, MI, Detroit, State, 256',
-         'phone': '734-780-0006',
+         'phone': '734-780-0007',
          'role': 'Instructor'}
     ],
 
@@ -99,43 +108,43 @@ populate_data = {
          'course_id': 1,
          'number': '001',
          'admission_term': 'Summer 2022',
-         'instructor_id': 4},
+         'instructor_id': 5},
 
         {'id': 2,
          'course_id': 1,
          'number': '001',
          'admission_term': 'Fall 2022',
-         'instructor_id': 4},
+         'instructor_id': 5},
 
         {'id': 3,
          'course_id': 2,
          'number': '001',
          'admission_term': 'Summer 2022',
-         'instructor_id': 5},
+         'instructor_id': 6},
 
         {'id': 4,
          'course_id': 2,
          'number': '001',
          'admission_term': 'Fall 2022',
-         'instructor_id': 5},
+         'instructor_id': 6},
 
         {'id': 5,
          'course_id': 3,
          'number': '001',
          'admission_term': 'Summer 2022',
-         'instructor_id': 4},
+         'instructor_id': 5},
 
         {'id': 6,
          'course_id': 3,
          'number': '001',
          'admission_term': 'Fall 2022',
-         'instructor_id': 4},
+         'instructor_id': 5},
 
         {'id': 7,
          'course_id': 4,
          'number': '001',
          'admission_term': 'Summer 2022',
-         'instructor_id': 6}
+         'instructor_id': 5}
     ]
 }
 
@@ -726,6 +735,21 @@ class StarrsData:
         if user_tuple:
             return self.convert_to_user([user_tuple])[0]
 
+    def get_user___(self, user_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM user WHERE id=:id",
+                       {'id': user_id})
+
+        user_tuple = cursor.fetchone()
+
+        connection.close()
+
+        if user_tuple:
+            return self.convert_to_user([user_tuple])[0]
+
     def get_users_by_name(self, last_name):
 
         connection = sqlite3.connect(self.sql_file_path)
@@ -796,6 +820,7 @@ class StarrsData:
             return self.convert_to_role(role_tuples)
 
     # Application
+
     def add_application(self, application_tuple):
 
         application = Application(application_tuple)
@@ -1065,6 +1090,25 @@ class StarrsData:
         # Update STARRS data
         self.update_pending_applications(user_id)
 
+    def update_advisor(self, user_id, advisor_id):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("UPDATE application SET "
+                       "advisor_id=:advisor_id "
+
+                       "WHERE user_id=:user_id",
+
+                       {'user_id': user_id,
+                        'advisor_id': advisor_id})
+
+        connection.commit()
+        connection.close()
+
+        # Update STARRS data
+        self.update_pending_applications(user_id)
+
     def update_pending_applications(self, user_id):
 
         for application in self.pending_applications:
@@ -1278,6 +1322,37 @@ class StarrsData:
                 self.display_users.append(user)
                 self.display_applications.append(self.get_application(user_id))
 
+    def get_advisers(self):
+
+        connection = sqlite3.connect(self.sql_file_path)
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM role WHERE name=:name",
+                       {'name': 'Adviser'})
+
+        role_tuples = cursor.fetchall()
+        connection.close()
+
+        advisers = []
+        for role_tuple in role_tuples:
+            user_id = role_tuple[1]
+            advisers.append(self.get_user(user_id))
+
+        return advisers
+
+    def set_advisor(self, user_id, adviser_name):
+
+        first_name, last_name = adviser_name.split(' ')
+
+        advisors = self.get_users_by_name(last_name)
+
+        if advisors:
+            advisor = advisors[0]
+        else:
+            return
+
+        self.update_advisor(user_id, advisor.id)
+
     # 3) Registration
     def is_section_registered(self, section_id, student_id):
 
@@ -1386,6 +1461,9 @@ class StarrsData:
         """
 
         roles = self.get_user_roles(user_id)
+
+        if not roles:
+            return
 
         for role in roles:
             if role.name == role_name:
@@ -1511,13 +1589,13 @@ class ReviewApplicantModel(QtCore.QAbstractTableModel):
         QtCore.QAbstractTableModel.__init__(self, parent)
 
         self.starrs_data = starrs_data
-        self.header = ['  Id  ', ' Email ', '  Verbal ', '      Ranking      ', '  Comments  ', '  Adviser  ', '  Status  ']
+        self.header = ['  Id  ', ' Email ', '  Verbal ', '   Ranking  ', '  Comments  ', '    Status   ', '  Adviser  ']
 
     # Build-in functions
     def flags(self, index):
 
         column = index.column()
-        if column in [3, 4, 5]:
+        if column in [3, 4, 5, 6]:
             return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
         else:
             return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
@@ -1559,8 +1637,17 @@ class ReviewApplicantModel(QtCore.QAbstractTableModel):
             if column == 4:
                 return self.starrs_data.pending_applications[row].comments
 
-            if column == 6:
+            if column == 5:
                 return self.starrs_data.pending_applications[row].status
+
+            if column == 6:
+                advisor_id = self.starrs_data.pending_applications[row].advisor_id
+                
+                if not advisor_id:
+                    return
+
+                user = self.starrs_data.get_user(advisor_id)
+                return '{0} {1}'.format(user.first_name, user.last_name)
 
     def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
         """
@@ -1581,9 +1668,13 @@ class ReviewApplicantModel(QtCore.QAbstractTableModel):
                 self.starrs_data.update_comments(user_id, cell_data)
                 print '>> Comment updated: {}'.format(cell_data)
 
-            if column == 6:
+            if column == 5:
                 self.starrs_data.update_status(user_id, cell_data)
                 print '>> Status updated: {}'.format(cell_data)
+
+            if column == 6:
+                self.starrs_data.set_advisor(user_id, cell_data)
+                print '>> Comment updated: {}'.format(cell_data)
 
             return True
 
@@ -2253,18 +2344,27 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         self.statusBar().showMessage('>> Applicant {0} recommendations submitted!'.format(user_id))
 
+    def delegate_applicants(self):
+
+        adviser_names = []
+        advisers = self.starrs_data.get_advisers()
+        for adviser in advisers:
+            adviser_names.append('{0} {1}'.format(adviser.first_name, adviser.last_name))
+
+        ranking_delegate = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
+        decision_delegate = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
+        adviser_delegate = DropdownDelegate(adviser_names, self.tabReviewAdmitApplicant)
+        self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking_delegate)
+        self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, decision_delegate)
+        self.tabReviewAdmitApplicant.setItemDelegateForColumn(6, adviser_delegate)
+
     def load_pending_applicants(self):
 
         self.starrs_data.get_pending_applicants()
         applicant_model = ReviewApplicantModel(self.starrs_data)
         self.tabReviewAdmitApplicant.setModel(applicant_model)
 
-        ranking = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
-        decision = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
-        advisers = DropdownDelegate(['John Smith'], self.tabReviewAdmitApplicant)
-        self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking)
-        self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, advisers)
-        self.tabReviewAdmitApplicant.setItemDelegateForColumn(6, decision)
+        self.delegate_applicants()
 
     def load_applicant(self):
 
@@ -2279,10 +2379,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             applicant_model = ReviewApplicantModel(self.starrs_data)
             self.tabReviewAdmitApplicant.setModel(applicant_model)
 
-            ranking = DropdownDelegate(self.rankings, self.tabReviewAdmitApplicant)
-            decision = DropdownDelegate(self.decisions, self.tabReviewAdmitApplicant)
-            self.tabReviewAdmitApplicant.setItemDelegateForColumn(3, ranking)
-            self.tabReviewAdmitApplicant.setItemDelegateForColumn(5, decision)
+            self.delegate_applicants()
+
         else:
             self.starrs_data.clear_data()
             applicant_model = ReviewApplicantModel(self.starrs_data)
