@@ -2220,7 +2220,7 @@ class EditAlumniModel(QtCore.QAbstractTableModel):
                 self.starrs_data.update_user_attribute('address', user_id, cell_data)
             if column == 4:
                 self.starrs_data.update_user_attribute('phone', user_id, cell_data)
-                
+
             return True
 
 
@@ -2801,6 +2801,10 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.statusBar().showMessage('>> Please, enter the student id!')
             return
 
+        if not self.starrs_data.check_roles(user_id, 'Alumni'):
+            self.statusBar().showMessage('>> This user did not graduate the DBU!')
+            return
+
         self.starrs_data.load_alumni_data(user_id)
         self.tabAlumniData.setModel(EditAlumniModel(self.starrs_data))
 
@@ -2811,6 +2815,13 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         if user_id == '':
             self.statusBar().showMessage('>> Please, enter the student id!')
             return
+
+        if not self.starrs_data.check_roles(user_id, 'Alumni'):
+            self.statusBar().showMessage('>> This user did not graduate the DBU!')
+            return
+
+        self.starrs_data.get_courses(user_id)
+        self.tabClasses.setModel(CoursesDisplayModel(self.starrs_data))
 
 
 if __name__ == "__main__":

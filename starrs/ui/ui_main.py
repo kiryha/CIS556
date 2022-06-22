@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Wed Jun 22 11:34:57 2022
+# Created: Wed Jun 22 19:36:54 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -569,6 +569,7 @@ class Ui_STARRS(object):
         self.btnLoadAlumniData.setObjectName("btnLoadAlumniData")
         self.verticalLayout_16.addWidget(self.btnLoadAlumniData)
         self.tabAlumniData = QtGui.QTableView(self.tab_4)
+        self.tabAlumniData.setMaximumSize(QtCore.QSize(16777215, 100))
         self.tabAlumniData.setObjectName("tabAlumniData")
         self.verticalLayout_16.addWidget(self.tabAlumniData)
         self.line_5 = QtGui.QFrame(self.tab_4)
@@ -583,8 +584,6 @@ class Ui_STARRS(object):
         self.tabClasses = QtGui.QTableView(self.tab_4)
         self.tabClasses.setObjectName("tabClasses")
         self.verticalLayout_16.addWidget(self.tabClasses)
-        spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_16.addItem(spacerItem3)
         self.tabSections.addTab(self.tab_4, "")
         self.verticalLayout.addWidget(self.tabSections)
         STARRS.setCentralWidget(self.centralwidget)
