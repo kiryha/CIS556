@@ -603,6 +603,7 @@ class StarrsData:
         self.display_applications = []
         self.display_academics = []
         self.display_courses = []
+        self.edit_alumni = None
 
     # Init data
     def clear_data(self):
@@ -1485,6 +1486,11 @@ class StarrsData:
         academic_display.grade = grade
         self.display_academics[index] = academic_display
 
+    # 4) Graduation
+    def load_alumni_data(self, user_id):
+
+        self.edit_alumni = self.get_user(user_id)
+
     # Additional Queries
     def check_roles(self, user_id, role_name):
         """
@@ -2131,6 +2137,81 @@ class AdvisorsModel(QtCore.QAbstractTableModel):
                 return self.advisors[row].phone
 
 
+class EditAlumniModel(QtCore.QAbstractTableModel):
+    def __init__(self, starrs_data, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+
+        self.starrs_data = starrs_data
+
+        self.header = ['  First Name ',
+                       '  Last Name',
+                       '  Email ',
+                       '  Address  ',
+                       '  Phone  ']
+
+    # Build-in functions
+    def flags(self, index):
+
+        column = index.column()
+        if column == 0:  # Code State Type
+            return QtCore.Qt.ItemIsEnabled
+        else:
+            return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+
+    def headerData(self, col, orientation, role):
+
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+            return self.header[col]
+
+    def rowCount(self, parent):
+
+        return 1
+
+    def columnCount(self, parent):
+
+        return len(self.header)
+
+    def data(self, index, role):
+
+        if not index.isValid():
+            return
+
+        row = index.row()
+        column = index.column()
+
+        if not self.starrs_data.edit_alumni:
+            return
+
+        if role == QtCore.Qt.DisplayRole:  # Fill table data to DISPLAY
+
+            if column == 0:
+                return self.starrs_data.edit_alumni.first_name
+
+        if role == QtCore.Qt.EditRole:
+
+            if column == 0:
+                pass
+
+    def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
+        """
+        When table cell is edited
+        """
+
+        column = index.column()
+        user_id = self.starrs_data.edit_user.id
+
+        if role == QtCore.Qt.EditRole:
+
+            if column in range(1, 7):
+                attribute = self.schema['user'][column]
+                self.starrs_data.update_user_attribute(attribute, user_id, cell_data)
+            else:
+                attribute = self.schema['application'][column]
+                self.starrs_data.update_application_attribute(attribute, user_id, cell_data)
+
+            return True
+
+
 class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
     def __init__(self, parent=None):
         super(STARRS, self).__init__(parent=parent)
@@ -2180,6 +2261,10 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         # 3)
         self.comAdmissionTermReg.currentIndexChanged.connect(self.load_courses)
         self.linStudentIDRegistration.textChanged.connect(self.load_courses)
+        # 4)
+        self.btnGraduate.pressed.connect(self.graduate)
+        self.btnLoadAlumniData.pressed.connect(self.load_alumni_data)
+        self.btnLoadAlumniClasses.pressed.connect(self.load_alumni_courses)
 
         # Queries
         self.btnGetApplicants.pressed.connect(self.query_applicants)
@@ -2249,6 +2334,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.setup_table(self.tabCourses)
         self.setup_table(self.tabGSCourses)
         self.setup_table(self.tabAdvisors)
+        self.setup_table(self.tabAlumniData)
+        self.setup_table(self.tabClasses)
 
     def init_data(self):
 
@@ -2677,6 +2764,41 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         grades = DropdownDelegate(self.grades, self.tabCourses)
         self.tabCourses.setItemDelegateForColumn(6, register)
         self.tabCourses.setItemDelegateForColumn(7, grades)
+
+    # 4) Graduation
+    def graduate(self):
+
+        user_id = self.linStudentIDGrad.text()
+
+        if user_id == '':
+            self.statusBar().showMessage('>> Please, enter the student id!')
+            return
+
+        # TODO: Check if student meets requirments
+
+        # Set Alumni role
+        role_tuple = [None, user_id, 'Alumni', '']
+        self.starrs_data.add_role(role_tuple)
+        self.statusBar().showMessage('>> Student {0} graduated the Database University and become alumni!'.format(user_id))
+
+    def load_alumni_data(self):
+
+        user_id = self.linStudentIDGrad.text()
+
+        if user_id == '':
+            self.statusBar().showMessage('>> Please, enter the student id!')
+            return
+
+        self.starrs_data.load_alumni_data(user_id)
+        self.tabAlumniData.setModel(EditAlumniModel(self.starrs_data))
+
+    def load_alumni_courses(self):
+
+        user_id = self.linStudentIDGrad.text()
+
+        if user_id == '':
+            self.statusBar().showMessage('>> Please, enter the student id!')
+            return
 
 
 if __name__ == "__main__":
