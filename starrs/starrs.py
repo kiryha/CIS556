@@ -2153,7 +2153,7 @@ class EditAlumniModel(QtCore.QAbstractTableModel):
     def flags(self, index):
 
         column = index.column()
-        if column == 0:  # Code State Type
+        if column in [0, 1]:  # Code State Type
             return QtCore.Qt.ItemIsEnabled
         else:
             return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
@@ -2186,11 +2186,23 @@ class EditAlumniModel(QtCore.QAbstractTableModel):
 
             if column == 0:
                 return self.starrs_data.edit_alumni.first_name
+            if column == 1:
+                return self.starrs_data.edit_alumni.last_name
+            if column == 2:
+                return self.starrs_data.edit_alumni.email
+            if column == 3:
+                return self.starrs_data.edit_alumni.address
+            if column == 4:
+                return self.starrs_data.edit_alumni.phone
 
         if role == QtCore.Qt.EditRole:
 
-            if column == 0:
-                pass
+            if column == 2:
+                return self.starrs_data.edit_alumni.email
+            if column == 3:
+                return self.starrs_data.edit_alumni.address
+            if column == 4:
+                return self.starrs_data.edit_alumni.phone
 
     def setData(self, index, cell_data, role=QtCore.Qt.EditRole):
         """
@@ -2198,17 +2210,17 @@ class EditAlumniModel(QtCore.QAbstractTableModel):
         """
 
         column = index.column()
-        user_id = self.starrs_data.edit_user.id
+        user_id = self.starrs_data.edit_alumni.id
 
         if role == QtCore.Qt.EditRole:
 
-            if column in range(1, 7):
-                attribute = self.schema['user'][column]
-                self.starrs_data.update_user_attribute(attribute, user_id, cell_data)
-            else:
-                attribute = self.schema['application'][column]
-                self.starrs_data.update_application_attribute(attribute, user_id, cell_data)
-
+            if column == 2:
+                self.starrs_data.update_user_attribute('email', user_id, cell_data)
+            if column == 3:
+                self.starrs_data.update_user_attribute('address', user_id, cell_data)
+            if column == 4:
+                self.starrs_data.update_user_attribute('phone', user_id, cell_data)
+                
             return True
 
 
