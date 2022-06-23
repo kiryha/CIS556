@@ -604,6 +604,8 @@ class StarrsData:
         self.display_academics = []
         self.display_courses = []
         self.edit_alumni = None
+        self.credit_hours = 0
+        self.gpa = 0
 
     # Init data
     def clear_data(self):
@@ -1491,6 +1493,38 @@ class StarrsData:
 
         self.edit_alumni = self.get_user(user_id)
 
+    def get_requirements(self, user_id):
+        """
+        Calculate student GPA and credit hours
+        """
+
+        gpa_data = {'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'F': 0.0}
+
+        academics = self.get_academics(user_id)
+
+        if not academics:
+            print '>> Student did not take any courses!'
+            return False
+
+        grades = 0
+        courses = 0
+        credit_hours = 0
+
+        for academic in academics:
+            section = self.get_section(academic.section_id)
+            course = self.get_course(section.course_id)
+
+            courses += 1
+            grades += gpa_data[academic.grade]
+            credit_hours += course.credit_hours
+
+        gpa = grades/courses
+
+        self.gpa = gpa
+        self.credit_hours = credit_hours
+
+        print '>> Student GPA = {0}, credit hours = {1}'.format(gpa, credit_hours)
+
     # Additional Queries
     def check_roles(self, user_id, role_name):
         """
@@ -2257,7 +2291,8 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.scores = ['95-100', '85-94', '70-84', '0-70']
         self.roles = ['GS', 'Reviewer', 'Advisor', 'Instructor', 'Applicant', 'Student', 'Alumni']
         self.register = ['Registered', 'Dropped']
-        self.grades = ['A', 'B', 'C', 'F']
+        self.grades = ['A', 'B', 'C', 'D', 'F']
+        self.requirements = {'credit_hours': 9, 'gpa': 3.0}
 
         # Database
         self.sql_file_path = '{0}/data/database.db'.format(scripts_root)
@@ -2555,8 +2590,16 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
 
         if user_id == '':
             self.starrs_data.clear_data()
-        else:
-            self.starrs_data.load_applicant_data(user_id)
+            self.statusBar().showMessage('>> Please, enter the student id!')
+            return
+
+        # Get application data
+        self.starrs_data.load_applicant_data(user_id)
+
+        if not self.starrs_data.edit_application:
+            self.starrs_data.clear_data()
+            self.statusBar().showMessage('>> Applicant with id {} does not exists!'.format(user_id))
+            return
 
         self.tabEditApplication.setModel(EditApplicationModel(self.starrs_data))
 
@@ -2817,7 +2860,28 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
             self.statusBar().showMessage('>> Please, enter the student id!')
             return
 
-        # TODO: Check if student meets requirments
+        # Check if user is a student
+        if not self.starrs_data.check_roles(user_id, 'Student'):
+            self.statusBar().showMessage('>> User must be a student to graduate!')
+            return
+
+        # Check if user graduate already
+        if self.starrs_data.check_roles(user_id, 'Alumni'):
+            self.statusBar().showMessage('>> This student graduated already!')
+            return
+
+        # Check if student meets requirements
+        self.starrs_data.get_requirements(user_id)
+
+        if self.starrs_data.gpa < self.requirements['gpa']:
+            self.statusBar().showMessage('>> Student has insufficient GPA {0} out of {1}'
+                                         ''.format(self.starrs_data.gpa, self.requirements['gpa']))
+            return
+
+        if self.starrs_data.credit_hours < self.requirements['credit_hours']:
+            self.statusBar().showMessage('>> Student has insufficient Credit Hours {0} out of {1}!'
+                                         ''.format(self.starrs_data.credit_hours, self.requirements['credit_hours']))
+            return
 
         # Set Alumni role
         role_tuple = [None, user_id, 'Alumni', '']
