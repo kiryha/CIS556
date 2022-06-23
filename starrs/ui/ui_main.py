@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\projects\master\CIS556\dev\starrs\ui\ui_main.ui'
 #
-# Created: Wed Jun 22 19:36:54 2022
+# Created: Wed Jun 22 19:53:14 2022
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -440,9 +440,9 @@ class Ui_STARRS(object):
         self.btnGetCurrentStudents = QtGui.QPushButton(self.splitter_20)
         self.btnGetCurrentStudents.setMinimumSize(QtCore.QSize(0, 35))
         self.btnGetCurrentStudents.setObjectName("btnGetCurrentStudents")
-        self.btnGetGraduatingStudents = QtGui.QPushButton(self.splitter_20)
-        self.btnGetGraduatingStudents.setMinimumSize(QtCore.QSize(0, 35))
-        self.btnGetGraduatingStudents.setObjectName("btnGetGraduatingStudents")
+        self.btnGetAlumnies = QtGui.QPushButton(self.splitter_20)
+        self.btnGetAlumnies.setMinimumSize(QtCore.QSize(0, 35))
+        self.btnGetAlumnies.setObjectName("btnGetAlumnies")
         self.verticalLayout_4.addWidget(self.splitter_20)
         self.tabAdmissionQuerries = QtGui.QTableView(self.tab_7)
         self.tabAdmissionQuerries.setObjectName("tabAdmissionQuerries")
@@ -656,7 +656,7 @@ class Ui_STARRS(object):
         self.btnGetApplicants.setText(QtGui.QApplication.translate("STARRS", "Get Applicants", None, QtGui.QApplication.UnicodeUTF8))
         self.btnGetAdmittedStudents.setText(QtGui.QApplication.translate("STARRS", "Get Admited Students", None, QtGui.QApplication.UnicodeUTF8))
         self.btnGetCurrentStudents.setText(QtGui.QApplication.translate("STARRS", "Get Current Students", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnGetGraduatingStudents.setText(QtGui.QApplication.translate("STARRS", "Get Graduating Students", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnGetAlumnies.setText(QtGui.QApplication.translate("STARRS", "Get Alumnies", None, QtGui.QApplication.UnicodeUTF8))
         self.label_21.setText(QtGui.QApplication.translate("STARRS", "Numberl of Applicants ", None, QtGui.QApplication.UnicodeUTF8))
         self.label_22.setText(QtGui.QApplication.translate("STARRS", "Number of Rejected", None, QtGui.QApplication.UnicodeUTF8))
         self.label_23.setText(QtGui.QApplication.translate("STARRS", "Averege GRE of Admitted", None, QtGui.QApplication.UnicodeUTF8))

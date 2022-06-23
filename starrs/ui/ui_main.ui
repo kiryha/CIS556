@@ -928,7 +928,7 @@
                 <string>Get Current Students</string>
                </property>
               </widget>
-              <widget class="QPushButton" name="btnGetGraduatingStudents">
+              <widget class="QPushButton" name="btnGetAlumnies">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -936,7 +936,7 @@
                 </size>
                </property>
                <property name="text">
-                <string>Get Graduating Students</string>
+                <string>Get Alumnies</string>
                </property>
               </widget>
              </widget>

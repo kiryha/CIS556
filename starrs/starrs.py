@@ -1523,7 +1523,7 @@ class StarrsData:
         for application in applications:
             user = self.get_user(application.user_id)
 
-            if self.check_roles(user.id, 'Applicant'):
+            if self.check_roles(user.id, 'Applicant') and not self.check_roles(user.id, 'Student') and not self.check_roles(user.id, 'Alumni'):
                 self.display_users.append(user)
                 self.display_applications.append(application)
 
@@ -1557,7 +1557,25 @@ class StarrsData:
         for application in applications:
             user = self.get_user(application.user_id)
 
-            if self.check_roles(user.id, 'Student'):
+            if self.check_roles(user.id, 'Student') and not self.check_roles(user.id, 'Alumni'):
+                self.display_users.append(user)
+                self.display_applications.append(application)
+
+    def query_alumni_by_attribute(self, attribute_name, attribute_value):
+
+        # Clean existing data
+        del self.display_users[:]
+        del self.display_applications[:]
+
+        applications = self.get_admitted_applications(attribute_name, attribute_value)
+
+        if not applications:
+            return
+
+        for application in applications:
+            user = self.get_user(application.user_id)
+
+            if self.check_roles(user.id, 'Alumni'):
                 self.display_users.append(user)
                 self.display_applications.append(application)
 
@@ -2284,6 +2302,7 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         self.btnGetAdmittedStudents.pressed.connect(self.query_admitted)
         self.btnGetAdmittedStudents.pressed.connect(self.query_statistic)
         self.btnGetCurrentStudents.pressed.connect(self.query_students)
+        self.btnGetAlumnies.pressed.connect(self.query_alumni)
         self.btnGetAdvisors.pressed.connect(self.get_advisors)
 
     # Data and UI setup
@@ -2686,6 +2705,18 @@ class STARRS(QtGui.QMainWindow, ui_main.Ui_STARRS):
         else:
             degree_sought = self.comDegreeSoughtQ.currentText()
             self.starrs_data.query_students_by_attribute('degree_sought', degree_sought)
+
+        self.tabAdmissionQuerries.setModel(DisplayApplicantModel(self.starrs_data))
+
+    def query_alumni(self):
+
+        if self.radByTerm.isChecked():
+            admission_term = self.comAdmissionTermQ.currentText()
+            self.starrs_data.query_alumni_by_attribute('admission_term', admission_term)
+
+        else:
+            degree_sought = self.comDegreeSoughtQ.currentText()
+            self.starrs_data.query_alumni_by_attribute('degree_sought', degree_sought)
 
         self.tabAdmissionQuerries.setModel(DisplayApplicantModel(self.starrs_data))
 
