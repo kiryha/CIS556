@@ -75,7 +75,10 @@ populate_data = {
          'role': 'Instructor'}
     ],
 
-    'departments': [{'id': 1, 'name': 'CIS'}, {'id': 2, 'name': 'ECE'}],
+    'departments': [
+        {'id': 1, 'name': 'CIS'},
+        {'id': 2, 'name': 'ECE'}
+    ],
 
     'courses': [
         {'id': 1,
@@ -1325,7 +1328,6 @@ class StarrsData:
         del self.pending_applications[:]
 
         pending_applications = self.get_pending_applications()
-        print pending_applications
 
         if not pending_applications:
             return
@@ -1574,8 +1576,10 @@ class StarrsData:
 
         for application in applications:
             user = self.get_user(application.user_id)
-            self.display_users.append(user)
-            self.display_applications.append(application)
+
+            if not self.check_roles(user.id, 'Alumni'):
+                self.display_users.append(user)
+                self.display_applications.append(application)
 
     def query_students_by_attribute(self, attribute_name, attribute_value):
 
